@@ -1,0 +1,144 @@
+﻿@model List<CarServiceApp.Domain.Model.ReportByExecServiceByMonthForEmployee>
+@{
+    ViewBag.Title = "Диаграмма";
+    Layout = "_DefaultLayout";
+}
+
+<style>
+/*     .redefined {
+        padding: 0px;
+        margin: 0;
+    } */
+
+   /*  table {
+        background-color: white;
+        margin-top: 20px;
+    }
+
+        table tr:first-child {
+            background: linear-gradient(to top, #EDEDED 40%, #F9F9F9 100%);
+        }
+
+        table span {
+            float: right;
+            margin-right: 15px;
+            height: 100%;
+            margin: -6px;
+            padding: 3px;
+            margin-right: 10px;
+            border: 1px solid #DDDDDD;
+            border-radius: 5px;
+        } */
+
+/*     .my-label {
+        float: left;
+        padding-top: 5px;
+        padding-right: 5px;
+    } */
+
+    #year, #month {
+        width: 120px !important;
+    }
+</style>
+<div class="container">
+    <h2 class="header-page">Диаграмма доходов по услугам и автозапчастям</h2>
+    <div class="row bs-callout bs-callout-info">
+        <div id="popError" style="height: 50px; margin: 10px; background-color: #F2DEDE; border-radius: 10px; font-size: 16px; color: #A94442; display: none; text-align: center; padding-top: 10px;"></div>
+
+        <form id="ajaxForm" method="post" action="@Url.Action("GetDiagramIncome", "ReportView")" class="form-horizontal">
+            <div class="row">
+                <div class="col-md-3 form-group">
+                    @* <label for="year" class="my-label">Выбрать год:</label> *@
+                    @Html.DropDownList("year", ViewBag.selectListYear as SelectList, new { @class = "form-control" })
+                </div>
+                <div class="col-md-3 form-group redefined">
+                    @* <label for="month" class="my-label">Выбрать месяц:</label> *@
+                    @Html.DropDownList("month", ViewBag.selectListMonth as SelectList, new { @class = "form-control" })
+                </div>
+
+                <div class="col-md-3 form-group">
+                    @* <label for="month" class="my-label"></label> *@
+                    <button id="btn-ajax" type="button" class="btn btn-primary"><i class="fas fa-paint-brush"></i>Обновить диаграмму</button>
+                </div>
+            </div>
+        </form>
+        </br>
+        <div class="col-md-12" style="background:white">
+            <canvas id="myChart"></canvas>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<script>
+    $().ready(function () {
+        $('#btn-ajax').click(function () {
+            var year = $('#year').val();
+            var month = $('#month').val();
+
+            $.ajax({
+                type: 'POST',
+                url: '/ReportView/GetDiagramIncome',
+                data: { year: year, month: month },
+                dataType: 'json',
+                success: function (result) {
+                    UpdateDiagram(result);
+                },
+                error: function (xhr, status, error) {
+                    console.log(xhr.responseText);
+                    console.log(status);
+                    console.log(error);
+                }
+            });
+        });
+
+        var data = {
+            labels: [],
+            datasets: [
+                {
+                    label: "Услуги, BYN",
+                    backgroundColor: 'rgba(211,86,77, 0.2)',
+                    borderColor: 'rgba(130,47,38,1)',
+                    borderWidth: 2,
+                    data: [],
+                },
+                {
+                    label: "Материалы, BYN",
+                    backgroundColor: 'rgba(75,174,240, 0.2)',
+                    borderColor: 'rgba(61,142,196,1)',
+                    borderWidth: 2,
+                    data: [],
+                }
+            ]
+        };
+
+        var ctx = document.getElementById("myChart");
+        var myLineChart = new Chart(ctx, {
+            type: 'bar',
+            data: data,
+            options: {
+                responsive: true
+            }
+        });
+
+        function UpdateDiagram(result) {
+            var listMonth = new Array();
+            var listDataPoints1 = new Array();
+            var listDataPoints2 = new Array();
+            for (key in result[0]) {
+                listMonth.push(result[0][key].nameMonth == null ? result[0][key].x + ' ' + $('#month option:selected').text() : result[0][key].nameMonth);
+                listDataPoints1.push(result[0][key].y);
+            }
+            for (key in result[1]) {
+                listDataPoints2.push(result[1][key].y);
+            }
+            data.datasets[0].data = listDataPoints1;
+            data.datasets[1].data = listDataPoints2;
+            data.labels = listMonth;
+            myLineChart.update();
+        }
+    });
+</script>

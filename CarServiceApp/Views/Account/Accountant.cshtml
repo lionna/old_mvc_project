@@ -1,0 +1,180 @@
+﻿@{
+    ViewBag.Title = "Главная страница Бухгалтера";
+    Layout = "_AccountantLayout";
+}
+
+<div class="row">
+    <div class="col-sm-3">
+        <div class="card-body text-center">
+            <a class="btn btn-outline-warning d-flex flex-column align-items-center" asp-area="" asp-controller="WorkLoading" asp-action="Index">
+                <i class="fas fa-calendar-alt fa-3x"></i>
+                <span class="text-truncate text-dark fw-bold">Расписание работ</span>
+            </a>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="card-body text-center">
+            <a class="btn btn-outline-warning d-flex flex-column align-items-center" asp-area="" asp-controller="Employee" asp-action="Index">
+                <i class="fas fa-id-card-alt fa-3x" aria-hidden="true"></i>
+                <span class="text-truncate text-dark fw-bold">Сотрудники</span>
+            </a>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="card-body text-center">
+            <a class="btn btn-outline-warning d-flex flex-column align-items-center" asp-area="" asp-controller="User" asp-action="Index">
+                <i class="fa fa-user-circle fa-3x" aria-hidden="true"></i>
+                <span class="text-truncate text-dark fw-bold">Договора</span>
+            </a>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="card-body text-center">
+            <a class="btn btn-outline-warning d-flex flex-column align-items-center" asp-area="" asp-controller="SparePartMaterials" asp-action="Index">
+                <i class="fa fa-cogs fa-3x" aria-hidden="true"></i>
+                <span class="text-truncate text-dark fw-bold">Запчасти</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-3">
+        <div class="card-body text-center">
+            <a class="btn btn-outline-warning d-flex flex-column align-items-center" asp-area="" asp-controller="Providers" asp-action="Index">
+                <i class="fas fa-boxes fa-3x" aria-hidden="true"></i>
+                <span class="text-truncate text-dark fw-bold">Поставщики</span>
+            </a>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="card-body text-center">
+            <a class="btn btn-outline-warning d-flex flex-column align-items-center" asp-area="" asp-controller="Services" asp-action="Index">
+                <i class="fa fa-wrench fa-3x" aria-hidden="true"></i>
+                <span class="text-truncate text-dark fw-bold">Услуги</span>
+            </a>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="card-body text-center">
+            <a class="btn btn-outline-warning d-flex flex-column align-items-center" asp-area="" asp-controller="Departments" asp-action="Index">
+                <i class="fa fa-building fa-3x" aria-hidden="true"></i>
+                <span class="text-truncate text-dark fw-bold">Отделы</span>
+            </a>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="card-body text-center">
+            <a class="btn btn-outline-warning d-flex flex-column align-items-center" asp-area="" asp-controller="Posts" asp-action="Index">
+                <i class="fas fa-user-shield fa-3x" aria-hidden="true"></i>
+                <span class="text-truncate text-dark fw-bold">Должности</span>
+            </a>
+        </div>
+    </div>
+</div>
+ 
+<div class="row">
+    <div class="col-sm-3">
+        <div class="card-body text-center">
+            <a class="btn btn-outline-warning d-flex flex-column align-items-center" asp-area="" asp-controller="ReportView" asp-action="DiagramTotalIncomeByServices">
+                <i class="fas fa-chart-bar fa-3x"></i>
+                <span class="text-truncate text-dark fw-bold">Диаграмма доходов</span>
+            </a>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="card-body text-center">
+            <a class="btn btn-outline-warning d-flex flex-column align-items-center" asp-area="" asp-controller="ReportView" asp-action="DiagramCountOfOrders">
+                <i class="fas fa-chart-line fa-3x"></i>
+                <span class="text-truncate text-dark fw-bold">Диаграмма заказов</span>
+            </a>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="card-body text-center">
+            <a class="btn btn-outline-warning d-flex flex-column align-items-center" asp-area="" asp-controller="ReportView" asp-action="AnalysePartsTrade">
+                <i class="fas fa-chart-pie fa-3x"></i>
+                <span class="text-truncate text-dark fw-bold">Анализ запчастей</span>
+            </a>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="card-body text-center">
+            <a class="btn btn-outline-warning d-flex flex-column align-items-center" asp-area="" asp-controller="ReportView" asp-action="AnalyseServicesTrade">
+                <i class="fas fa-chart-area fa-3x"></i>
+                <span class="text-truncate text-dark fw-bold">Анализ услуг</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-3">
+        <div class="card-body text-center">
+            <a class="btn btn-outline-warning d-flex flex-column align-items-center" asp-area="" asp-controller="ReportView" asp-action="ReportByMonthForEmployee">
+                <i class="fas fa-file-invoice fa-3x"></i>
+                <span class="text-truncate text-dark fw-bold">Информация заказах</span>
+            </a>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="card-body text-center">
+            <a class="btn btn-outline-warning d-flex flex-column align-items-center" asp-area="" asp-controller="ReportView" asp-action="ReportByProviders">
+                <i class="fas fa-file-alt fa-3x"></i>
+                <span class="text-truncate text-dark fw-bold">Детализация поставок</span>
+            </a>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="card-body text-center">
+            <a class="btn btn-outline-warning d-flex flex-column align-items-center" asp-area="" asp-controller="ReportView" asp-action="ReportOrders">
+                <i class="fas fa-file-invoice-dollar fa-3x"></i>
+                <span class="text-truncate text-dark fw-bold">Информация о заказах</span>
+            </a>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="card-body text-center">
+            <a class="btn btn-outline-warning d-flex flex-column align-items-center" asp-area="" asp-controller="WorkLoading" asp-action="Index">
+                <i class="far fa-file-alt fa-3x"></i>
+                <span class="text-truncate text-dark fw-bold">Загрузка сотрудников</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-sm-3">
+        <div class="card-body text-center">
+            <a class="btn btn-outline-warning d-flex flex-column align-items-center" asp-area="" asp-controller="ReportView" asp-action="PrintReportByMonthForEmployee">
+                <i class="fas fa-file-download fa-3x"></i>
+                <span class="text-truncate text-dark fw-bold">Документ о работе</span>
+            </a>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="card-body text-center">
+            <a class="btn btn-outline-warning d-flex flex-column align-items-center" asp-area="" asp-controller="ReportView" asp-action="PrintReportByProviders">
+                <i class="fas fa-file-import fa-3x"></i>
+                <span class="text-truncate text-dark fw-bold">Документ о поставках</span>
+            </a>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="card-body text-center">
+            <a class="btn btn-outline-warning d-flex flex-column align-items-center" asp-area="" asp-controller="ReportView" asp-action="PrintReportOrders">
+                <i class="fas fa-file-signature fa-3x"></i>
+                <span class="text-truncate text-dark fw-bold">Документ о заказах</span>
+            </a>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="card-body text-center">
+            <a class="btn btn-outline-warning d-flex flex-column align-items-center" asp-area="" asp-controller="Account" asp-action="UserSettings">
+                <i class="fas fa-user-cog fa-3x" aria-hidden="true"></i>
+                <span class="text-truncate text-dark fw-bold">Личные настройки</span>
+            </a>
+        </div>
+    </div>
+</div>

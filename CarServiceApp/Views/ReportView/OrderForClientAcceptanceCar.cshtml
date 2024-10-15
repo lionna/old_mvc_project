@@ -1,0 +1,558 @@
+﻿@model CarServiceApp.Models.ReportOrderForClientAcceptanceCarViewModel
+@using static CarServiceApp.Domain.Extension.StringExtensions
+
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Отчет</title>
+
+    <style>
+        table {
+            border-collapse: collapse;
+        }
+
+        h3 {
+            text-align: center;
+            margin: 3px;
+        }
+
+        .border-report {
+            position: absolute;
+            width: 1044px;
+            left: 50%;
+            margin-left: -522px;
+        }
+
+        #header-info {
+            font-size: 14px;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+            #header-info td, th {
+                border: 1px solid grey;
+                text-align: left;
+            }
+
+        #order-head div:first-child {
+            float: left;
+            width: 69%;
+            text-align: center;
+        }
+
+        #order-head div:last-child {
+            float: right;
+            width: 30%;
+        }
+
+        #order-head table {
+            text-align: left;
+            width: 100%;
+        }
+
+            #order-head table tr td:last-child {
+                font-weight: bold;
+                border-bottom: 1px solid grey;
+            }
+
+        div #client-info {
+            width: 100%;
+            font-size: 14px;
+        }
+
+        #client-info table {
+            width: 100%;
+        }
+
+        #client-info td {
+            line-height: 18px;
+        }
+
+        #client-info tr td:first-child {
+            width: 15%;
+        }
+
+        #client-info tr td:last-child {
+            font-weight: bold;
+            border-bottom: 1px solid grey;
+        }
+
+        #car-info tr:nth-child(odd) {
+            background-color: #D5D5D5;
+        }
+
+        #car-info tr:nth-child(even) {
+            font-weight: bold;
+        }
+
+        #car-info table {
+            width: 100%;
+            margin-top: 5px;
+            text-align: center;
+        }
+
+            #car-info table td {
+                border: 1px solid grey;
+            }
+
+        #car-body {
+            border: 1px solid grey;
+        }
+
+        .rect {
+            border: 1px solid black;
+            width: 10px;
+            height: 10px;
+            float: left;
+            margin: 5px;
+            vertical-align: middle;
+        }
+
+        .rect-checked {
+            border: 1px solid black;
+            width: 10px;
+            height: 10px;
+            float: left;
+            margin: 5px;
+            vertical-align: middle;
+        }
+
+            .rect-checked:before {
+                content: '\2714';
+                position: relative;
+                bottom: 8px;
+            }
+
+        #car-body table {
+            width: 100%;
+        }
+
+            #car-body table td {
+                text-align: center;
+                padding-left: 5px;
+                border: 1px solid grey;
+            }
+
+            #car-body table tr:first-child td {
+                background-color: #D5D5D5;
+            }
+
+            #car-body table tr:not(:first-child) td {
+                width: 64%;
+                text-align: left;
+            }
+
+        #car-body img {
+            width: 100%;
+        }
+
+        .wrapper-img, .wrapper-table {
+            display: Inline-block;
+        }
+
+        .wrapper-img {
+            width: 730px;
+            position: relative;
+        }
+
+        .wrapper-table {
+            width: 26%;
+            position: relative;
+            top: -1px;
+            left: 39px;
+        }
+
+        .wrapper-img-fluel img {
+            margin-top: 10px;
+        }
+
+        .arrow-fluel {
+            display: inline-block;
+            border: 2px solid BLACK;
+            width: 45%;
+            border-radius: 3px;
+            position: absolute;
+            top: 100%;
+            margin-top: -37px;
+            margin-left: 13px;
+            -webkit-transform-origin: 100% 40%;
+            -webkit-transform: rotate(@((int)(Model.OrderService.FuelLevelPercent * 0.01 * 142 + 18))deg);
+        }
+
+        .wrapper-img-fluel {
+            margin-top: 10px;
+            width: 100%;
+            border: 1px solid grey;
+            float: right;
+        }
+
+            .wrapper-img-fluel:before {
+                content: "Уровень топлива по указателю";
+                font-size: 14px;
+                position: absolute;
+                width: 100%;
+                background-color: #D5D5D5;
+                text-align: center;
+                border-bottom: 1px solid grey;
+            }
+
+        #comment_viewcar {
+            width: 100%;
+        }
+
+            #comment_viewcar td {
+                border-bottom: 1px solid grey;
+                height: 20px;
+            }
+
+                #comment_viewcar td:first-child {
+                    text-align: center;
+                    font-weight: bold;
+                }
+
+        .table {
+            font-size: 16px;
+            width: 100%;
+        }
+
+            .table tr:first-child {
+                background-color: #D5D5D5;
+            }
+
+            .table td {
+                border: 1px solid black;
+                text-align: center;
+            }
+
+        .table-numerable tr:nth-child(2) {
+            background-color: #D5D5D5;
+        }
+
+        .item-remark {
+            height: 20px;
+            width: 20px;
+            border: 2px solid green;
+            border-radius: 15px;
+            position: absolute;
+            text-align: center;
+            background-color: #68BF68;
+            color: white;
+            cursor: pointer;
+        }
+
+            .item-remark div {
+                height: 15px;
+                width: 15px;
+                position: absolute;
+                bottom: 100%;
+                left: 100%;
+                margin-left: -2px;
+                margin-bottom: -2px;
+                border: 1px solid black;
+                border-radius: 15px 15px 15px 0px;
+                text-align: center;
+                background-color: grey;
+                color: white;
+                font-size: 12px;
+            }
+    </style>
+
+
+
+</head>
+<body>
+    <div class="border-report">
+        <p />
+        <table id="header-info">
+            <tr>
+                <th>OOO "iCarService", УНП 790485810 </th>
+            <tr>
+            <tr>
+                <td>
+                    Адрес: 220096 г. Минск, пр. Независимости 65, тел 123-45-67<br>
+                    Р/сч.: 3012146548019 в Региональная дирекция №600 ОАО "БПС-Сбербанк", код 153001369, адрес: г.Минск, ул.Первомайская,56
+                </td>
+            <tr>
+        </table>
+        <div id="order-head">
+            <div style="font-size:18px">
+                <p>
+                    <h3>Акт № @Model?.OrderService?.OrderId <br>cдачи-приемки транспортного средства, запачасных частей и материалов</h3>
+                </p>
+            </div>
+            <div>
+                <table>
+                    <tr>
+                        <td>Дата оформления:</td>
+                        <td>@Model?.OrderService?.DateMakingOrder?.GetDateTimeFormats()[4]</td>
+                    </tr>
+                    <tr>
+                        <td>Мастер:</td>
+                        <td>@Model?.ManagerName?.ConvertToShortName()</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div id="container">
+            <div id="client-info">
+                <table>
+                    <tr>
+                        <td>Заказчик:</td>
+                        <td>@Model?.Client?.FullName</td>
+                    </tr>
+                    <tr>
+                        <td>Адрес:</td>
+                        <td>@Model?.Client?.Address</td>
+                    </tr>
+                    <tr>
+                        <td>Телефон:</td>
+                        <td>@Model?.Client?.Phone</td>
+                    </tr>
+                    <tr>
+                        <td>Владелец автомобиля:</td>
+                        <td>@Model?.Car?.OwnerName</td>
+                    </tr>
+                    <tr>
+                        <td>Контактное лицо:</td>
+                        <td>@Model?.Client?.FullName</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div id="car-info">
+                <table>
+                    <tr>
+                        <td>Марка-модель</td>
+                        <td>Номерной знак</td>
+                        <td>№ кузова</td>
+                        <td>Код ДВС</td>
+                        <td>Код КПП</td>
+                        <td>Год выпуска</td>
+                    </tr>
+                    <tr>
+                        <td>@Model.Car?.CarModification?.Series?.CarModel?.CarBrand?.Name @Model.Car?.CarModification?.Series?.CarModel?.Name</td>
+                        <td>@Model.Car?.RegistrationNumber</td>
+                        <td>@Model.Car?.VinNumber</td>
+                        <td>@Model.Car?.CarModification?.Name</td>
+                        <td>@Model.Car?.TransmissionType</td>
+                        <td>@Model.Car?.IssueYear</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3">Техпаспорт</td>
+                        <td colspan="2">Дата начала гарантии</td>
+                        <td>Пробег</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3">@Model?.Car?.DataSheetCar</td>
+                        <td colspan="2"></td>
+                        <td>@Model?.OrderService?.CurrentMileageCar</td>
+                    </tr>
+                </table>
+            </div>
+            <h3>Состояние кузова и ЛКП</h3>
+            <div id="car-body">
+                <div class="wrapper-img">
+                    @foreach (var item in Model?.Remarks)
+                    {
+                        <div style="left:@((int)(item.XAxisPos))px;top:@((int)(item.YAxisPos))px" class="item-remark">
+                            <span>@(item.NumberType.Value == 1 ? "P" : item.NumberType == 2 ? "X" : item.NumberType == 3 ? "Y" : "O")</span>
+                            <div style="display:@(item.RemarkText!=null? "block":"none")">@(Model?.Remarks?.IndexOf(item) + 1)</div>
+                        </div>
+                    }
+                    <img src="~/img/views_car.jpg">
+                </div>
+                <div class="wrapper-table">
+                    <table>
+                        <tr>
+                            <td colspan="2">Комплектность</td>
+                        </tr>
+                        <tr>
+                            <td>Колпаки колес</td>
+
+                            <td>
+                                @for (int n = 1; n <= Model?.OrderService?.NumberWheelCaps; n++)
+                                {
+                                    <div class="rect-checked"></div>
+                                }
+                                @for (int n = 4 - (Model?.OrderService?.NumberWheelCaps ?? 0); n > 0; n--)
+                                {
+                                    <div class="rect"></div>
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Щетки стеклооч.</td>
+                            <td>
+                                @for (int n = 1; n <= Model?.OrderService?.NumberWipers; n++)
+                                {
+                                    <div class="rect-checked"></div>
+                                }
+                                @for (int n = 3 - (Model?.OrderService?.NumberWipers ?? 0); n > 0; n--)
+                                {
+                                    <div class="rect"></div>
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Рычаги стеклооч.</td>
+                            <td>
+                                @for (int n = 1; n <= Model?.OrderService?.NumberWipersArms; n++)
+                                {
+                                    <div class="rect-checked"></div>
+                                }
+                                @for (int n = 3 - (Model?.OrderService?.NumberWipersArms ?? 0); n > 0; n--)
+                                {
+                                    <div class="rect"></div>
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Антенна</td>
+                            <td><div class=@(Model?.OrderService?.IsAntenna ?? false ? "rect-checked" : "rect")></div></td>
+                        </tr>
+                        <tr>
+                            <td>Радиоприемник</td>
+                            <td><div class=@(Model?.OrderService?.IsTuner ?? false ? "rect-checked" : "rect")></div></td>
+                        </tr>
+                        <tr>
+                            <td>Зап. колесо</td>
+                            <td><div class=@(Model?.OrderService?.IsSpareWheel ?? false ? "rect-checked" : "rect")></div></td>
+                        </tr>
+                        <tr>
+                            <td>Декор крышки ДВС</td>
+                            <td><div class=@(Model?.OrderService?.IsCoverDecorEngine ?? false ? "rect-checked" : "rect")></div></td>
+                        </tr>
+                    </table>
+                    <div class="wrapper-img-fluel">
+                        <div class="arrow-fluel"></div>
+                        <img src="~/img/fuel-gauge.jpg">
+                    </div>
+                </div>
+
+            </div>
+            <table id="comment_viewcar">
+                <tr>
+                    <td>Комментарий:</td>
+                </tr>
+                <tr>
+                    <td>
+                        @foreach (var item in Model?.Remarks)
+                        {
+                            if (item.RemarkText != null)
+                            {
+                                @Html.Raw(Model?.Remarks?.IndexOf(item) + 1 + " - " + item?.RemarkText + "; ")
+                            }
+                        }
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                </tr>
+            </table>
+            <div style="text-align:center;font-weight:bold;">
+                <p>Запасные части и материалы, принятые от заказчика</p>
+            </div>
+            <table class="table table-numerable">
+                <tr>
+                    <td width="5%">№ п/п</td>
+                    <td width="35%">Наименование запчасти</td>
+                    <td width="20%">Номенклатурный номер</td>
+                    <td width="5%">Ед.изм.</td>
+                    <td width="5%">Кол-во</td>
+                    <td width="10%">Состояние</td>
+                    <td width="5%">№ док.</td>
+                    <td>Принял</td>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td>2</td>
+                    <td>3</td>
+                    <td>4</td>
+                    <td>5</td>
+                    <td>6</td>
+                    <td>7</td>
+                    <td>8</td>
+                </tr>
+                @for (int item = 0; item < Model?.CustomParts?.Count; item++)
+                {
+                    <tr>
+                        <td>@(item + 1)</td>
+                        <td>@Model.CustomParts[item].Name</td>
+                        <td>@Model.CustomParts[item].PartId</td>
+                        <td>@Model.CustomParts[item].Unit</td>
+                        <td>@Model.CustomParts[item].StockCustom</td>
+                        <td>@Model.CustomParts[item].StateSPart</td>
+                        <td>@Model.CustomParts[item].AcceptanceId</td>
+                        <td>@Model.CustomParts[item].FullName?.ConvertToShortName()</td>
+                    </tr>
+                }
+            </table>
+            <br>
+            <table style="font-size:16px; width:100%; border-collapse:collapse">
+                <tr>
+                    <td colspan="2" width="40%">Транспортное средство, запчасти и материалы СДАЛ</td>
+                    <td width="20%"></td>
+                    <td colspan="2" width="40%" style="vertical-align:top">Транспортное средство, запчасти и материалы ПРИНЯЛ</td>
+                </tr>
+                <tr>
+                    <td height="30px" colspan="2"></td>
+
+                </tr>
+                <tr>
+                    <td colspan="2" style="border-top:1px solid black;text-align:center">(подпись заказчика)</td>
+                    <td></td>
+                    <td colspan="2" style="border-top:1px solid black;text-align:center">(подпись отв. лица)</td>
+                </tr>
+                <tr></tr>
+                <tr>
+                    <td>@DateTime.Now.GetDateTimeFormats()[4]</td>
+                    <td>@Model?.Client?.FullName?.ConvertToShortName()</td>
+                    <td height="30px"></td>
+                    <td>@DateTime.Now.GetDateTimeFormats()[4]</td>
+                    <td>@Model?.ManagerName?.ConvertToShortName()</td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="border-top:1px solid black;text-align:center">(дата, ФИО заказчика)</td>
+                    <td></td>
+                    <td colspan="2" style="border-top:1px solid black;text-align:center">(дата, ФИО отв. лица)</td>
+                </tr>
+                <tr>
+                    <td colspan="5" style="border-top:1px dashed black;height:20px;"></td>
+
+                </tr>
+                <tr>
+                    <td colspan="2" width="40%">Транспортное средство, запчасти и материалы ПРИНЯЛ</td>
+                    <td width="20%"></td>
+                    <td colspan="2" width="40%" style="vertical-align:top">Транспортное средство, запчасти и материалы СДАЛ</td>
+                </tr>
+                <tr>
+                    <td height="30px" colspan="2"></td>
+
+                </tr>
+                <tr>
+                    <td colspan="2" style="border-top:1px solid black;text-align:center">(подпись заказчика)</td>
+                    <td></td>
+                    <td colspan="2" style="border-top:1px solid black;text-align:center">(подпись отв. лица)</td>
+                </tr>
+                <tr></tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td height="30px"></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="border-top:1px solid black;text-align:center">(дата, ФИО заказчика)</td>
+                    <td></td>
+                    <td colspan="2" style="border-top:1px solid black;text-align:center">(дата, ФИО отв. лица)</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

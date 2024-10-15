@@ -1,0 +1,245 @@
+﻿@model CarServiceApp.Models.SearchOrdersViewModel
+@{
+    ViewBag.Title = "Заказы";
+    Layout = "_DefaultLayout";
+}
+
+@* <link href="~/Content/order-search.css" rel="stylesheet"/> *@
+
+<style>
+    li.green:hover {
+        background-color: #C4C4C4;
+        cursor: pointer;
+        color: white;
+    }
+
+    .order {
+        font-size: 16px;
+    }
+
+    .checkbox,
+    .radio {
+        display: none;
+    }
+
+    .checkbox-custom,
+    .radio-custom {
+        width: 20px;
+        height: 20px;
+        border: 2px solid #ccc;
+        border-radius: 3px;
+        position: relative;
+    }
+
+    .checkbox-custom,
+    .radio-custom,
+    ._for_sort .label {
+        display: inline-block;
+        vertical-align: middle;
+        color: grey;
+        font-size: 100%;
+    }
+
+    .checkbox:checked + .checkbox-custom::before,
+    .radio:checked + .radio-custom::before {
+        content: "";
+        display: block;
+        position: absolute;
+        top: 2px;
+        right: 2px;
+        bottom: 2px;
+        left: 2px;
+        background: #413548;
+        border-radius: 2px;
+    }
+
+    .radio-custom,
+    .radio:checked + .radio-custom::before {
+        border-radius: 50%;
+    }
+
+    .sort-style {
+        display: inline-block;
+        vertical-align: middle;
+        padding-top: 5px;
+        padding-left: 5px;
+        border-radius: 15px;
+        background: white;
+        position: relative;
+        padding-right: 100px;
+    }
+
+        .sort-style div {
+            border: 1px solid #CCCCCC;
+            height: 100%;
+            width: 100px;
+            left: 100%;
+            position: absolute;
+            bottom: 0%;
+            margin-left: -100px;
+            border-radius: 15px;
+            background: #EEEEEE;
+            display: table-cell;
+            text-align: center;
+            vertical-align: middle;
+            padding-top: 2px;
+            color: grey;
+        }
+
+            .sort-style div:after {
+                content: "сортировка";
+                font-size: 16px;
+            }
+
+    .tbl-row {
+        width: 100%;
+    }
+
+        .tbl-row td:nth-child(1) {
+            width: 50px;
+        }
+
+        .tbl-row td:nth-child(2) {
+            width: 145px;
+        }
+
+        .tbl-row td:nth-child(3) {
+            width: 90px;
+        }
+
+        .tbl-row td:nth-child(4) {
+            width: 130px;
+            white-space: nowrap;
+        }
+
+        .tbl-row td:nth-child(5) {
+            width: 315px;
+            white-space: nowrap;
+            display: block;
+            text-overflow: ellipsis;
+            overflow: hidden;
+        }
+
+        .tbl-row td:nth-child(6) {
+            width: 65px;
+            white-space: nowrap;
+        }
+</style>
+
+<div class="header-page">Поиск заказа</div>
+<div class="col-12 bs-callout bs-callout-info">
+    <form class="row g-3" style="padding-bottom: 10px;" id="ajaxForm" method="post" action="@Url.Action("Search", "Order")">
+        <input type="hidden" name="page" />
+        <div class="col-md-3">
+            <input type="text" style="max-width:none" placeholder="Введите № заказа" name="OrderId" class="form-control" id="search" data-autocomplete-source="@Url.Action("AutocompleteSearch", "Order")" />
+        </div>
+        <div class="col-md-2">
+            <input asp-for="FullName" class="form-control" placeholder="ФИО клиента" id="search2" />
+        </div>
+        <div class="col-md-2">
+            <div class="form-check">
+                <input asp-for="IsClosed" class="form-check-input" />
+                <label class="form-check-label">Закрыт</label>
+            </div>
+            <div class="form-check">
+                <input asp-for="IsRejection" class="form-check-input" />
+                <label class="form-check-label">Отказ</label>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="input-group">
+                <input asp-for="DateMakingFrom" type="date" class="form-control" placeholder="От" />
+                @* <span class="input-group-text"><i class="far fa-calendar"></i></span> *@
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="input-group">
+                <input asp-for="DateMakingBefore" type="date" class="form-control" placeholder="До" />
+                @* <span class="input-group-text"><i class="far fa-calendar"></i></span> *@
+            </div>
+        </div>
+        <div class="col-md-1">
+            <button type="submit" class="btn btn-primary">Найти</button>
+        </div>
+
+        <div class="col-12">
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" name="IsAsc" checked="checked" value="true" />
+                <label class="form-check-label">по возрастанию</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="NumbSortRow" id="is_name" value="1" />
+                <label class="form-check-label">фио клиента</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="NumbSortRow" id="is_model" value="2" />
+                <label class="form-check-label">модель автомобиля</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="NumbSortRow" id="is_date" value="3" checked="checked" />
+                <label class="form-check-label">дата заказа</label>
+            </div>
+        </div>
+    </form>
+    <div id="popErorr" class="alert alert-danger" role="alert" style="display: none;">Ошибка</div>
+    <div id="popSuccess" class="alert alert-success" role="alert" style="display: none;">Успех</div>
+    <div id="results"></div>
+</div>
+
+
+<img id="loading" src="@Url.Content("~/img/loading.gif")" style="display: none; position: absolute; margin: auto; top: 0; bottom: 0; left: 0; right: 0" />
+@* @section Script{
+    @Scripts.Render("~/Scripts/moment-with-locales.min.js")
+    @Scripts.Render("~/Scripts/bootstrap-datetimepicker.min.js")
+    @Styles.Render("~/Content/bootstrap-datetimepicker.min.css")
+    <script src="~/Scripts/forViews/order-search.js"></script>
+} *@
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // //Инициализация dtPick_From и dtPick_Before
+        // $(".date").datetimepicker({ language: 'ru', pickTime: false, format: 'YYYY-MM-DD' });
+        // //При изменении даты в dtPick_From, она устанавливается как минимальная для dtPick_Before
+        // $("#dtPick_From").on("dp.change", function (e) {
+        //     $("#dtPick_Before").data("DateTimePicker").setMinDate(e.date);
+        // });
+        // //При изменении даты в dtPick_Before, она устанавливается как максимальная для dtPick_From
+        // $("#dtPick_Before").on("dp.change", function (e) {
+        //     $("#dtPick_From").data("DateTimePicker").setMaxDate(e.date);
+        // });
+
+        $('#ajaxForm').submit(function (event) {
+            event.preventDefault();
+            var form = $(this);
+            $.ajax({
+                url: form.attr('action'),
+                type: form.attr('method'),
+                data: form.serialize(),
+                success: function (data) {
+                    $('#results').html(data);
+                },
+                error: function () {
+                    $('#popErorr').show();
+                }
+            });
+        });
+
+        //для автозаполнения строки поиска номер заказа
+        $("[data-autocomplete-source]").each(function () {
+            var target = $(this);
+            target.autocomplete({ minLength: 1, autoFocus: true, source: target.attr("data-autocomplete-source") });
+        });
+        //для чекбоксов
+        $('#IsRejection').change(function () {
+            if (!$('#IsClosed').prop('checked') && this.checked)
+                $('#IsClosed').prop('checked', true);
+            else
+                $('#IsClosed').prop('checked', false);
+        })
+        //для пейджинга-сброс номера отсылаемой страницы при изменении строки поиска
+        $('#search, #search2').change(function () {
+            $('input[name=page]').removeAttr('value');
+        })
+    })
+
+</script>

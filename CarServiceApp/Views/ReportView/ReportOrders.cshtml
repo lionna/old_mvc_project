@@ -1,0 +1,253 @@
+﻿@model CarServiceApp.Models.ReportModel
+@using CarServiceApp.Domain.Common
+@using CarServiceApp.Helper
+@using CarServiceApp.Domain.Extension
+
+@{
+    ViewBag.Title = "Информация о заказах за месяц";
+    Layout = "_DefaultLayout";
+}
+
+<style>
+    .redefined {
+        /*  padding: 0px;
+            margin: 0; */
+    }
+
+    .my-table {
+        /*         background-color: white;
+            margin-top: 100px;
+            margin-bottom: 10px; */
+    }
+
+        .my-table tr:nth-child(odd) {
+            background: #F5F5F5;
+        }
+
+        .my-table td, .my-table th {
+            padding: 8px;
+            border: 1px solid #CCCCCC;
+        }
+
+        .my-table tr:first-child {
+            background: linear-gradient(to top, #EDEDED 40%, #F9F9F9 100%);
+        }
+
+        .my-table td:nth-child(4) span {
+            white-space: nowrap;
+            display: block;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            width: 300px;
+        }
+
+    .my-label {
+        float: left;
+        padding-top: 5px;
+        padding-right: 5px;
+    }
+
+    #year, #month {
+        width: 100px !important;
+    }
+
+    .checkbox,
+    .radio {
+        display: none;
+    }
+
+    .checkbox-custom,
+    .radio-custom {
+        width: 20px;
+        height: 20px;
+        border: 2px solid #ccc;
+        border-radius: 3px;
+        position: relative;
+    }
+
+    .checkbox-custom,
+    .radio-custom,
+    ._for_sort .label {
+        display: inline-block;
+        vertical-align: middle;
+        color: grey;
+        font-size: 100%;
+    }
+
+    .checkbox:checked + .checkbox-custom::before,
+    .radio:checked + .radio-custom::before {
+        content: "";
+        display: block;
+        position: absolute;
+        top: 2px;
+        right: 2px;
+        bottom: 2px;
+        left: 2px;
+        background: #413548;
+        border-radius: 2px;
+    }
+
+    .radio-custom,
+    .radio:checked + .radio-custom::before {
+        border-radius: 50%;
+    }
+
+    .sort-style {
+        display: inline-block;
+        vertical-align: middle;
+        padding-top: 5px;
+        padding-left: 5px;
+        border-radius: 15px;
+        background: white;
+        position: relative;
+        padding-right: 100px;
+    }
+
+        .sort-style div {
+            border: 1px solid #CCCCCC;
+            height: 100%;
+            width: 100px;
+            left: 100%;
+            position: absolute;
+            bottom: 0%;
+            margin-left: -100px;
+            border-radius: 15px;
+            background: #EEEEEE;
+            display: table-cell;
+            text-align: center;
+            vertical-align: middle;
+            padding-top: 2px;
+            color: grey;
+        }
+
+            .sort-style div:hover {
+                cursor: pointer;
+                background: #E4E4E4;
+            }
+
+            .sort-style div:after {
+                content: "сортировать";
+                font-size: 16px;
+            }
+</style>
+
+<div class="alert alert-secondary" role="alert">
+    Информация о заказах за месяц
+</div>
+<div class="col-md-12 bs-callout bs-callout-info">
+    <form asp-controller="ReportView" asp-action="ReportOrders" method="post">
+        <div class="row">
+            <div class="col-md-2 form-group">
+                <span class="my-label">
+                    Выбрать год:
+                </span>
+                @Html.DropDownList("year", Model.Years as SelectList, Model.Years.FirstOrDefault()?.Text, new { @class = "form-control" })
+            </div>
+            <div class="col-md-2 form-group">
+	            <span class="my-label">Выбрать месяц:</span>
+                @Html.DropDownList("month", Model.Months as SelectList, new { @class = "form-control" })
+                  @* @Html.DropDownList("month", Model.Months as SelectList, Model.Months.FirstOrDefault()?.Text, new { @class = "form-control" })  *@
+                @* @Html.DropDownListFor(model => model.Month, new SelectList(Model.Months, "Value", "Text", Model.Month), Model.Months.FirstOrDefault()?.Text, new { @class = "form-control", @id = "months", @name = "months" }) *@
+            </div>
+            <div class="col-md-3 form-group d-grid gap-1">
+                <button type="submit" class="btn btn-outline-primary"><i class="far fa-file-alt"></i> Сформировать отчет</button>
+                <button type="button" class="btn btn-outline-success" style=""
+                        onclick="printReport()">
+                    <i class="fas fa-print"></i> Печать
+                </button>
+            </div>
+        </div>
+        <br/>
+        <div class="row _for_sort">
+            <div class="col-md-12 redefined">
+                <label>
+                    <input class="checkbox" type="checkbox" name="isAsc" checked="checked" value="true">
+                    <span class="checkbox-custom"></span>
+                    <span class="label">по возрастанию</span>
+                </label>
+                <div class="sort-style">
+                    <label>
+                        <input class="radio" type="radio" name="sortRow" id="is_name" value="1">
+                        <span class="radio-custom"></span>
+                        <span class="label">фио клиента</span>
+                    </label>
+                    <label>
+                        <input class="radio" type="radio" name="sortRow" id="is_amount" value="2">
+                        <span class="radio-custom"></span>
+                        <span class="label">сумма заказа</span>
+                    </label>
+                    <label>
+                        <input class="radio" type="radio" name="sortRow" id="is_date" value="3" checked="checked">
+                        <span class="radio-custom"></span>
+                        <span class="label">дата заказа</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </form>
+    <br />
+    <div id="contents_result">
+        <table class="my-table table table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>№ заказа</th>
+                    <th width="11%">Клиент</th>
+                    <th>Дата</th>
+                    <th>Автомобиль</th>
+                    <th>Год вып.</th>
+                    <th width="8%">Рег. номер</th>
+                    <th>Услуги BYN</th>
+                    <th>НДС BYN</th>
+                    <th>Услуги с ндс BYN</th>
+                    <th>Запчасти BYN</th>
+                    <th>Сумма BYN</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in (List<CarServiceApp.Domain.Model.ReportByOrderModel>)Model?.GridItem?.Data)
+                {
+                    <tr>
+                        <td>@item.OrderId</td>
+                        <td>@item.FullName.ConvertToShortName()</td>
+                        <td>@item.DateMaking.Value.ToString("dd-MM-yyyy")</td>
+                        <td><span>@item.Model</span></td>
+                        <td>@item.IssueYear</td>
+                        <td>@item.RegisterNumber</td>
+                        <td>@(Math.Round(item.CostService ?? 0, 2))</td>
+                        <td>@(Math.Round(item.TaxAddedValue ?? 0, 2)) </td>
+                        <td>@(Math.Round(item.PriceService ?? 0, 2))</td>
+                        <td>@(Math.Round(item.TotallPriceParts ?? 0, 2)) </td>
+                        <td>@(Math.Round(item.TotallPriceOrder ?? 0, 2)) </td>
+                    </tr>
+                }
+                @if (ViewBag.listMoney != null)
+                {
+                    <tr>
+                        <td colspan="6" style="text-align:right;font-weight:bold">Итого:</td>
+                        <td style="font-weight:bold">@((ViewBag.listMoney as List<decimal>)[0]) </td>
+                        <td style="font-weight:bold">@((ViewBag.listMoney as List<decimal>)[1]) </td>
+                        <td style="font-weight:bold">@((ViewBag.listMoney as List<decimal>)[2]) </td>
+                        <td style="font-weight:bold">@((ViewBag.listMoney as List<decimal>)[3]) </td>
+                        <td style="font-weight:bold">@((ViewBag.listMoney as List<decimal>)[4])</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    </div>
+</div>
+<pager paged-result="@Model.GridItem" page-handler="ReportOrders" css-class="pagination"></pager>
+<img id="loading" src="~/img/loading.gif" style="display: none; position: absolute; margin: auto; top: 0; bottom: 0; left: 0; right: 0" />
+
+<script>
+    function printReport() {
+        var year = $('#year option:selected').val();
+        var month = $('#month option:selected').val();
+        var isAsc = $('[name=isAsc]').val();
+        var sortRow = $('[name=sortRow]:checked').val();
+
+        var url = '/ReportView/PrintReportOrders/?year=' + year + '&month=' + month + '&isAsc=' + isAsc + '&sortRow=' + sortRow;
+
+        window.location.href = url;
+    }
+</script>

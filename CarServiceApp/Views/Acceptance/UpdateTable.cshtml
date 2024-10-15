@@ -1,0 +1,87 @@
+﻿@model CarServiceApp.Models.AcceptancedPartsViewModel
+@{
+    ViewBag.Title = "Информация";
+}
+<style>
+    input {
+        width: 50px;
+    }
+
+    .glyphicon-remove-circle:hover {
+        color: red;
+    }
+
+    #infoInvoice:hover {
+        cursor: pointer;
+    }
+</style>
+<div style="overflow-y: scroll; height: 475px;">
+    <i class="fas fa-arrow-circle-left" onclick="extend()" style="position: absolute; float: left; margin-top: 250px; margin-left: -15px; font-size: 30px;opacity:0.3; color: orange; "></i>
+    <table class="table" style="border-top: 2px none white;">
+        <tr style="background-color: #82B98F">
+            <th>Наименование</th>
+            <th>ID</th>
+            <th style="display:none">Производитель</th>
+            <th>Ед.изм.</th>
+            <th>Кол-во</th>
+            <th>Цена</th>
+            <th></th>
+        </tr>
+        @foreach (var i in Model.AcceptencedParts)
+        {
+            <tr>
+                <td>@i.Name</td>
+                <td>@i.PartId</td>
+                <td style="display:none">@i.Manufacture</td>
+                <td>@i.Unit</td>
+                <td>@i.Number</td>
+                <td>@i.Price</td>
+                <td><i class="fas fa-times-circle" onclick="del('@i.PositionId')" /></td>
+            </tr>
+        }
+        <tr>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th>Итого:</th>
+            <th>@Model.TotallSummByParts</th>
+            <th></th>
+        </tr>
+    </table>
+</div>
+<hr style="margin:0">
+<div id="invoice">
+    <div id="infoInvoice" style="text-align: center; background-color: #FFFFCC" onmouseover="showMenu()">
+        <strong>Акт сдачи-приемки №: </strong>
+        <input type="hidden" value='@Model.InvoiceInfo.LotNumber' name="LotNumber" id="idLotNumb" />
+        @Html.DisplayFor(m => m.InvoiceInfo.LotNumber)
+        от @Html.Raw(Model.InvoiceInfo.DeliveryDate != null ? Model.InvoiceInfo.DeliveryDate.Value.ToString("dd MMMM yyyy") : "")
+        <br>
+        <strong>Поставщик:</strong>
+        @Html.DisplayFor(m => m.InvoiceInfo.ProviderName)
+        <br>
+        <strong>
+            Принял:
+        </strong>
+        @Html.DisplayFor(m => m.InvoiceInfo.FullName)
+    </div>
+    <div id="menuInvoice" class="row" style="display: none; z-index: 10; position: absolute; display: none; left: 50%; margin-left: -240px">
+        <ul class="list-inline" style="text-align:center;">
+            <li><button onclick="DeleteInvoice()" class="btn btn-sm" style="border-radius:0px 0px 10px 10px">Удалить акт</button> </li>
+            <li><button onclick="EditInvoice()" class="btn btn-sm" style="border-radius:0px 0px 10px 10px">Изменить данные</button> </li>
+            <li><button onclick="ClearInvoice()" class="btn btn-sm" style="border-radius:0px 0px 10px 10px">Убрать все материалы</button> </li>
+        </ul>
+    </div>
+</div>
+<script src="~/Scripts/forViews/acceptance-upd-table.js"></script>
+<script type="text/javascript">
+        //скрыть/показать производителя при развертывании таблицы
+    $(document).ready(function () {
+        if ($('#updTable').attr('class') == 'col-md-12')
+            $('#updTable table th:nth-child(3), #updTable table td:nth-child(3)').show();
+        else
+            $('#updTable table th:nth-child(3), #updTable table td:nth-child(3)').hide();
+
+       
+    })
+</script>

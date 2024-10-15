@@ -1,0 +1,89 @@
+﻿@model CarServiceApp.Domain.Entity.Models.Provider
+
+@{
+    ViewBag.Title = "Создание поставщика";
+    Layout = "_DefaultLayout";
+}
+
+<div class="header-page">@ViewData["Title"]</div>
+
+<form asp-action="Create" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="form-group">
+        <label asp-for="Name" class="control-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="CertificateNumber" class="control-label"></label>
+        <input asp-for="CertificateNumber" class="form-control" />
+        <span asp-validation-for="CertificateNumber" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="ZipCode" class="control-label"></label>
+        <input asp-for="ZipCode" class="form-control" />
+        <span asp-validation-for="ZipCode" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Address" class="control-label"></label>
+        <input asp-for="Address" class="form-control" />
+        <span asp-validation-for="Address" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Phone" class="control-label"></label>
+        <input asp-for="Phone" class="form-control" />
+        <span asp-validation-for="Phone" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Email" class="control-label"></label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+
+    <br>
+    <div class="form-group">
+        <button type="submit" class="btn btn-outline-primary">
+            <i class="fas fa-plus"></i> Создать
+        </button>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="fas fa-times"></i> Отмена
+        </a>
+    </div>
+</form>
+
+@section Scripts {
+    <!-- Добавьте ссылки на jQuery и библиотеку для маски -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+
+            // Маска для телефона
+            $('#Phone').mask('+375(00)-000-00-00');
+
+            // Маска для индекса
+            $('#ZipCode').mask('000000-999999');
+
+            $('#Email').mask('A@b.c', {
+                translation: {
+                    'A': {
+                        pattern: /^[a-zA-Z0-9_-.]{1,30}$/
+                    },
+                    'b': {
+                        pattern: /^[a-zA-Z0-9]+\.[a-zA-Zа-я]{1,30}$/
+                    },
+                    'c': {
+                        pattern: /[a-zA-Z]{1,5}$/
+                    }
+                }
+            });
+        });
+    </script>
+}

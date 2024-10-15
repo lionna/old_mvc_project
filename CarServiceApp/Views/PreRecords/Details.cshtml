@@ -1,0 +1,498 @@
+﻿@model CarServiceApp.Domain.Entity.Models.PreRecord
+@using CarServiceApp.Domain.Extension
+
+@{
+    ViewBag.Title = "Данные о заявке";
+    Layout = "_DefaultLayout";
+}
+@* <link href="~/Content/pre-record-detalis.css" rel="stylesheet" /> *@
+
+<style>
+
+    input[type="button"] {
+        width: 100%;
+    }
+
+    .redefined {
+        padding: 2px;
+        margin: 0;
+    }
+
+    input {
+        max-width: none;
+    }
+
+    .tbl-service-search {
+        width: 100%;
+        background-color: white;
+    }
+
+        .tbl-service-search td, .tbl-service-search th {
+            border: 1px solid #DBDBDB;
+            line-height: 25px;
+            padding-left: 5px;
+            padding-right: 5px;
+        }
+
+        .tbl-service-search tr:first-child {
+            background-color: #DBDBDB;
+        }
+
+    #form_search {
+        padding: 0;
+    }
+
+    .glyphicon-plus {
+        cursor: pointer;
+        color: #5CB85C;
+        vertical-align: middle;
+    }
+
+    .glyphicon-remove {
+        cursor: pointer;
+        color: #D35545;
+        vertical-align: middle;
+    }
+
+    #wrap_tbl {
+        max-height: 245px;
+        overflow-y: scroll;
+    }
+
+    .custom-form-group {
+        width: 100%;
+        background-color: white;
+        border-right: 1px solid #E7E7E7;
+        border-top: 1px solid #E7E7E7;
+        border-bottom: 1px solid #E7E7E7;
+    }
+
+        .custom-form-group span, .custom-form-group label {
+            margin: 5px;
+        }
+
+        .custom-form-group label {
+            width: 25%;
+        }
+
+        .custom-form-group span {
+            color: white;
+            padding: 5px;
+            border-top-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+        }
+
+    .custom-form-group {
+        margin-top: 5px;
+        margin-bottom: 5px;
+        border-radius: 0px 3px 3px 0px;
+        border-left: 3px solid;
+        padding: 5px;
+    }
+
+    .group-green {
+        border-left: 3px solid #5CB85C;
+    }
+
+        .group-green span {
+            background-color: #5CB85C;
+        }
+
+    .group-sand {
+        border-left: 3px solid #DA9765;
+    }
+
+        .group-sand span {
+            background-color: #DA9765;
+        }
+
+    .group-light-grey {
+        border-left: 3px solid #D8D8D8;
+    }
+
+        .group-light-grey span {
+            background-color: #D8D8D8;
+            color: #333333;
+        }
+
+    .custom-form-horizontal {
+        width: 100%;
+        justify-content: space-between;
+        flex-direction: row;
+        display: inline-flex;
+    }
+
+        .custom-form-horizontal .custom-form-group:not(:last-child) {
+            margin-right: 10px;
+        }
+
+        .custom-form-horizontal .custom-form-group label {
+            width: 30%;
+        }
+
+    .col-md-12 hr {
+        margin: 5px;
+        border-color: grey;
+    }
+
+    /****для модального окна*/
+    #modal_form {
+        width: 500px;
+        height: auto;
+        border-radius: 8px;
+        border: 3px #000 solid;
+        background: #fff;
+        position: fixed;
+        left: 50%;
+        margin-top: -250px;
+        margin-left: -250px;
+        display: none;
+        opacity: 0;
+        z-index: 5;
+        padding: 10px;
+    }
+
+        #modal_form h4 {
+            text-align: center;
+        }
+        /* Кнoпкa зaкрыть для тех ктo в тaнке) */
+        #modal_form #modal_close {
+            width: 40px;
+            height: 40px;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            display: block;
+        }
+    /* Пoдлoжкa */
+    #overlay2 {
+        z-index: 3; /* пoдлoжкa дoлжнa быть выше слoев элементoв сaйтa, нo ниже слoя мoдaльнoгo oкнa */
+        position: fixed; /* всегдa перекрывaет весь сaйт */
+        background-color: #000; /* чернaя */
+        opacity: 0.8; /* нo немнoгo прoзрaчнa */
+        -moz-opacity: 0.8; /* фикс прозрачности для старых браузеров */
+        filter: alpha(opacity=80);
+        width: 100%;
+        height: 100%; /* рaзмерoм вo весь экрaн */
+        top: 0; /* сверху и слевa 0, oбязaтельные свoйствa! */
+        left: 0;
+        cursor: pointer;
+        display: none; /* в oбычнoм сoстoянии её нет) */
+    }
+    /************************/
+
+</style>
+@*
+<div class="header-page">Информация о предварительной записи</div>
+<div class="col-md-12 bs-callout bs-callout-info">
+
+        <div class="col-md-6 redefined">
+            <div class="custom-form-group group-green">
+                @Html.LabelFor(model => model.FullName)
+            <span> @Html.DisplayFor(model => model.FullName)</span>
+            </div>
+            <div class="custom-form-group group-green">
+                @Html.LabelFor(model => model.PhoneNumber)
+            <span> @Html.DisplayFor(model => model.PhoneNumber)</span>
+            </div>
+        </div>
+        <div class="col-md-6 redefined">
+            <div class="custom-form-group group-sand">
+                @Html.LabelFor(model => model.MarkModelCar)
+                <span> @Html.DisplayFor(model => model.MarkModelCar)</span>
+            </div>
+            <div class="custom-form-group group-sand">
+                @Html.LabelFor(model => model.IssueYear)
+                <span> @Html.DisplayFor(model => model.IssueYear)</span>
+            </div>
+            <div class="custom-form-group group-sand">
+                @Html.LabelFor(model => model.RegNumberCar)
+                <span> @Html.DisplayFor(model => model.RegNumberCar)</span>
+            </div>
+        </div>
+    <div class="col-md-12 redefined">
+        <div class="custom-form-horizontal">
+            <div class="custom-form-group group-light-grey">
+                @Html.LabelFor(model => model.Employee.FullName)
+                <span> @Html.DisplayFor(model => model.Employee.FullName)</span>
+            </div>
+            <div class="custom-form-group group-light-grey">
+                @Html.LabelFor(model => model.DateMakingRecord)
+                <span> @Html.DisplayFor(model => model.DateMakingRecord)</span>
+            </div>
+            <div class="custom-form-group group-light-grey">
+                @Html.LabelFor(model => model.IsRejection)
+                <span>@(!Model.IsRejection.Value? "активна" : "отказ/просрочено")</span>
+            </div>
+        </div>
+    </div>
+        <div class="col-md-12 redefined">
+            <h4 style="text-align:center">Список планируемых услуг</h4>
+            <div id="wrap_tbl">
+                <table class="tbl-service-search" id="required">
+
+                    <tr>
+                        <th width="45%">Наименование услуги</th>
+                        <th width="20%">Код работы (ID)</th>
+                        <th width="5%">Время</th>
+                        <th width="10%">Дата старта</th>
+                        <th width="10%">Исполнитель</th>
+                    </tr>
+                    @foreach (var item in Model.PreRecordServices.OrderByDescending(o=>o.DateReservation))
+                    {
+                        <tr>
+                            <td>@item.Service.Name</td>
+                            <td>@item.ServiceId</td>
+                            <td>@item.Service.RateTime</td>
+                            <td>@item.DateReservation</td>
+                            <td>@(item.Employee==null?"":item.Employee.FullName.ConvertToShortName())</td>
+                        </tr>
+                    }
+                    @if(Model.PreRecordServices.Count>0)
+                    {
+                    <tr>
+                        <th style="text-align:right" colspan="2">Суммарно время работ по нормам</th>
+                        <th>@(Model.PreRecordServices.Select(m => m.Service.RateTime).Aggregate((f, e) => f + e))</th>
+                        <th>X</th>
+                        <th>X</th>
+                    </tr>
+                    }
+                </table>
+            </div>
+        </div>
+        <div class="col-md-12 redefined">
+            <div class="col-md-1 redefined">
+                <input value="К поиску" class="btn btn-default" onclick="window.location.href='@Url.Action("List", "PreRecord")'" type="button">
+            </div>
+            @if (!Model.IsRejection.Value)
+            {
+            <div class="col-md-3 redefined">
+                <input value="Распределить работы (услуги) по мастерам" class="btn btn-success" type="button" onclick="javascript:window.location.href='@Url.Action("TableLoadPreReservation", "WorkLoading", new { id_pre_record = Model.RecordId })'">
+            </div>
+            <div class="col-md-2 redefined">
+                <input value="Зарегистрировать как заказ" class="btn btn-success" type="button" onclick="CastRecord('@Model.RecordId')">
+            </div>
+            }
+            <div class="col-md-2 redefined" style="float:right">
+            <input value="@(Model.IsRejection.Value?"Восстановить заявку":"Отменить заявку")" class="btn btn-warning" type="button" onclick="javascript:window.location.href='@Url.Action("ChangeStatlRecord", "PreRecords", new { id_pre_record = Model.RecordId })'">
+            </div>
+            <div class="col-md-2 redefined" style="float:right">
+            <input value="Удалить заявку" class="btn btn-danger" type="button" onclick="confirmDialog('Вы уверены,  что хотите удалить предварительную запись № @Model.RecordId клиента @Model.FullName?', DeleteRecord, '@Model.RecordId');">
+            </div>
+        </div>
+
+    </div>
+
+ *@
+
+
+<div class="header-page">Информация о предварительной записи</div>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12 bs-callout bs-callout-info">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="custom-form-group group-green">
+                        @Html.LabelFor(model => model.FullName)
+                        <span>@Html.DisplayFor(model => model.FullName)</span>
+                    </div>
+                    <div class="custom-form-group group-green">
+                        @Html.LabelFor(model => model.PhoneNumber)
+                        <span>@Html.DisplayFor(model => model.PhoneNumber)</span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="custom-form-group group-sand">
+                        @Html.LabelFor(model => model.MarkModelCar)
+                        <span>@Html.DisplayFor(model => model.MarkModelCar)</span>
+                    </div>
+                    <div class="custom-form-group group-sand">
+                        @Html.LabelFor(model => model.IssueYear)
+                        <span>@Html.DisplayFor(model => model.IssueYear)</span>
+                    </div>
+                    <div class="custom-form-group group-sand">
+                        @Html.LabelFor(model => model.RegNumberCar)
+                        <span>@Html.DisplayFor(model => model.RegNumberCar)</span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="custom-form-horizontal">
+                        <div class="custom-form-group group-light-grey">
+                            @Html.LabelFor(model => model.Employee.FullName)
+                            <span>@Html.DisplayFor(model => model.Employee.FullName)</span>
+                        </div>
+                        <div class="custom-form-group group-light-grey">
+                            @Html.LabelFor(model => model.DateMakingRecord)
+                            <span>@Html.DisplayFor(model => model.DateMakingRecord)</span>
+                        </div>
+                        <div class="custom-form-group group-light-grey">
+                            @Html.LabelFor(model => model.IsRejection)
+                            <span>@(!Model.IsRejection.Value ? "активна" : "отказ/просрочено")</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <h4 style="text-align:center">Список планируемых услуг</h4>
+                    <div id="wrap_tbl">
+                        <table class="tbl-service-search" id="required">
+                            <tr>
+                                <th width="45%">Наименование услуги</th>
+                                <th width="20%">Код работы (ID)</th>
+                                <th width="5%">Время</th>
+                                <th width="10%">Дата старта</th>
+                                <th width="10%">Исполнитель</th>
+                            </tr>
+                            @foreach (var item in Model.PreRecordServices.OrderByDescending(o => o.DateReservation))
+                            {
+                                <tr>
+                                    <td>@item.Service.Name</td>
+                                    <td>@item.ServiceId</td>
+                                    <td>@item.Service.RateTime</td>
+                                    <td>@item.DateReservation</td>
+                                    <td>@(item.Employee == null ? "" : item.Employee.FullName.ConvertToShortName())</td>
+                                </tr>
+                            }
+                            @if (Model.PreRecordServices.Count > 0)
+                            {
+                                <tr>
+                                    <th style="text-align:right" colspan="2">Суммарно время работ по нормам</th>
+                                    <th>@(Model.PreRecordServices.Select(m => m.Service.RateTime).Aggregate((f, e) => f + e))</th>
+                                    <th>X</th>
+                                    <th>X</th>
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                </div>
+            </div>
+            </br>
+            <div class="row ">
+               
+                    <div class="col-auto">
+                        <button type="submit" onclick="window.location.href='@Url.Action("List", "PreRecords")'" class="btn btn-outline-info"><i class="fas fa-backspace"></i> К поиску</button>
+                    </div>
+                     @if (!Model.IsRejection.Value)
+                    {
+                        <div class="col-auto">
+                            <button type="submit" onclick="javascript:window.location.href='@Url.Action("TableLoadPreReservation", "WorkLoading", new { recordId = Model.RecordId })'" class="btn btn-outline-success"><i class="fas fa-user-plus"></i> Распределить работы (услуги) по мастерам</button>
+                        </div>
+                        <div class="col-auto">
+                            <button type="submit" onclick="CastRecord('@Model.RecordId')" class="btn btn-outline-success"><i class="fas fa-folder-plus"></i> Зарегистрировать как заказ</button>
+                        </div>
+                    }
+                    <div class="col-auto">
+                    <button type="submit" onclick="javascript:window.location.href='@Url.Action("ChangeStatlRecord", "PreRecords", new { recordId = Model.RecordId })'" class="btn btn-outline-warning"><i class="far fa-clipboard"></i> @(Model.IsRejection.Value ? "Восстановить заявку" : "Отменить заявку")</button>
+                    </div>
+                    <div class="col-auto">
+                    <button type="submit" onclick="confirmDialog('Вы уверены, что хотите удалить предварительную запись № @Model.RecordId клиента @Model.FullName?', DeleteRecord, '@Model.RecordId');" class="btn btn-outline-danger"><i class="fas fa-trash-alt"></i> Удалить заявку</button>
+                    </div>
+
+                    @*                 <div class="col-md-12">
+                    <div class="col-md-1">
+                    <input value="К поиску" class="btn btn-info" onclick="window.location.href='@Url.Action("List", "PreRecord")'" type="button">
+                    </div>
+                    @if (!Model.IsRejection.Value)
+                    {
+                    <div class="col-md-3">
+                    <input value="Распределить работы (услуги) по мастерам" class="btn btn-success" type="button" onclick="javascript:window.location.href='@Url.Action("TableLoadPreReservation", "WorkLoading", new { recordId = Model.RecordId })'">
+                    </div>
+                    <div class="col-md-2">
+                    <input value="Зарегистрировать как заказ" class="btn btn-success" type="button" onclick="CastRecord('@Model.RecordId')">
+                    </div>
+                    }
+                    <div class="col-md-2" style="float:right">
+                    <input value="@(Model.IsRejection.Value ? "Восстановить заявку" : "Отменить заявку")" class="btn btn-warning w-100" type="button" onclick="javascript:window.location.href='@Url.Action("ChangeStatlRecord", "PreRecords", new { recordId = Model.RecordId })'">
+                    </div>
+                    <div class="col-md-2" style="float:right">
+                    <input value="Удалить заявку" class="btn btn-danger" type="button" onclick="confirmDialog('Вы уверены, что хотите удалить предварительную запись № @Model.RecordId клиента @Model.FullName?', DeleteRecord, '@Model.RecordId');">
+                    </div>
+                    </div> *@
+
+
+
+ 
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+
+        $(document).ready(function () {
+            //для модального окна
+            /* Зaкрытие мoдaльнoгo oкнa, тут делaем тo же сaмoе нo в oбрaтнoм пoрядке */
+            $('#modal_close, #overlay').click(function () {
+                $('#modal_form')
+                    .animate({ opacity: 0, top: '45%' }, 200,
+                        function () {
+                            $(this).css('display', 'none');
+                            $('#overlay2').fadeOut(400);
+                        }
+                    );
+            });
+        })
+
+        //удаление заказа
+        function DeleteRecord(idOrd) {
+            $.ajax(
+                {
+                    url: '/PreRecords/DeleteRecord',
+                    data: 'recordId=' + idOrd,
+                    type: "GET",
+                    datatype: "json"
+                })
+        }
+        //
+        function openModalWindow() {
+            $('#overlay2').fadeIn(400,
+                function () {
+                    $('#modal_form')
+                        .css('display', 'block')
+                        .animate({ opacity: 1, top: '50%' }, 200);
+                });
+        }
+        //
+        function CastRecord(recordId) {
+            $.ajax({
+                url: '/PreRecords/CastToOrder',
+                data: 'recordId=' + recordId,
+                type: "GET",
+                datatype: "json",
+                success: function (result) {
+                    var df = result.indexOf("javascript");
+                    if (result.indexOf("javascript") == -1) {
+                        $("#contents2").html(result);
+                        openModalWindow();
+                    }
+
+                }
+            });
+        }
+    </script>
+    @*модальное окно*@
+    @* <div class="DialogComfirms">
+    <div id="contents" class="col-md-10">
+    </div>
+    <i class="fas fa-question-circle sing-question"></i>
+    <hr>
+    <div class="col-md-12 form-inline">
+    <button id="ok" class="btn btn-danger">Ок</button>
+    <button id="cancel" class="btn btn-success">Отмена</button>
+    </div>
+    </div>
+    <div id="overlay"></div> *@
+
+    @* <div id="modal_form">
+    <!-- Сaмo oкнo -->
+    <span class="fas fa-times" id="modal_close"></span> <!-- Кнoпкa зaкрыть -->
+    <div id="contents2">
+
+    </div>
+    <img id="loading" src="@Url.Content("/img/loading.gif")" style="display: none; position: absolute; margin: auto; top: 0; bottom: 0; left: 0; right: 0" />
+    </div>
+    <div id="overlay2"></div><!-- Пoдлoжкa --> *@

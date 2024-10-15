@@ -1,0 +1,313 @@
+﻿@model CarServiceApp.Models.AcceptanceParamsViewModel
+@{
+    ViewBag.Title = "Прием материалов";
+    Layout = "_DefaultLayout";
+}
+<style>
+    .fas {
+        cursor: pointer;
+    }
+
+    #menuInvoice button {
+        border-radius: 0px 0px 10px 10px !important;
+        width: 150px;
+        background-color: #82B98F;
+    }
+
+    #updTable, #resultSearch {
+        background-color: white;
+    }
+
+    #findProviderControl {
+        display: none;
+        position: absolute;
+        z-index: 5;
+        width: 400px;
+        height: auto;
+        background: rgba(234,234,234, 0.9);
+        padding: 5px;
+        border-radius: 5px;
+        left: 50%;
+        top: 50%;
+        box-shadow: 0 0 5px 1px #53C2FA;
+    }
+
+        #findProviderControl table tr:hover {
+            cursor: pointer;
+        }
+</style>
+<div class="header-page">Прием материалов на склад</div>
+<div class="col-md-12 bs-callout bs-callout-info" style="padding-bottom:0;">
+
+    <ul class="list-inline" style="text-align:justify">
+        <li style="font-size:16px; cursor:pointer"><a style="text-decoration:underline">от поставщиков</a> </li>
+        <li style="font-size:16px"><a href="/acceptancecustom/manage">от клиентов</a> </li>
+        <li style="float:right;padding-right:0"><button class="btn" onclick="showbar()" style="border: 1px solid rgb(196, 196, 196); width: 360px;">Внести новый акт сдачи-приемки материалов</button></li>
+    </ul>
+    <div id="createInvoice" style="display:none">
+        <div class="row">
+            <div class="col-md-12 form-inline" style="padding-left:0">
+                <div class=" col-md-3 control-label">
+                    Поставщик
+                </div>
+                <div class="col-md-2 control-label">
+                    Номер документа
+                </div>
+                <div class="col-md-3 control-label">
+                    Принимающий сотрудник
+                </div>
+                <div class="col-md-2 control-label">
+                    Дата поставки
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 form-inline">
+                <form id="Params">
+                    <div class="col-md-3 input-group">
+                        <span class="input-group-addon" onclick="addProvider(this)">
+                            <i class="fas fa-search"></i>
+                        </span>
+                        @Html.DropDownListFor(model => model.ProvideId, Model.ListProvider, new { @class = "form-control" })
+                    </div>
+                    <div class="col-md-2 input-group">
+                        @Html.EditorFor(model => model.LotNumber, new { htmlAttributes = new { @class = "form-control", @placeholder = "партия / # накладной" } })
+                    </div>
+                    <div class="col-md-3 input-group">
+                        @Html.DropDownListFor(model => model.PersonnelNumber, Model.ListEmployee, new { @class = "form-control" })
+                    </div>
+                    <div class="col-md-2 input-group">
+                        <div class="input-group date">
+                            @Html.EditorFor(model => model.DeliveryDate, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                            <span class="input-group-addon">
+                                <i class="far fa-calendar"></i>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-md-1 input-group" style="width:15%;float:right">
+                        <button class="btn btn-success" type="button" style="max-width:none;width:100%;" onclick="AddInvoice()">Оформить</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <hr style="margin:5px">
+    <div class="row">
+     
+        <div class="col-md-6" id="row_find_part">
+            <div class="row">
+                <div class="col-md-12">Найти материал, для добавления в акт сдачи-приемки</div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <form id="SearchParts" class="col-md-12 form-inline" data-ajax="true" data-ajax-method="Post" data-ajax-mode="replace" data-ajax-update="#resultSearch" data-ajax-loading="#loading" data-ajax-loading-duration="0" action="/Acceptance/SearchParts">
+                        <div class="col-md-3 input-group">
+                            <input type="text" name="PartId" placeholder="ID запчасти" class="form-control">
+                        </div>
+                        <div class="col-md-6 input-group">
+                            <input type="text" name="NamePart" placeholder="Наименование запчасти" class="form-control">
+                        </div>
+                        <div class="col-md-2 input-group">
+                            <button type="submit" class="btn" style="width: 125px; background-color: #AAAEB9;">Найти</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6" id="row_find_invoice">
+            <div class="row">
+                <div class="col-md-12">Поиск актов сдачи-приемки материалов</div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <form id="frm_search_invoice" class="col-md-12 form-inline" data-ajax="true" data-ajax-method="Post" data-ajax-mode="replace" data-ajax-update="#updTable" data-ajax-loading="#loading" data-ajax-loading-duration="0" action="/Acceptance/SearchInvoice">
+                        <div class="col-md-10 input-group" id="search-inv">
+                            <span class="input-group-addon">
+                                <span id="extendIcon" class="fas fa-chevron-left" onclick="extend()"></span>
+                            </span>
+                            <input type="text" name="LotNumber" placeholder="Введите № документа" class="form-control">
+                        </div>
+                        <div class="col-md-2 input-group hide-group" style="display:none">
+                            <div class="input-group date" id="dtPick_From">
+                                <input type="text" name="DateLotStart" class="form-control" readonly="readonly" placeholder="От">
+                                <span class="input-group-addon">
+                                    <i class="far fa-calendar"></i>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-md-2 input-group hide-group" style="display:none">
+                            <div class="input-group date" id="dtPick_Before">
+                                <input type="text" name="DateLotEnd" class="form-control" readonly="readonly" placeholder="До">
+                                <span class="input-group-addon">
+                                    <i class="far fa-calendar"></i>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-md-2 input-group hide-group" style="display:none">
+                            <select name="ProvideId" class="form-control" style="max-width:none">
+                                @foreach (var item in Model.ListProvidersSearch)
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-1 input-group" style="float:right; width:15%">
+                            <button type="submit" class="btn" style="max-width: none;width:100%; background-color: #AAAEB9; ">Найти</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+      
+    </div>
+    <div id="popErorr" style="height: 50px; margin-top: 10px;background-color: #F2DEDE; border-radius: 10px; font-size: 16px; color: #A94442; display: none; text-align: center; padding-top: 10px"></div>
+    <div id="popSuccess" style="height: 50px; margin-top: 10px; background-color: #5EB986;color:white; border-radius: 10px; font-size: 16px; display: none; text-align: center; padding-top: 10px"></div>
+    <div class="row" style="padding:10px 0px 0px">
+        <div id="resultSearch" class="col-md-6" style="border-right: 1px solid #EEEEEE; border-top: 1px solid #EEEEEE; padding: 0px;">
+        </div>
+        <div id="updTable" class="col-md-6" style="border-top: 1px solid #EEEEEE; border-left: 1px solid #EEEEEE; padding: 0px;">
+        </div>
+    </div>
+</div>
+@*место для модального окна*@
+<div id="findProviderControl">
+    <div class="row">
+        <form id="SearchProvider" class="col-md-12 form-inline" data-ajax="true" data-ajax-method="Post" data-ajax-mode="replace" data-ajax-update="#contents" action="/Acceptance/SearchProvider">
+            <input type="text" name="id_prov" placeholder="ID поставщика" style="width:38%" class="form-control">
+            <input type="text" name="name_prov" placeholder="Наименование поставщика" style="width:50%" class="form-control">
+            <button type="submit" class="btn btn-default">
+                <i class="fas fa-search"></i>
+            </button>
+        </form>
+    </div>
+    <div class="row" id="contents">
+    </div>
+</div>
+
+<img id="loading" src="@Url.Content("~/img/loading.gif")" style="display: none; position: absolute; margin: auto; top: 0; bottom: 0; left: 0; right: 0" />
+@* @section Script{
+    @Scripts.Render("~/Scripts/moment-with-locales.min.js")
+    @Scripts.Render("~/Scripts/bootstrap-datetimepicker.min.js")
+    @Styles.Render("~/Content/bootstrap-datetimepicker.min.css")
+    @Scripts.Render("~/scripts/jquery.validate.js")
+    @Scripts.Render("~/Scripts/jquery.validate.unobtrusive.js")
+    @Scripts.Render("~/Scripts/jquery.maskedinput.js")
+}*@
+<script>
+
+    //функция для  отправки запроса на добавление  инвойс
+    function AddInvoice() {
+        if ($('#row_find_part').css('display') == 'none') {
+            $('i[onclick="extend()"]').click();
+        }
+        $.ajax(
+            {
+                url: '/Acceptance/AddInvoice',
+                data: $('#Params').serialize(),
+                type: "Post",
+                datatype: "json",
+                success: function (result) {
+                    $('#updTable').html(result);
+                }
+            });
+    }
+    //для расширения таблицы инвойса
+    function extend() {
+        if ($('#resultSearch').css('display') != 'none') {
+            $('#resultSearch, #updTable, #row_find_part, #row_find_invoice').fadeOut(200);
+            setTimeout(function () {
+                $('#updTable table th:nth-child(3), #updTable table td:nth-child(3)').show();
+                $('#updTable, #row_find_invoice').attr('class', 'col-md-12');
+                $('#updTable, #row_find_invoice').fadeIn(200);
+                $('.hide-group').show(); $('#search-inv').removeClass('col-md-10').addClass('col-md-4');
+            }, 200)
+            $('i[onclick="extend()"]').attr('class', 'glyphicon glyphicon-circle-arrow-right');
+            $('#extendIcon').removeClass('glyphicon-chevron-left').addClass('glyphicon-chevron-right');
+
+        }
+        else {
+            $(' #updTable, #row_find_invoice').fadeOut(200);
+            setTimeout(function () {
+                $('#updTable table th:nth-child(3), #updTable table td:nth-child(3)').hide();
+                $('#updTable, #row_find_invoice').attr('class', 'col-md-6');
+                $('#resultSearch, #updTable, #row_find_part, #row_find_invoice').fadeIn(200);
+                $('.hide-group').hide(); $('#search-inv').removeClass('col-md-4').addClass('col-md-10');
+            }, 200)
+            $('i[onclick="extend()"]').attr('class', 'glyphicon glyphicon-circle-arrow-left');
+            $('#extendIcon').removeClass('glyphicon-chevron-right').addClass('glyphicon-chevron-left');
+        }
+
+    }
+
+    //функция для  отправки запроса на добавление запчасти в инвойс
+    function AddPart(btn) {
+        $.ajax(
+            {
+                url: '/Acceptance/AddPart',
+                data: $(btn).parent().parent().find('input').add('#idLotNumb').serialize(),
+                type: "Post",
+                datatype: "json",
+                success: function (result) {
+                    if (result.indexOf('table') == -1) {
+                        $('#popErorr').html('Данная запчасть ID (' + result + ') уже есть в документе').slideDown(1000).delay(3000).slideUp(1000); return 0;
+                    }
+                    if (result != '') {
+                        $('#updTable').html(result);
+                        $('#popErorr').fadeOut(1000);
+                    }
+                }
+            });
+    }
+
+    function showbar() {
+        if ($('#createInvoice').css('display') == 'none') {
+            $('#createInvoice').fadeIn(300);
+            $('button[onclick="showbar()"]').css('borderRadius', '10px').html('Добавление нового акта сдачи-приемки материалов');
+        }
+        else {
+            $("#findProviderControl").fadeOut(300);
+            $('#createInvoice').fadeOut(300);
+            $('button[onclick="showbar()"]').css('borderRadius', '0px').html('Внести новый акт сдачи-приемки материалов');
+        }
+
+    }
+    //показать контрол с поиском поставщиков
+    function addProvider(elem) {
+        var coord = $(elem).offset();
+        if ($('#findProviderControl').css('display') == "none")
+            $('#findProviderControl').css('top', coord.top + 35).css('left', coord.left).slideDown(300);
+        else
+            $('#findProviderControl').slideUp(300);
+    }
+    //добавление новго провайдерав комбобокс
+    function addToSet(row) {
+        var name = $(row).children().eq(0).text();
+        var id = $(row).children().eq(2).text();
+        $("#ID_provider").prepend($('<option selected="selected" value=' + id + '>' + name + '</option>'));
+        $("#findProviderControl").slideUp(500);
+    }
+    $(function () {
+        $('.date').datetimepicker({ language: 'ru', pickTime: false, format: 'YYYY-MM-DD' });
+        //При изменении даты в dtPick_From, она устанавливается как минимальная для dtPick_Before
+        $("#dtPick_From").on("dp.change", function (e) {
+            $("#dtPick_Before").data("DateTimePicker").setMinDate(e.date);
+        });
+        //При изменении даты в dtPick_Before, она устанавливается как максимальная для dtPick_From
+        $("#dtPick_Before").on("dp.change", function (e) {
+            $("#dtPick_From").data("DateTimePicker").setMaxDate(e.date);
+        });
+    });
+
+</script> 
+  <script type="text/javascript">
+    $(function () {
+        //для перехода на конкретный инвойс
+        if ('@ViewBag.LotNumberCurrent' != '')
+        {
+            $('#LotNumber').attr('value', '@ViewBag.LotNumberCurrent');
+            $('#frm_search_invoice').submit();
+        }
+    });
+</script>  

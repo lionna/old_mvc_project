@@ -1,0 +1,90 @@
+﻿@using CarServiceApp.Domain.Common
+@using CarServiceApp.Helper
+@using CarServiceApp.Domain.Entity.Models
+@model GridItem
+
+@{
+    ViewBag.Title = "Список услуг";
+   Layout = "_DefaultLayout";
+}
+
+<div class="col-md-12 bs-callout bs-callout-info">
+    <div id="popErorr" style="height: 50px; background-color: #F2DEDE;border-radius:10px;font-size:16px; color: #A94442; display: none; text-align:center; padding-top:10px"></div>
+
+    <form asp-action="Index" method="get" class="row g-2">
+        <div class="col-6">
+            <input type="text" class="form-control" name="searchString" value="@ViewData["CurrentFilter"]" placeholder="Поиск модели по наименованию" />
+        </div>
+        <div class="col-6">
+            <button class="btn btn-outline-dark" type="submit">
+                <i class="fas fa-search"></i> Поиск
+            </button>
+        </div>
+    </form>
+
+    <br>
+
+    <div class="header-page">@ViewData["Title"]</div>
+    <table class="table table-striped table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>
+                    Наименование
+                    <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParam"]">
+                        @if ((string)ViewData["NameSortParam"]! == "NameDesc")
+                        {
+                            <i class="fas fa-sort-alpha-down-alt" style="color: white;"></i>
+                        }
+                        else
+                        {
+                            <i class="fas fa-sort-alpha-up-alt" style="color: white;"></i>
+                        }
+                    </a>
+                </th>
+                <th>Тип</th>
+                <th>Время</th>
+                <th>Цена</th>
+                <th>Доступность</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in (IEnumerable<Service>)Model?.Data)
+            {
+                <tr>
+                    <td style="display:none">@item.Id</td>
+                    <td>@Html.DisplayFor(modelItem => item.Name)</td>
+                    <td>@Html.DisplayFor(modelItem => item.ServiceType.Name)</td>
+                    <td>@Html.DisplayFor(modelItem => item.RateTime)</td>
+                    <td>@Html.DisplayFor(modelItem => item.PriceHour)</td>
+                    <td>
+                        @if (item.Available == true)
+                        {
+                            <span id="statusSpan_@item.Id" style="cursor: pointer;" onclick="activateItem('@item.Id', '@Url.Action("Activate", "Services")', '@item.Name')">
+                                <img src="~/img/checkbox2.png" alt="" width="20" height="20">
+                            </span>
+                        }
+                        else
+                        {
+                            <span id="statusSpan_@item.Id" style="cursor: pointer;" onclick="activateItem('@item.Id', '@Url.Action("Activate", "Services")', '@item.Name')">
+                                <img src="~/img/checkbox1.png" alt="" width="20" height="20">
+                            </span>
+                        }                      
+                        
+                    </td>
+
+                    <td>
+                        <i class="fas fa-edit" title="Редактировать" onclick="window.location='@Url.Action("Edit", "Services", new { id = item.Id})'"></i>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <pager paged-result="@Model" page-handler="Index" css-class="pagination"></pager>
+
+    <br>
+    <button class="btn btn-outline-success" type="button" onclick="window.location='@Url.Action("Create", "Services")'">
+        <i class="fas fa-plus"></i> Регистрация нового значения
+    </button>
+</div>

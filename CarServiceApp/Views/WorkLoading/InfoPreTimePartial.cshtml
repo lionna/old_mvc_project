@@ -1,0 +1,22 @@
+﻿@using CarServiceApp.Domain.Extension
+@using CarServiceApp.Domain.Repository
+@model List<CarServiceApp.Domain.Entity.Models.PreRecordService>
+
+<div><strong>
+    Информация о пред. записи
+</strong></div>
+<hr>
+<table>
+    <tr> <th>Автомобиль:</th> <td>@Model.FirstOrDefault()?.PreRecord?.MarkModelCar (@Model.FirstOrDefault()?.PreRecord?.RegNumberCar)</td></tr>
+    <tr><th>ID пред.записи:</th> <td>@Model.FirstOrDefault()?.PreRecord?.RecordId</td></tr>
+    <tr>
+        <th>Число работ:</th> <td>@Model.Count</td>
+    </tr>
+    <tr>
+        <th>Клиент:</th> <td>@Model.FirstOrDefault()?.PreRecord?.FullName.ConvertToShortName()</td>
+    </tr>
+
+</table>
+<hr>
+<div id="link_bottom">@Html.ActionLink("На страницу пред.записи", "TableLoadPreReservation", "WorkLoading", new { preRecordId = @Model.FirstOrDefault()?.PreRecord?.RecordId, currentDate = ViewBag.SelectedDate }, null)</div>
+

@@ -1,0 +1,200 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] SysAdmin - iCarService</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/CarServiceApp.styles.css" asp-append-version="true" />
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" integrity="...">
+    <link rel="stylesheet" href="~/lib/fontawesome/css/all.min.css" asp-append-version="true" />
+
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-primary  border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                <a class="navbar-brand" asp-area="" asp-controller="Account" asp-action="SysAdmin">
+                    <img src="~/img/logo_menu.png" alt="" width="24" height="24" class="d-inline-block align-text-top">
+                    iCarService
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <!-- Добавленный код для выпадающего списка -->
+                    <div class="nav-item dropdown">
+                        <a class="nav-link text-light dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user-shield"></i> Клиенты и Сотрудники
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-dark">
+                            <a class="dropdown-item" asp-area="" asp-controller="Clients" asp-action="Create">Новый клиент</a>
+                            <a class="dropdown-item" asp-area="" asp-controller="Clients" asp-action="Index">Клиенты</a>
+                            <a class="dropdown-item" asp-area="" asp-controller="Cars" asp-action="Search">Автомобили</a>
+                            <a class="dropdown-item" asp-area="" asp-controller="Orders" asp-action="Search">Заказы</a>
+                            <a class="dropdown-item" asp-area="" asp-controller="Services" asp-action="Index">Услуги</a> 
+                            <hr class="dropdown-divider">
+                            <a class="dropdown-item" asp-area="" asp-controller="Employees" asp-action="Create">Новый сорудник</a>
+                            <a class="dropdown-item" asp-area="" asp-controller="Employees" asp-action="Index">Сотрудники</a>
+                            <a class="dropdown-item" asp-area="" asp-controller="Departments" asp-action="Index">Отделы</a>
+                            <a class="dropdown-item" asp-area="" asp-controller="Posts" asp-action="Index">Должности</a>
+                            <a class="dropdown-item" asp-area="" asp-controller="Contracts" asp-action="Index">Договора</a>
+                        </div>
+                    </div>
+                    <!-- Добавленный код для выпадающего списка -->
+                    <div class="nav-item dropdown">
+                        <a class="nav-link text-light dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-boxes"></i>    Склад
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-dark">
+                            <a class="dropdown-item" asp-area="" asp-controller="-----" asp-action="Index">Учет материалов от поставщика</a>
+                            <a class="dropdown-item" asp-area="" asp-controller="----" asp-action="Index">Учет материалов от клиента</a>
+                            <hr class="dropdown-divider">
+                            <a class="dropdown-item" asp-area="" asp-controller="SparePartMaterials" asp-action="Index">Поиск материалов</a>
+                            <a class="dropdown-item" asp-area="" asp-controller="Providers" asp-action="Index">Поставщики</a>
+                            <hr class="dropdown-divider">
+                            <a class="dropdown-item" asp-area="" asp-controller="Parts" asp-action="Index">База материалов</a>
+                        </div>
+                    </div>
+                    <!-- Добавленный код для выпадающего списка -->
+                    <div class="nav-item dropdown">
+                        <a class="nav-link text-light dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-calendar-alt"></i> Запись
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-dark">
+                            <a class="dropdown-item" asp-area="" asp-controller="PreRecords" asp-action="Create">Добавить новую запись</a>
+                            <a class="dropdown-item" asp-area="" asp-controller="PreRecords" asp-action="Search">Поиск</a>
+                            <li><hr class="dropdown-divider"></li>
+                            <a class="dropdown-item" asp-area="" asp-controller="WorkLoading" asp-action="Index">Таблица загрузки мастеров</a>
+                        </div>
+                    </div>
+                    <!-- Добавленный код для выпадающего списка -->
+                    <div class="nav-item dropdown">
+                        <a class="nav-link text-light dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-print"></i>   Отчеты
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-dark">
+                            <a class="dropdown-item" asp-area="" asp-controller="ReportView" asp-action="ReportByMonthForEmployee">Выработка мастеров</a>
+                            <a class="dropdown-item" asp-area="" asp-controller="ReportView" asp-action="ReportOrders">Отчет по заказам</a>
+                            <a class="dropdown-item" asp-area="" asp-controller="ReportView" asp-action="ReportByProviders">Отчет по поставщикам</a>
+                            <li><hr class="dropdown-divider"></li>
+                            <a class="dropdown-item" asp-area="" asp-controller="ReportView" asp-action="DiagramCountOfOrders">Диаграмма заказов</a>
+                            <a class="dropdown-item" asp-area="" asp-controller="ReportView" asp-action="DiagramTotalIncomeByServices">Диаграмма доходов</a>
+                            <li><hr class="dropdown-divider"></li>
+                            <a class="dropdown-item" asp-area="" asp-controller="ReportView" asp-action="AnalysePartsTrade">Анализ по запчастям</a>
+                            <a class="dropdown-item" asp-area="" asp-controller="ReportView" asp-action="AnalyseServicesTrade">Анализ по услугам</a>
+                            <li><hr class="dropdown-divider"></li>
+                            <a class="dropdown-item" asp-area="" asp-controller="ReportView" asp-action="PrintReportByMonthForEmployee">Документ о работе</a>
+                            <a class="dropdown-item" asp-area="" asp-controller="ReportView" asp-action="PrintReportOrders">Документ о заказах</a>
+                            <a class="dropdown-item" asp-area="" asp-controller="ReportView" asp-action="PrintReportByProviders">Документ о поставках</a>
+                        </div>
+                    </div>
+                    <!-- Добавленный код для выпадающего списка -->
+                    <div class="dropdown">
+                        <a class="nav-link text-light dropdown-toggle" href="#" role="button" id="navbarDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-cogs"></i>      Настройки
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" asp-area="" asp-controller="Users" asp-action="Index">Пользователи</a>
+                            <a class="dropdown-item" asp-area="" asp-controller="Roles" asp-action="Index">Роли</a>
+                            <a class="dropdown-item" asp-area="" asp-controller="Streets" asp-action="Index">Улицы</a>
+                            <a class="dropdown-item" asp-area="" asp-controller="TypeOfPayments" asp-action="Index">Типы платежей</a>
+                            <a class="dropdown-item" asp-area="" asp-controller="CarModels" asp-action="Index">Модели машин</a>
+                            <a class="dropdown-item" asp-area="" asp-controller="CarBrands" asp-action="Index">Бренды машин</a>
+                            <a class="dropdown-item" asp-area="" asp-controller="CarColors" asp-action="Index">Цвета машин</a>
+                            <a class="dropdown-item" asp-area="" asp-controller="CarSeries" asp-action="Index">Серии машин</a>
+                            <a class="dropdown-item" asp-area="" asp-controller="CarModifications" asp-action="Index">Модификации машин</a>
+                            <a class="dropdown-item" asp-area="" asp-controller="CarGenerations" asp-action="Index">Покаление машин</a>
+                        </div>
+                    </div>
+                    <!-- /Добавленный код для выпадающего списка -->
+                    <partial name="_LoginPartial" />
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            <img src="~/img/logo_menu.png" alt="" width="24" height="24" class=""> 
+            &copy; 2024 - iCarService - <a style="text-decoration: none;" asp-area="" asp-controller="Account" asp-action="SysAdmin">Главная страница администратора</a>
+            <a style="text-decoration: none;" asp-area="" asp-controller="Home" asp-action="Contact"> <i class="fas fa-phone"></i> Контакты</a>
+            <a style="text-decoration: none;" asp-area="" asp-controller="Home" asp-action="Privacy"> <i class="fas fa-tasks"></i> Политика конфиденциальности</a>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/lib/fontawesome/js/all.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+
+    <script>
+        // Определение функции confirmDialog
+        function confirmDialog(message, callback, id, controllerAction) {
+            var result = confirm(message);
+            if (result) {
+                // Вызов колбэка с передачей аргументов
+                callback(id, controllerAction);
+            }
+        }
+
+        //диактивировать
+        function activateItem(id, controllerAction) {
+            $.ajax(
+                {
+                    url: controllerAction,
+                    data: 'id=' + id,
+                    type: "DELETE",
+                    datatype: "json",
+                    success: function (result) {
+
+                        if (result.isNotSuccess) {
+                            $('#popErorr').html(result.errors).slideDown(500).delay(3000).slideUp(500);
+                            return 0;
+                        }
+                        else {
+
+                            var statusSpan = $('#statusSpan_' + id);
+                            var currentImageSrc = statusSpan.find('img').attr('src');
+
+                            if (currentImageSrc === '/img/checkbox2.png') {
+                                // Текущее изображение - включено, меняем на выключено
+                                statusSpan.find('img').attr('src', '/img/checkbox1.png');
+                            } else {
+                                // Текущее изображение - выключено, меняем на включено
+                                statusSpan.find('img').attr('src', '/img/checkbox2.png');
+                            }
+                        }
+                    }
+                })
+        }
+
+        //удаление
+        function deleteItem(id, controllerAction) {
+            $.ajax(
+                {
+                    url: controllerAction,
+                    data: 'id=' + id,
+                    type: "DELETE",
+                    datatype: "json",
+                    success: function (result) {
+                        console.log(result);
+                        if (result.isNotSuccess) {
+                            $('#popErorr').html(result.errors).slideDown(500).delay(3000).slideUp(500);
+                            return 0;
+                        }
+                        else {
+                            $('table tr>td:contains(' + id + ')').parent().remove();
+                        }
+                    }
+                })
+        }
+    </script>
+</body>
+</html>

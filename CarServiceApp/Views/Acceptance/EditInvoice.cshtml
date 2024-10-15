@@ -1,0 +1,93 @@
+﻿@model CarServiceApp.Domain.Model.InvoiceInformation
+@{
+    ViewBag.Title = "Изменить фактуру";
+}
+
+<form method="post" id="infoInvoice" class="col-md-12" style="background-color: #FFFFCC" onmouseover="showMenu()">
+    <input type="hidden" value="@Model.LotNumber" name="LotNumber" id="idLotNumb" />
+    @Html.ValidationSummary()
+    @Html.AntiForgeryToken()
+
+    <div class="form-group row">
+        <label class="control-label col-md-6" style="padding:5px 0 0 0">Акт сдачи-приемки № @Model.LotNumber от</label>
+        <div class="col-md-6">
+            <input type="text" asp-for="DeliveryDate" class="form-control" style="width:150px;" />
+            @Html.ValidationMessageFor(model => model.DeliveryDate, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="control-label col-md-6" style="padding:0">Поставщик:</label>
+        <div class="col-md-6">
+            <select asp-for="ProviderId" asp-items="@(ViewBag.ListProvider as SelectList)" class="form-control" style="width:150px;"></select>
+            @Html.ValidationMessageFor(model => model.ProviderId, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="control-label col-md-6" style="padding:0">Принял:</label>
+        <div class="col-md-6">
+            <select asp-for="PersonnelNumber" asp-items="@(ViewBag.ListEmployee as SelectList)" class="form-control" style="width:150px;"></select>
+            @Html.ValidationMessageFor(model => model.PersonnelNumber, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="form-group">
+        <button type="submit" class="btn btn-outline-primary">
+            <i class="fas fa-plus"></i> Сохранить
+        </button>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="fas fa-times"></i> Отмена
+        </a>
+    </div>
+</form>
+
+
+@* @using (Ajax.BeginForm("EditSaveInvoice", "Acceptance", null, new AjaxOptions { UpdateTargetId = "updTable", HttpMethod = "Post" }, new { @class = "col-md-12", @id = "infoInvoice", @style = "background-color: #FFFFCC", @onmouseover = "showMenu()" }))
+{
+    @Html.ValidationSummary()
+    @Html.AntiForgeryToken()
+
+    <input type="hidden" value='@Model.LotNumber' name="LotNumber" id="idLotNumb" />
+    <div class="form-horizontal">
+        @Html.Label("Акт сдачи-приемки № " + @Model.LotNumber + " от ", new { @class = "control-label col-md-6", @style = "padding:5px 0 0 0" })
+        <div class="col-md-6">
+            @Html.EditorFor(m => m.DeliveryDate, new { htmlAttributes = new { @style = "width:150px;" } })
+        </div>
+    </div>
+    <div class="form-horizontal">
+        @Html.Label("Поставщик:", new { @class = "control-label col-md-6", @style = "padding:0" })
+        <div class="col-md-6">
+            @Html.DropDownListFor(m => m.ProviderId, ViewBag.ListProvider as SelectList, new { @style = "width:150px" })
+        </div>
+    </div>
+    <div class="form-horizontal">
+        @Html.Label("Принял:", new { @class = "control-label col-md-6", @style = "padding:0" })
+        <div class="col-md-6">
+            @Html.DropDownListFor(m => m.PersonnelNumber, ViewBag.ListEmployee as SelectList, new { @style = "width:150px" })
+        </div>
+    </div>
+    <div id="menuInvoice" class="row" style="display: none; z-index: 10; position: absolute; display: none; left: 50%; margin-left: -150px; top: 70px;">
+        <ul class="list-inline" style="text-align:center;">
+            <li><button type="submit" class="btn btn-sm">Сохранить</button> </li>
+            <li><button type="button" class="btn btn-sm" onclick="Cancel()">Отмена</button> </li>
+        </ul>
+    </div>
+}
+
+ *@
+<script>
+    $(document).ready(function () {
+        // $('input[type="datetime"]').mask("99-99-9999", { placeholder: "дд-мм-гггг" });
+    })
+    function Cancel()
+    {
+        $.ajax(
+           {
+               url: '@Url.Action("CancelEditInvoice", "Acceptance")',
+               data: 'lotNumber=' + '@Model.LotNumber',
+               type: "Get",
+               datatype: "json",
+               success: function (result) {
+                   $('#invoice').html(result);
+               }
+           });
+    }
+</script>

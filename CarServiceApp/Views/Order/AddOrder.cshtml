@@ -1,0 +1,599 @@
+﻿@model CarServiceApp.Models.OrderViewModel
+
+@{
+    ViewBag.Title = "Заказы";
+    Layout = "_DefaultLayout";
+}
+
+<div class="header-page">Регистрация нового заказа @(Model.RecordId.HasValue ? "по заявке №" + Model.RecordId : "")</div>
+<div class="col-md-12 bs-callout bs-callout-info">
+    <ul class="list-inline" style="text-align:justify">
+        <li style="font-size:18px">Клиент: @ViewBag.ShortName</li>
+        <li><span class="label label-success" style="font-size:12px">ID: @Model.ClientId</span></li>
+    </ul>
+    <hr />
+    @using (Html.BeginForm())
+    {
+        @Html.HiddenFor(g => g.RecordId) 
+        @Html.ValidationSummary(false)
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(model => model.ClientId)
+
+            <div class="col-md-6">
+                    <label class="control-label col-md-4">
+                        Автомобиль
+                    </label>
+                    <div class="col-md-8">
+                        <div class="input-group">
+                            <span class="input-group-btn">
+                                <button class="btn btn-default " type="button" id="info">
+                                    <span class="fas fa-question-circle"></span>
+                                </button>
+                            </span>
+                    @Html.DropDownListFor(model => model.VinNumber, ViewBag.CarVINs as MultiSelectList, new { @class = "form-control", @id = "ddlist", @style = "max-width:none" })
+                        </div>
+                        <div class="input-group">
+                            <span class="input-group-addon">VIN</span>
+                            <input type="text" class="form-control" placeholder="Введите VIN номер" id="search" data-autocomplete-source='@Url.Action("AutoCompleteSearch", "Car")' name="VIN">
+                            <span class="input-group-btn">
+                                <button class="btn btn-default " type="button" onclick="addVinCar()">
+                                    <span class="fas fa-arrow-up"></span>
+                                </button>
+                            </span>
+                        </div>
+                    </div>
+                    <label class="control-label col-md-4">
+                        Текущий пробег
+                    </label>
+                    <div class="col-md-8">
+                        <div class="input-group">
+                    @Html.EditorFor(model => model.CurrentMileageCar, new { htmlAttributes = new { @class = "form-control" } })
+                            <span class="input-group-addon">км</span>
+                        </div>
+                    </div>
+                    <label class="control-label col-md-4">
+                        Уровень топлива, %
+                    </label>
+                    <div class="col-md-8">
+                        <div class="input-group">
+                    @Html.EditorFor(model => model.FluelLevelPercent, new { htmlAttributes = new { @class = "form-control", placeholder = "от полного бака" } })
+                            <span class="input-group-addon">&nbsp;%&nbsp;</span>
+                        </div>
+                    </div>
+                    <label class="control-label col-md-4">
+                        Комплектность
+                    </label>
+                    <div class="col-md-8">
+                        <table id="table_kit">
+                            <tr>
+                                <td>Колпаки колес</td>
+                                <td>
+                                    <input type="checkbox" name="NumberWheelCaps" value="1">
+                                    <input type="checkbox" name="NumberWheelCaps" value="1">
+                                    <input type="checkbox" name="NumberWheelCaps" value="1">
+                                    <input type="checkbox" name="NumberWheelCaps" value="1">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Щетки стеклооч.</td>
+                                <td>
+                                    <input type="checkbox" name="NumberWipers" value="1">
+                                    <input type="checkbox" name="NumberWipers" value="1">
+                                    <input type="checkbox" name="NumberWipers" value="1">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Рычаги стеклооч.</td>
+                                <td>
+                                    <input type="checkbox" name="NumberWipersArms" value="1">
+                                    <input type="checkbox" name="NumberWipersArms" value="1">
+                                    <input type="checkbox" name="NumberWipersArms" value="1">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Антенна</td>
+                                <td>
+                                    <input type="checkbox" name="IsAntenna" value="true">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Радиоприемник</td>
+                                <td>
+                                    <input type="checkbox" name="IsTuner" value="true">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Декор крышки ДВС</td>
+                                <td>
+                                    <input type="checkbox" name="IsCoverDecorEngine" value="true">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Зап. колесо</td>
+                                <td>
+                                    <input type="checkbox" name="IsSpareWheel" value="true">
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <label class="control-label col-md-4">Описание проблемы (требуемые работы)</label>
+                    <div class="col-md-8">
+                @Html.TextAreaFor(model => model.Descriptions, new { @class = "form-control", @rows = "6", @cols = "180", @style = "max-width:500px" })
+                    </div>
+                    <label class="control-label col-md-4">Дата регистрации заказа</label>
+                    <div class="input-group date col-md-8" style="padding:0px 15px" id="dateb">
+                @Html.TextBoxFor(model => model.DateMakingOrder, "{0:yyyy-MM-dd}", new { @type = "date", @readonly = "readonly", @class = "form-control" })
+                        <span class="input-group-addon">
+                            <i class="far fa-calendar"></i>
+                        </span>
+                    </div>
+
+                    <label class="control-label col-md-4">Сотрудник</label>
+                    <div class="input-group col-md-8" style="padding:0px 15px" id="dateb">
+                @Html.DropDownListFor(model => model.PersonnelNumber, Model.ListEmplyees, new { @class = "form-control", @style = "max-width:none" })
+                    </div>
+                    <div class="col-md-12">
+                        <button type="submit" class="btn btn-success">Оформить</button>
+                        <button type="button" class="btn btn-danger" onclick="history.back()">Отмена</button>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                        <div class="col-md-12" style="padding-left:0px">
+                            <button type="button" class="btn btn-default" id="btnAddCar" onclick="CreateCar()">Добавить новый</button>
+                            <button type="button" class="btn btn-default" id="btnEditCar" onclick="EditCar()">Редактировать текущий</button>
+                        </div>
+                    <div id="header-remark" class="col-md-12">Пометки на кузове автомобиля</div>
+                    <div id="carState" class="col-md-12">
+                        <img src="~/Content/images/views_car.jpg">
+                        <div id="item-remark-id" class="item-remark"><span></span><input type="hidden" name="id_item"></div>
+                        <div class="my-remark">
+                            <div id="contents_remark">
+                                <div>Добавить метку</div>
+                                <label>
+                                    <input class="radio" type="radio" name="TypeMark" id="p" value="1" checked>
+                                    <span class="radio-custom"></span>
+                                    <span class="label">Р</span>
+                                </label>
+                                <label>
+                                    <input class="radio" type="radio" name="TypeMark" id="x" value="2">
+                                    <span class="radio-custom"></span>
+                                    <span class="label">X</span>
+                                </label>
+                                <label>
+                                    <input class="radio" type="radio" name="TypeMark" id="y" value="3">
+                                    <span class="radio-custom"></span>
+                                    <span class="label">Y</span>
+                                </label>
+                                <label>
+                                    <input class="radio" type="radio" name="TypeMark" id="o" value="4">
+                                    <span class="radio-custom"></span>
+                                    <span class="label">O</span>
+                                </label>
+                                <textarea class="form-control" id="addonInfo" name="addonInfo" style="max-width: 100%; max-height: 40px;" placeholder="Комментарий"></textarea>
+                                <input type="hidden" name="id_item">
+                            </div>
+                            <div class="fas fa-check-circle"></div>  <div class="fas fa-times-circle"></div>
+                            <div class=" close-sign"></div>
+                        </div>
+                    </div>
+                </div>
+    }
+            </div>
+
+@* @section Script{
+@Scripts.Render("~/Scripts/moment-with-locales.min.js")
+@Scripts.Render("~/Scripts/bootstrap-datetimepicker.min.js")
+@Styles.Render("~/Content/bootstrap-datetimepicker.min.css")
+@Styles.Render("~/Content/MyModalWindow.css")
+@Scripts.Render("~/Scripts/jquery.maskedinput.js")
+@Scripts.Render("~/scripts/jquery.validate.js")
+@Scripts.Render("~/Scripts/jquery.validate.unobtrusive.js")
+<script src="~/Scripts/forViews/order-addOrder.js"></script>
+} *@
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(function () {
+        $('button#info').click(function (event) {
+            showDetail();
+        })
+        $('#dateb').datetimepicker({ language: 'ru', pickTime: false, format: 'YYYY-MM-DD', defaultDate: moment().format('YYYY-MM-DD') });
+        //для автозаполения поискового запроса
+        $("[data-autocomplete-source]").each(function () {
+            var target = $(this);
+            target.autocomplete({ minLength: 1, autoFocus: false, source: target.attr("data-autocomplete-source") });
+        });
+        //для модального окна
+        $('#info, #btnAddCar, #btnEditCar').click(function (event) {
+            event.preventDefault();
+            $('#overlay_dark').fadeIn(400,
+                function () {
+                    $('#modal_form')
+                        .css('display', 'block')
+                        .animate({ opacity: 1, top: '50%' }, 200);
+                });
+        });
+        $('#modal_close, #overlay_dark').click(function () {
+            $('#modal_form')
+                .animate({ opacity: 0, top: '45%' }, 200,
+                    function () {
+                        $(this).css('display', 'none');
+                        $('#overlay_dark').fadeOut(400);
+                    }
+                );
+        });
+    });
+
+    $.ajaxSetup({ cache: false });
+
+    function CreateCar() {
+        $.ajax({
+            url: "/Car/Create",
+            datatype: "json",
+            beforeSend: showSpinner,
+            complete: hideSpinner,
+            success: function (result) { $("#contents").html(result); }
+        });
+    }
+
+
+    function EditCar() {
+        var vinID = $("#ddlist").val();
+        if (vinID != null)
+            $.ajax({
+                url: "/Car/Edit",
+                data: 'VIN=' + vinID,
+                datatype: "json",
+                beforeSend: showSpinner,
+                complete: hideSpinner,
+                success: function (result) { $("#contents").html(result); }
+            });
+        else
+            $('#overlay_dark, #modal_close').click();
+    }
+
+    function showSpinner() {
+        $('#loading').show();
+    }
+
+    function hideSpinner() {
+        $('#loading').hide();
+    }
+
+    function addVinCar(vinNumb) {
+        $.ajax(
+            {
+                url: '/Car/AttachCar',
+                data: $("#search"),
+                type: "POST",
+                datatype: "json",
+                success: function (result) {
+                    $('#ddlist option:selected').removeAttr('selected');
+                    $("#ddlist").prepend($('<option value=' + result[0].vnumb + '>' + result[0].model + '(' + result[0].number + ')' + '</option>'));
+                    $("#ddlist :first").attr("selected", "selected");
+                }
+            })
+    };
+    function showDetail() {
+        var vinID = $("#ddlist").val();
+        if (vinID != null)
+            $.ajax(
+                {
+                    url: '/Car/Detail',
+                    data: 'VIN=' + vinID,
+                    type: "Get",
+                    beforeSend: showSpinner,
+                    complete: hideSpinner,
+                    datatype: "json",
+                    success: function (result) { $("#contents").html(result); }
+                });
+        else
+            $('#overlay_dark, #modal_close').click();
+    }
+
+    //global variables for counter  about item info
+    var _gCount = 1;
+    var yClick, xClick;
+    //for remark_car
+    $().ready(function () {
+        //close window
+        $('.my-remark  .close-sign').click(function () {
+            //set default values
+            $('.my-remark .glyphicon-remove-circle').hide();
+            $('#contents_remark div:nth-child(1)').text('Добавить метку');
+            $('.my-remark input[name="id_item"]').removeAttr('value');
+            $('#addonInfo').val('');
+            $('.my-remark').fadeOut(100);
+        });
+        $('#carState').click(function (e) {
+            var target = $(e.target);
+            if (!(target.is('.my-remark, .my-remark *, .item-remark, .item-remark *'))) {
+                //gaining click's coords
+                xClick = Math.round(e.pageX - $(this).offset().left);
+                yClick = Math.round(e.pageY - $(this).offset().top);
+                var h = $('.my-remark').height();
+                $('.my-remark').css('top', yClick - h * 0.5 - 2).css('left', xClick + 19);
+                $('.my-remark').fadeIn(100);
+            }
+        });
+        //forming data and sending to server for event CLICK for adding Items
+        $('.my-remark  .glyphicon-ok-circle').click(function () {
+            var editId = $('.my-remark input[name="id_item"]').val();
+            var jSondata = {
+                tempID: editId == '' ? _gCount : editId,
+                TypeMark: $('[name="TypeMark"]:checked').val(),
+                addonInfo: $('#addonInfo').val(),
+                X_Axis: xClick - 10,
+                Y_Axis: yClick - 10,
+                IsEdit: editId == '' ? false : true
+            };
+            $.ajax(
+                {
+                    url: '/Order/AddRemarkItem',
+                    data: jSondata,
+                    type: "POST",
+                    datatype: "json",
+                    success: function (result) {
+                        if (result.stat == 1) {
+                            if (!result.IsEdit) {
+                                var new_mark_item = $('#item-remark-id').clone().removeAttr('id');//clone info item
+                                $('#carState').append(new_mark_item);
+                                new_mark_item.css('top', jSondata.Y_Axis).css('left', jSondata.X_Axis);
+                                new_mark_item.find('input').attr('value', _gCount);
+                            }
+                            else {
+                                var new_mark_item = $('.item-remark [value="' + jSondata.tempID + '"]').parent();
+                            }
+                            switch (jSondata.TypeMark) {
+                                case '1': new_mark_item.find('span').text("P"); break;
+                                case '2': new_mark_item.find('span').text("X"); new_mark_item.css({ borderColor: '#D56161', background: '#FF7474' }); break;
+                                case '3': new_mark_item.find('span').text("Y"); new_mark_item.css({ borderColor: '#5E8DC7', background: '#74AFF7' }); break;
+                                case '4': new_mark_item.find('span').text("O"); new_mark_item.css({ borderColor: '#A99A2C', background: '#D8C95B' }); break;
+                            }
+                            new_mark_item.fadeIn(200);
+                            _gCount += editId == '' ? 1 : 0;
+                            $('.my-remark  .close-sign').click();
+                        }
+                        else { $('.item-remark:has(input)').remove(); alert("Сессия устарела!"); $('.my-remark').fadeOut(100); }
+                    }
+                });
+        });
+        //get info about point
+        $('#carState').on('click', '.item-remark', function (e) {
+            $.ajax(
+                {
+                    url: '/Order/GetInfoRemarkItem',
+                    data: { tempID: $(this).find('input').val() },
+                    type: "POST",
+                    datatype: "json",
+                    success: function (result) {
+                        $('#addonInfo').val(result.addonInfo);
+                        $('input[type="radio"][value="' + result.TypeMark + '"]').click();
+                        $('.my-remark').css('top', result.Y_Axis - 120 * 0.5 + 15).css('left', result.X_Axis + 29);
+                        $('.my-remark input[name="id_item"]').attr('value', result.tempID);
+                        $('#contents_remark div:nth-child(1)').text('Изменить метку');
+                        $('.my-remark').fadeIn(100);
+                        $('.my-remark .glyphicon-remove-circle').show();
+
+                    }
+                });
+        });
+        //delete info about point
+        $('.glyphicon-remove-circle').click(function () {
+            var temp_id = $('.my-remark').find('input[name="id_item"]').val();
+            $.ajax(
+                {
+                    url: '/Order/DeleteInfoRemarkItem',
+                    data: { tempID: temp_id },
+                    type: "POST",
+                    datatype: "json",
+                    success: function (result) {
+                        if (result.stat) {
+                            $('.item-remark [value="' + temp_id + '"]').parent().remove();
+                            $('.my-remark  .close-sign').click();
+                        }
+                    }
+                });
+        });
+    });
+</script>
+
+
+<div id="modal_form">
+    <!-- Сaмo oкнo -->
+    <span class="fas fa-times" id="modal_close"></span> <!-- Кнoпкa зaкрыть -->
+    <div id="contents">
+
+    </div>
+    <img id="loading" src="@Url.Content("/Content/Images/loading.gif")" style="display: none; position: absolute; margin: auto; top: 0; bottom: 0; left: 0; right: 0" />
+</div>
+<div id="overlay_dark"></div><!-- Пoдлoжкa -->
+@* <link href="~/Content/add-order.css" rel="stylesheet" type="text/css"/> *@
+<style>
+
+
+    #table_kit {
+        width: 100%;
+        background: white;
+    }
+
+        #table_kit td:nth-child(1) {
+            width: 40%;
+        }
+
+        #table_kit td {
+            border: 1px solid #CCCCCC;
+            padding-left: 5px;
+        }
+
+            #table_kit td [type] {
+                margin-right: 30px;
+            }
+
+    .radio {
+        display: none;
+    }
+
+    .radio-custom {
+        width: 20px;
+        height: 20px;
+        border: 2px solid #ccc;
+        border-radius: 3px;
+        position: relative;
+        margin-right: -5px;
+        margin-left: 5px;
+    }
+
+    .radio-custom, .my-remark .label {
+        display: inline-block;
+        vertical-align: middle;
+        color: #474539;
+        font-size: 85%;
+    }
+
+    .radio:checked + .radio-custom::before {
+        content: "";
+        display: block;
+        position: absolute;
+        top: 2px;
+        right: 2px;
+        bottom: 2px;
+        left: 2px;
+        background: #413548;
+        border-radius: 2px;
+    }
+
+    .radio-custom,
+    .radio:checked + .radio-custom::before {
+        border-radius: 50%;
+    }
+    /***************************/
+    /*for car's remarks*/
+    #header-remark {
+        border-style: solid;
+        border-color: #CCCCCC;
+        border-width: 1px;
+        width: 100%;
+        margin-top: 15px;
+        text-align: center;
+        background: #EEEEEE;
+        padding: 7px;
+    }
+
+    #carState {
+        width: 524px;
+        border: 1px solid #cccccc;
+        border-top: none;
+        position: relative;
+        padding: 0;
+    }
+
+        #carState img {
+            width: 100%;
+        }
+
+    .my-remark {
+        background-color: #DEEDDC;
+        border-radius: 10px;
+        border: 1px solid #a3a3a3;
+        box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
+        color: #404040;
+        display: block;
+        height: 120px;
+        padding: 5px;
+        position: absolute;
+        width: 200px;
+        z-index: 5;
+        display: none;
+    }
+
+    #contents_remark {
+        width: 100%;
+    }
+
+    .my-remark hr {
+        margin: 0px;
+    }
+
+    .my-remark .close-sign {
+        color: #D9534F;
+    }
+
+    .my-remark::after {
+        border-bottom: 5px solid transparent;
+        border-right: 10px solid #DEEDDC;
+        border-top: 5px solid transparent;
+        content: "";
+        height: 0px;
+        position: absolute;
+        right: 100%;
+        top: 50px;
+        width: 0px;
+    }
+
+    .my-remark::before {
+        border-bottom: 7px solid transparent;
+        border-right: 12px solid #a3a3a3;
+        border-top: 7px solid transparent;
+        content: "";
+        height: 0px;
+        position: absolute;
+        right: 100%;
+        top: 48px;
+        width: 0px;
+    }
+
+    .item-remark {
+        height: 20px;
+        width: 20px;
+        border: 2px solid green;
+        border-radius: 10px;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        text-align: center;
+        background-color: #68BF68;
+        color: white;
+        cursor: pointer;
+        display: none;
+    }
+
+        .item-remark:hover {
+            box-shadow: 0 0 5px #68BF68;
+        }
+
+    #contents_remark div:nth-child(1) {
+        background-color: #61BF61;
+        border-radius: 10px 10px 0px 0px;
+        padding: 3px;
+        text-align: center;
+        margin: -5px -5px 5px -5px;
+        border-bottom: 1px solid #a3a3a3;
+        color: white;
+    }
+
+    .glyphicon-ok-circle {
+        color: #61BF61;
+        cursor: pointer;
+        margin-left: 20%;
+        font-size: 18px;
+    }
+
+        .glyphicon-ok-circle:hover {
+            color: #478B47;
+        }
+
+    .glyphicon-remove-circle {
+        display: none;
+        color: #D9534F;
+        float: right;
+        cursor: pointer;
+        margin-right: 20%;
+        font-size: 18px;
+    }
+
+        .glyphicon-remove-circle:hover {
+            color: #A33F3B;
+        }
+    </style >
+

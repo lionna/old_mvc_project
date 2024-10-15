@@ -1,0 +1,117 @@
+﻿@model CarServiceApp.Domain.Model.InvoiceInformation
+@{
+    ViewBag.Title = "Фактура";
+}
+<style>
+    input {
+        width: 50px;
+    }
+
+    .glyphicon-remove-circle:hover {
+        cursor: pointer;
+        color: red;
+    }
+</style>
+<div style="overflow-y: scroll; height: 470px;">
+    <i class="fas fa-arrow-left" onclick="extend()" style="position: absolute; float: left; margin-top: 250px; margin-left: -15px; font-size: 30px; opacity: 0.3; color: orange;"></i>
+
+    <table class="table" style="border-top: 2px none white;">
+        <tr style="background-color: #82B98F">
+            <th>Наименование</th>
+            <th>ID</th>
+            <th>Ед.изм.</th>
+            <th>Кол-во</th>
+            <th>Цена</th>
+            <th></th>
+        </tr>
+        <tr style="height:300px; text-align:center;">
+            <td colspan="6" style="padding-top: 35%">Для добавления позиций в акт сдачи приемки, нажмите поиск материалов а затем <i class="fas fa-arrow-right"></i></td>
+        </tr>
+    </table>
+</div>
+<hr style="margin:0">
+<div id="invoice">
+    <div id="infoInvoice" style="text-align: center; background-color: #FFFFCC" onmouseover="showMenu()">
+        <strong>Акт сдачи-приемки №: </strong>
+        <input type="hidden" value='@Model.LotNumber' name="LotNumber" id="lotNumberId" />
+        @Html.DisplayFor(m => m.LotNumber)
+        от @Html.DisplayFor(m => m.DeliveryDate)
+        <br>
+        <strong>Поставщик:</strong>
+        @Html.DisplayFor(m => m.ProviderName)
+        <br>
+        <strong>
+            Принял:
+        </strong>
+        @Html.DisplayFor(m => m.FullName)
+    </div>
+    <div id="menuInvoice" class="row" style="display: none; z-index: 10; position: absolute; display: none; left: 50%; margin-left: -160px">
+        <ul class="list-inline" style="text-align:center;">
+            <li><button onclick="DeleteInvoice()" class="btn btn-sm">Удалить акт</button> </li>
+            <li><button onclick="EditInvoice()" class="btn btn-sm">Изменить данные</button> </li>
+        </ul>
+    </div>
+</div>
+<script>
+
+    //функция для  удаления запчасти из инвойс
+    function del(positionId) {
+        $.ajax(
+            {
+                url: '/Acceptance/Delete',
+                data: 'positionId=' + positionId + '&lotNumber=' + $('#lotNumberId').val(),
+                type: "Post",
+                datatype: "json",
+                success: function (result) {
+                    if (result.indexOf('table') != -1)
+                        $('#updTable').html(result);
+                }
+            })
+    }
+    function showMenu() {
+        if ($('#menuInvoice').css('display') == 'none') {
+            $('#menuInvoice').slideDown(400);
+            setTimeout(function () {
+                $('#menuInvoice').slideUp(400);
+            }, 5000);
+        }
+    }
+
+    function DeleteInvoice() {
+        $.ajax(
+            {
+                url: '/Acceptance/DeleteInvoice',
+                data: 'lotNumber=' + $('#lotNumberId').val(),
+                type: "Post",
+                datatype: "json"
+            })
+    }
+
+    function EditInvoice() {
+        $.ajax(
+            {
+                url: '/Acceptance/EditInvoice',
+                data: 'lotNumber=' + $('#lotNumberId').val(),
+                type: "Post",
+                datatype: "json",
+                success: function (result) {
+                    if (result != '')
+                        $('#invoice').html(result);
+                }
+            })
+    }
+    function ClearInvoice() {
+        $.ajax(
+            {
+                url: '/Acceptance/ClearInvoice',
+                data: 'lotNumber=' + $('#lotNumberId').val(),
+                type: "Get",
+                datatype: "json",
+                success: function (result) {
+                    if (result.indexOf('table') != -1)
+                        $('#updTable').html(result);
+                }
+            })
+    }
+
+</script>

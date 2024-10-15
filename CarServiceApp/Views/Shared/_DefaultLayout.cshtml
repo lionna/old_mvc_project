@@ -1,0 +1,60 @@
+﻿@* @model CarServiceApp.AuthManagement.Model.UserModel *@
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInUser;
+@inject UserManager<IdentityUser> UserManager;
+@{
+    string layoutName = "_LoginLayout"; // По умолчанию для незарегистрированных пользователей
+
+    if (User.Identity.IsAuthenticated)
+    {
+        if (User.IsInRole("SysAdmin"))
+        {
+            layoutName = "_SysAdminLayout";
+        }
+        else if (User.IsInRole("Manager"))
+        {
+            layoutName = "_ServiceManagerLayout";
+        }
+        else if (User.IsInRole("Accountant"))
+        {
+            layoutName = "_AccountantLayout";
+        }
+        else if (User.IsInRole("Client"))
+        {
+            layoutName = "_ClientLayout";
+        }
+        else if (User.IsInRole("Employee"))
+        {
+            layoutName = "_EmployeeLayout";
+        }
+    }
+
+    Layout = layoutName;
+}
+@RenderBody()
+
+@* @using Microsoft.AspNetCore.Authorization
+
+@if (User.Identity.IsAuthenticated)
+{
+    <p>Пользователь аутентифицирован.</p>
+    <p>Имя пользователя: @User.Identity.Name</p>
+
+    @if (User.IsInRole("SysAdmin"))
+    {
+        <p>Пользователь является администратором.</p>
+    }
+    else if (User.IsInRole("User"))
+    {
+        <p>Пользователь является обычным пользователем.</p>
+    }
+    else
+    {
+        <p>Пользователь не имеет определенной роли.</p>
+    }
+}
+else
+{
+    <p>Пользователь не аутентифицирован.</p>
+} *@
+

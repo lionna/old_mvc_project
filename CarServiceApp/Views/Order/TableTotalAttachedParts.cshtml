@@ -1,0 +1,48 @@
+﻿    @using CarServiceApp.Domain.Common
+@using CarServiceApp.Helper
+@using CarServiceApp.Domain.Entity.Models
+@using CarServiceApp.Domain.Extension
+@using CarServiceApp.Domain.Repository
+@using CarServiceApp.Domain.Service
+@using CarServiceApp.Domain.Model
+@model List<AllInfoAttachedPart>
+
+
+<h4 style="text-align:center">2. Запасные части и материалы, оплачиваемые заказчиком</h4>
+<table class="table table-condensed table-striped table-bordered">
+    <tr>
+        <th width="40%">Наименование</th>
+        <th width="10%">ID</th>
+        <th width="15%">Производитель</th>
+        <th width="5%">Партия #</th>
+        <th width="5%">Сто-сть<br>BYN</th>
+        <th width="5%">Цена<br>BYN</th>
+        <th width="5%">Ед.изм.</th>
+        <th width="1%">Кол.</th>
+        <th width="5%">Сумма<br>BYN</th>
+    </tr>
+    @foreach (var i in Model)
+    {
+        if (@i.PartId != null)
+        {
+            <tr>
+                <td>@i.Name </td>
+                <td>@i.PartId </td>
+                <td>@i.Manufacture </td>
+                <td>@i.LotNumber </td>
+                <td>@i.Price </td>
+                <td>@i.CostPart </td>
+                <td>@i.Unit </td>
+                <td>@i.Number </td>
+                <td>@i.Summ</td>
+            </tr>
+        }
+        else
+        {
+            <tr style="background-color:#99FFCC">
+                <th colspan="8">Итого:</th>
+                <th>@i.Summ</th>
+            </tr>
+        }
+    }
+</table>

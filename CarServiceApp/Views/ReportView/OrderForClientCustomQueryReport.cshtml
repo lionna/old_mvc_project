@@ -1,0 +1,402 @@
+﻿@model CarServiceApp.Models.ReportOrderForClientCustomQueryModel
+@using static CarServiceApp.Domain.Extension.StringExtensions
+
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Отчет</title>
+    <style>
+        table {
+            border-collapse: collapse;
+        }
+
+        .border-report {
+            position: absolute;
+            width: 1044px;
+            left: 50%;
+            margin-left: -522px;
+        }
+
+        #header-info {
+            font-size: 14px;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+            #header-info td, th {
+                border: 1px solid grey;
+                text-align: left;
+            }
+
+        #order-head div:first-child {
+            float: left;
+            width: 69%;
+            text-align: center;
+        }
+
+        #order-head div:last-child {
+            float: right;
+            width: 30%;
+        }
+
+        #order-head table {
+            text-align: left;
+            width: 100%;
+        }
+
+            #order-head table tr td:last-child {
+                font-weight: bold;
+                border-bottom: 1px solid grey;
+            }
+
+        div #client-info {
+            width: 100%;
+            font-size: 14px;
+        }
+
+        #client-info table {
+            width: 100%;
+        }
+
+        #client-info td {
+            line-height: 18px;
+        }
+
+        #client-info tr td:first-child {
+            width: 15%;
+        }
+
+        #client-info tr td:last-child {
+            font-weight: bold;
+            border-bottom: 1px solid grey;
+        }
+
+        #car-info tr:nth-child(odd) {
+            background-color: #D5D5D5;
+        }
+
+        #car-info tr:nth-child(even) {
+            font-weight: bold;
+        }
+
+        #car-info table {
+            width: 100%;
+            margin-top: 5px;
+            text-align: center;
+        }
+
+            #car-info table td {
+                border: 1px solid grey;
+            }
+
+        #causes {
+            width: 100%;
+            margin-top: 10px;
+        }
+
+            #causes td {
+                border: 1px solid grey;
+                padding: 5px;
+            }
+
+            #causes tr:nth-child(odd) {
+                background-color: #D5D5D5;
+                text-align: center;
+            }
+
+            #causes tr:nth-child(even) {
+                font-weight: bold;
+                font-size: 18px;
+                padding-bottom: 10px;
+                padding-top: 10px;
+            }
+
+        #works > tbody {
+            width: 100%;
+            margin-top: 10px;
+        }
+
+            #works > tbody > tr td {
+                border: 1px solid grey;
+                padding-bottom: 7px;
+                padding-top: 7px;
+            }
+
+            #works > tbody > tr:nth-child(1), #works > tbody > tr:nth-child(4) {
+                font-size: 16px;
+                background-color: #D5D5D5;
+                text-align: center;
+            }
+
+            #works > tbody > tr:nth-child(2), #works > tbody > tr:nth-child(5) {
+                font-weight: bold;
+            }
+
+            #works > tbody > tr:nth-child(3) td:first-child, #works > tbody > tr:nth-child(6) td:first-child {
+                text-align: right;
+                border-bottom: none;
+                border-left: none;
+            }
+
+            #works > tbody > tr:nth-child(3) td:last-child, #works > tbody > tr:nth-child(6) td:last-child {
+                text-align: center;
+                width: 10%;
+                font-weight: bold;
+            }
+
+            #works > tbody > tr:nth-child(7) td:first-child {
+                text-align: right;
+                border: none;
+            }
+
+            #works > tbody > tr:nth-child(7) td:last-child {
+                border-left: none;
+            }
+
+        #comment-info {
+            margin-top: 20px;
+            border: 1px solid grey;
+            padding-left: 2px;
+        }
+
+        .item-info {
+        }
+
+        .rectangle {
+            margin-left: 100px;
+            height: 30px;
+            padding: 8px;
+        }
+
+            .rectangle:before {
+                content: "";
+                position: absolute;
+                right: 90%;
+                display: inline-block;
+                height: 20px;
+                width: 60px;
+                border: 2px solid grey;
+            }
+
+        .item-info table {
+            width: 100%;
+            margin-bottom: 25px;
+            margin-top: 15px;
+        }
+
+            .item-info table td {
+                width: 25px;
+            }
+
+                .item-info table td:nth-child(2), .item-info table td:nth-child(5) {
+                    border-bottom: 1px solid grey;
+                }
+
+                .item-info table td:nth-child(1), .item-info table td:nth-child(4) {
+                    width: 15%;
+                }
+
+        .table {
+            font-size: 14px;
+            width: 100%;
+        }
+
+            .table tr:first-child {
+                background-color: #D5D5D5;
+            }
+
+            .table td {
+                text-align: center;
+            }
+
+        .table-numerable tr:nth-child(2) {
+            background-color: #D5D5D5;
+        }
+    </style>
+</head>
+<body>
+    <div class="border-report">
+        <p />
+        <table id="header-info">
+            <tr>
+                <th>OOO "iCarService", УНП 790485810 </th>
+            <tr>
+            <tr>
+                <td>
+                    Адрес: 220096 г. Минск, пр. Независимости 65, тел 123-45-67<br>
+                    Р/сч.: 3012146548019 в Региональная дирекция №600 ОАО "БПС-Сбербанк", код 153001369, адрес: г.Минск, ул.Первомайская,56
+                </td>
+            <tr>
+        </table>
+        <div id="order-head">
+            <div>
+                <p>
+                    <h3>Заявка-заказ № @Model?.Order?.OrderId</h3>
+                </p>
+            </div>
+            <div>
+                <table>
+                    <tr>
+                        <td>Дата оформления:</td>
+                        <td>@Model?.Order?.DateMakingOrder?.GetDateTimeFormats()[4]</td>
+                    </tr>
+                    <tr>
+                        <td>Мастер:</td>
+                        <td>@Model?.Order?.ExecutingServices?.FirstOrDefault(d => d.ServiceId == "mngopen")?.Employee?.FullName?.ConvertToShortName()</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div id="container">
+            <div id="client-info">
+                <table>
+                    <tr>
+                        <td>Заказчик:</td>
+                        <td>@Model?.Order?.Client?.FullName</td>
+                    </tr>
+                    <tr>
+                        <td>Адрес:</td>
+                        <td>@Model?.Order?.Client?.Address</td>
+                    </tr>
+                    <tr>
+                        <td>Телефон:</td>
+                        <td>@Model?.Order?.Client?.Phone</td>
+                    </tr>
+                    <tr>
+                        <td>Владелец автомобиля:</td>
+                        <td>@Model?.Order?.Car?.OwnerName?.ConvertToShortName()</td>
+                    </tr>
+                    <tr>
+                        <td>Контактное лицо:</td>
+                        <td>@Model?.Order?.Client?.FullName?.ConvertToShortName()</td>
+                    </tr>
+                </table>
+            </div>
+            <div id="car-info">
+                <table>
+                    <tr>
+                        <td>Марка-модель</td>
+                        <td>Номерной знак</td>
+                        <td>№ кузова</td>
+                        <td>Код ДВС</td>
+                        <td>Код КПП</td>
+                        <td>Год выпуска</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            @Model.Order?.Car?.CarModification?.Series?.CarModel?.CarBrand?.Name
+                            @Model.Order?.Car?.CarModification?.Series?.CarModel?.Name
+                        </td>
+                        <td>@Model.Order?.Car?.RegistrationNumber</td>
+                        <td>@Model.Order?.Car?.VinNumber</td>
+                        <td>@Model.Order?.Car?.CarModification?.Name</td>
+                        <td>@Model.Order?.Car?.TransmissionType</td>
+                        <td>@Model.Order?.Car?.IssueYear</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3">Техпаспорт</td>
+                        <td colspan="2">Дата начала гарантии</td>
+                        <td>Пробег</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3">@Model?.Order?.Car?.DataSheetCar</td>
+                        <td colspan="2"></td>
+                        <td>@Model?.Order?.CurrentMileageCar км</td>
+                    </tr>
+                </table>
+            </div>
+            <table id="causes">
+                <tr>
+                    <td>Причины обращения</td>
+                </tr>
+                <tr>
+                    <td>@Model?.Order?.Descriptions</td>
+                </tr>
+            </table>
+            <table id="works">
+                <tr>
+                    <td colspan="2">Требующиеся работы</td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <table class="table table-numerable">
+                            <tr>
+                                <td width="5%">№ п/п</td>
+                                <td width="15%">Код работ</td>
+                                <td>Наименование работ</td>
+                            </tr>
+                            <tr>
+                                <td>1</td>
+                                <td>2</td>
+                                <td>3</td>
+                            </tr>
+                            @for (int item = 0; item < Model?.ServiceList?.Count; item++)
+                            {
+                                if (@Model.ServiceList[item]?.ServiceId != null)
+                                {
+                                    <tr>
+                                        <td>@(item + 1)</td>
+                                        <td>@Model.ServiceList[item]?.ServiceId</td>
+                                        <td>@Model.ServiceList[item]?.ServiceName</td>
+                                    </tr>
+                                }
+                            }
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Первоначальная стоимость заказа:</td>
+                    <td>@Model?.ServiceList?.LastOrDefault()?.SummMoney BYN</td>
+                </tr>
+                <tr>
+                    <td colspan="2">Дополнительные работы по согласованию с заказчиком</td>
+                </tr>
+                <tr>
+                    <td colspan="2">Согласно акту сдачи-приема работ</td>
+                </tr>
+                <tr>
+                    <td>Первоначальная стоимость заказа:</td>
+                    <td>@Model?.ServiceList?.LastOrDefault()?.SummMoney BYN</td>
+                </tr>
+                <tr>
+                    <td>Подпись заказчика:</td>
+                    <td></td>
+                </tr>
+            </table>
+            <div id="comment-info">
+                <div class="item-info">Согласование стоимости дополнительных (не указанных в заявке) работ и запасных частей производить по телефону и с использованием иных средств связи:</div>
+                <div class="item-info">
+                    <div class="rectangle">НЕ СОГЛАСЕН (внимание! если никакой отметки нет, считается подтвержденным)</div>
+                </div>
+                <div class="item-info">
+                    Доверяю и предоставляю право Автосервиса в лице уполномоченных сотрудников производить технологические необходимые поездки на автомобиле:
+                </div>
+                <div class="item-info">
+                    <div class="rectangle">НЕ СОГЛАСЕН (внимание! если никакой отметки нет, считается подтвержденным)</div>
+                </div>
+                <div class="item-info">Демонтированные в процессе ремонта и технического обслуживания агрегаты и детали (кроме маслянного, топливного фильтров и отработанных рабочих жидкостей) уложить в багажный отсек автомобиля</div>
+                <div class="item-info">
+                    <div class="rectangle">НЕ СОГЛАСЕН (внимание! если никакой отметки нет, считается подтвержденным)</div>
+                </div>
+                <div class="item-info">
+                    С правилами предоставления услуг и гарантийных обязательств ознакомлен и согласен. <br>
+                    С объемом заявленных работ согласен. Приемо-сдаточный акт автомобиля получил.
+                </div>
+                <div class="item-info">
+                    <table>
+                        <tr>
+                            <td>Подпись заказчика</td>
+                            <td></td>
+                            <td></td>
+                            <td>Подпись мастера</td>
+                            <td></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

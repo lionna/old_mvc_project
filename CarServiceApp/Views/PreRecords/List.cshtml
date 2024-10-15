@@ -1,0 +1,209 @@
+﻿@model CarServiceApp.Models.SearchPreRecordsViewModel
+@{
+    ViewBag.Title = "Список заявок";
+    Layout = "_DefaultLayout";
+}
+
+<style>
+
+    li.green:hover {
+        background-color: #C4C4C4;
+        cursor: pointer;
+        color: white;
+    }
+
+    .order {
+        font-size: 16px;
+    }
+
+    .redefined {
+        padding: 0px;
+        margin: 0;
+    }
+
+    #form-search {
+        margin-top: 20px;
+    }
+
+    .my-lable {
+        padding: 5px;
+        border: 1px solid white;
+        color: white;
+        border-radius: 15px;
+        background-color: #A3A3A3;
+    }
+
+    .my-lable-ok {
+        background-color: #5AC77C;
+    }
+
+    .my-lable-cancel {
+        background-color: #E46567;
+    }
+
+    .checkbox {
+        display: none;
+    }
+
+    .checkbox-custom {
+        width: 20px;
+        height: 20px;
+        border: 2px solid #ccc;
+        border-radius: 3px;
+        position: relative;
+    }
+
+    .checkbox-custom, .label {
+        display: inline-block;
+        vertical-align: middle;
+        color: grey;
+        font-size: 100%;
+    }
+
+    .checkbox-custom-checked::before {
+        content: "\2714";
+        display: block;
+        position: absolute;
+        color: #413548;
+        font-size: 25px;
+        line-height: 10px;
+    }
+
+    .checkbox:indeterminate + .checkbox-custom::before {
+        content: "";
+        display: block;
+        position: absolute;
+        top: 2px;
+        right: 2px;
+        bottom: 2px;
+        left: 2px;
+        background: #D1D8DB;
+        border-radius: 2px;
+        border: 1px solid;
+    }
+
+</style>
+
+<div class="header-page">Поиск предварительных заявок клиентов</div>
+
+<div class="col-md-12 bs-callout bs-callout-info">
+    @* <form id="form-search" asp-controller="PreRecords" asp-action="Search" data-ajax="true" data-ajax-method="post" data-ajax-update="#results" data-ajax-loading="#loading" data-ajax-loading-duration="0" class="row g-3"> *@
+
+   @*  <form class="row g-3" style="" id="ajaxForm" method="post" action="@Url.Action("Search", "PreRecords")"> *@
+        <form class="row g-3" style="padding-bottom: 10px;" id="ajaxForm" method="post" action="@Url.Action("Search", "PreRecords")">
+
+        <div class="col-md-1">
+            <input asp-for="RecordId" class="form-control" placeholder="№ записи" />
+        </div>
+        <div class="col-md-2">
+            <input asp-for="NameClient" class="form-control" placeholder="ФИО клиента" />
+        </div>
+        <div class="col-md-2">
+            <input asp-for="MarkCar" class="form-control" placeholder="Модель/марка авто" />
+        </div>
+        <div class="col-md-2">
+            <input asp-for="RegNumber" class="form-control" placeholder="Рег.номер авто" />
+        </div>
+        <div class="col-md-2">
+           @*  <label>
+                <input class="checkbox" type="checkbox" name="IsRejection" value="">
+                <span class="checkbox-custom"></span>
+                <span class="label">Просрочен<br>или отказ</span>
+            </label> *@
+             <div class="form-check">  
+                <input class="form-check-input" name="IsRejection" type="checkbox" asp-for="IsRejection.Value">
+                <label class="form-check-label">Просрочен или отказ</label>
+            </div>  
+        </div>
+        <div class="col-md-1">
+            <div class="input-group date" id="dtPick_From">
+                @*  <input asp-for="DateMakingFrom" class="form-control" readonly placeholder="От" />
+                <span class="input-group-text"><i class="far fa-calendar"></i></span> *@
+                <input asp-for="DateMakingFrom" type="date" class="form-control" placeholder="От" />
+            </div>
+        </div>
+        <div class="col-md-1">
+            <div class="input-group date" id="dtPick_Before">
+                @* <input asp-for="DateMakingBefore" class="form-control" readonly placeholder="До" />
+                <span class="input-group-text"><i class="far fa-calendar"></i></span> *@
+                <input asp-for="DateMakingBefore" type="date" class="form-control" placeholder="До" />
+            </div>
+        </div>
+        <div class="col-md-1">
+            <button type="submit" class="btn btn-primary">Найти</button>
+        </div>
+    </form>
+    <div id="results"></div>
+
+    @*  <div class="row">
+    <div class="col-md-12" id="results" style="margin-top: 20px;"></div>
+    </div> *@
+
+    @* <div class="row">
+    <div class="col-md-12">
+    <img id="loading" src="~/img/loading.gif" style="display: none; position: absolute; margin: auto; top: 0; bottom: 0; left: 0; right: 0;" />
+    </div>
+    </div> *@
+</div>
+
+
+@* @section Script{
+    @Scripts.Render("~/Scripts/moment-with-locales.min.js")
+    @Scripts.Render("~/Scripts/bootstrap-datetimepicker.min.js")
+    @Styles.Render("~/Content/bootstrap-datetimepicker.min.css")
+    <script src="~/Scripts/forViews/pre-record-list.js"></script>
+} *@
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+
+
+    $(document).ready(function () {
+        //Инициализация dtPick_From и dtPick_Before
+        // $(".date").datetimepicker({ language: 'ru', pickTime: false, format: 'YYYY-MM-DD' });
+        //При изменении даты в dtPick_From, она устанавливается как минимальная для dtPick_Before
+        // $("#dtPick_From").on("dp.change", function (e) {
+        //     $("#dtPick_Before").data("DateTimePicker").setMinDate(e.date);
+        // });
+        // //При изменении даты в dtPick_Before, она устанавливается как максимальная для dtPick_From
+        // $("#dtPick_Before").on("dp.change", function (e) {
+        //     $("#dtPick_From").data("DateTimePicker").setMaxDate(e.date);
+        // });
+
+        $('#ajaxForm').submit(function (event) {
+            event.preventDefault();
+            var form = $(this);
+            $.ajax({
+                url: form.attr('action'),
+                type: form.attr('method'),
+                data: form.serialize(),
+                success: function (data) {
+                    $('#results').html(data);
+                },
+                error: function () {
+                    $('#popErorr').show();
+                }
+            });
+        });
+
+        // //для пейджинга-сброс номера отсылаемой страницы при изменении строки поиска
+        // $('#form-search input').change(function () {
+        //     $('#page').attr('value', '')
+        // })
+
+        // for checkbox - it should has three state(true, false and indeterminate)
+        $('.checkbox').prop("indeterminate", true);
+        $('.checkbox').change(function () {
+            switch ($(this).attr('value')) {
+                case 'true':
+                    $(this).prop('checked', true).attr('value', false).prop("indeterminate", false);
+                    $('.checkbox-custom').removeClass('checkbox-custom-checked'); break;
+                case 'false': $(this).prop("indeterminate", true).attr('value', '');
+                    $('.checkbox-custom').removeClass('checkbox-custom-checked'); break;
+                case '': $(this).prop('checked', true).attr('value', true).prop("indeterminate", false);
+                    $('.checkbox-custom').addClass('checkbox-custom-checked'); break;
+            }
+        })
+    })
+
+</script>

@@ -1,0 +1,63 @@
+﻿@model CarServiceApp.Domain.Entity.Models.CarGeneration
+
+@{
+    ViewBag.Title = "Создание поколения";
+    Layout = "_DefaultLayout";
+}
+
+<div class="header-page">@ViewData["Title"]</div>
+
+<form asp-action="Create" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="form-group">
+        <label asp-for="Name" class="control-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="ModelId"></label>
+        <select asp-for="ModelId" asp-items="@(new SelectList(Model.DropdownList, "Key", "Value"))" class="form-control"></select>
+        <span asp-validation-for="ModelId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="YearBegin"></label>
+        <input asp-for="YearBegin" id="YearBegin" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="YearEnd"></label>
+        <input asp-for="YearEnd" id="YearEnd" class="form-control" />
+    </div>
+
+    <br>
+    <div class="form-group">
+        <button type="submit" class="btn btn-outline-primary">
+            <i class="fas fa-plus"></i> Создать
+        </button>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="fas fa-times"></i> Отмена
+        </a>
+    </div>
+</form>
+
+
+<script>
+    $(document).ready(function () {
+        $.ajax({
+            url: '@Url.Action("GetYearsJson", "CarGenerations")',
+            type: 'GET',
+            success: function (data) {
+                var years = JSON.parse(data);
+                console.log(years);
+                $('#YearBegin').val(years.YearBegin);
+                $('#YearEnd').val(years.YearEnd);
+            },
+            error: function (error) {
+                console.error('Ошибка при вызове эндпоинта:', error);
+            }
+        });
+    });
+</script>

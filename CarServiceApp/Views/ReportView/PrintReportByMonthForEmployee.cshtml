@@ -1,0 +1,150 @@
+﻿@model PrintReportModel<CarServiceApp.Domain.Model.ReportByExecServiceByMonthForEmployee>
+@using static CarServiceApp.Domain.Extension.StringExtensions
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Отчет</title>
+    <style>
+        /*div {
+                    border: 1px solid red;
+                }*/
+
+        table {
+            border-collapse: collapse;
+        }
+
+        h2, h3 {
+            text-align: center;
+        }
+
+        .border-report {
+            position: absolute;
+            width: 1044px;
+            left: 50%;
+            margin-left: -522px;
+            margin-top: 50px;
+        }
+
+        #header-info {
+            font-size: 16px;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+            #header-info td, th {
+                border: 1px solid grey;
+                text-align: left;
+            }
+
+        .my-table {
+            width: 100%;
+            background-color: white;
+            margin-top: 20px;
+        }
+
+            .my-table td {
+                border: 1px solid #808080;
+            }
+
+            .my-table td, .my-table th {
+                height: 20px;
+                padding: 5px;
+            }
+
+            .my-table tr:first-child {
+                background: linear-gradient(to top, #EDEDED 40%, #F9F9F9 100%);
+            }
+
+            .my-table span {
+                float: right;
+                margin-right: 15px;
+                height: 100%;
+                margin: -6px;
+                padding: 3px;
+                margin-right: 10px;
+                border: 1px solid #DDDDDD;
+                border-radius: 5px;
+            }
+
+        .footer {
+            width: 100%;
+        }
+
+            .footer td {
+                text-align: right;
+                padding: 5px;
+            }
+
+                .footer td:last-child {
+                    width: 15%;
+                    font-weight: bold;
+                }
+    </style>
+</head>
+<body>
+
+    <div class="border-report">
+        <table id="header-info">
+            <tr>
+                <th>OOO "iCarService", УНП 123456810 </th>
+            </tr>
+            <tr>
+                <td>
+                    Адрес: 220096 г. Минск, пр. Независимости 65, тел 123-45-67<br>
+                    Р/сч.: 3012146548019 в Региональная дирекция №600 ОАО "БПС-Сбербанк", код 153001369, адрес: г.Минск, ул.Первомайская,56
+                </td>
+            </tr>
+        </table>
+        <h2>Информация о выполненных заказах за месяц мастерами</h2>
+        <h3>
+            Отчетный период: @Model.SelectedDate?.ToString("MMMM")
+            @Model.SelectedDate?.ToString("yyyy") г.
+        </h3>
+        <p>
+            <table class="my-table">
+                <tr>
+                    <th>ФИО</th>
+                    <th>Таб. ном.</th>
+                    <th>Должность</th>
+                    <th>N заказов</th>
+                    <th>N услуг</th>
+                    <th>Время</th>
+                    <th width="10%">Средн. цена услуги</th>
+                    <th width="10%">Средн. цена заказа</th>
+                    <th width="11%">Сумма</th>
+                </tr>
+                @foreach (var item in Model.List)
+                {
+                    <tr>
+                        <td>@item.FullName.ConvertToShortName()</td>
+                        <td>@item.PersonnelNumber</td>
+                        <td>@item.NamePost</td>
+                        <td>@item.CountOfOrders</td>
+                        <td>@item.CountOfServices</td>
+                        <td>@item.TakeTime ч.</td>
+                        <td>@(Math.Round(item.AveragePriceServ ?? 0, 2)) byn</td>
+                        <td>@(Math.Round(item.AveragePriceOrder ?? 0, 2))byn</td>
+                        <td>@(Math.Round(item.TotalMoney ?? 0, 2)) byn</td>
+                    </tr>
+                }
+                <tr>
+                    <td colspan="8" style="text-align:right;font-weight:bold">Итого:</td>
+                    <td style="font-weight:bold">@(Math.Round(Model.List.Sum(s => s.TotalMoney ?? 0))) byn</td>
+                </tr>
+            </table>
+        <p>
+            <table class="footer">
+                <tr>
+                    <td>Отчет сформирован Автоматизированной системой "Автосервис iCarService"</td>
+                    <td> от @DateTime.Now.ToString("dd MMMM yyyy")</td>
+                </tr>
+                <tr>
+                    <td>Печать произвел:</td>
+                    <td>@Model.FullName</td>
+                </tr>
+            </table>
+    </div>
+</body>
+</html>
+

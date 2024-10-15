@@ -1,0 +1,54 @@
+﻿@* @model List<CarServiceDiplom.Entity.Models.GetTotalInfoServicesByOrder_Result>
+@using CarServiceDiplom.Entity.Converter
+ *@
+     @using CarServiceApp.Domain.Common
+@using CarServiceApp.Helper
+@using CarServiceApp.Domain.Entity.Models
+@using CarServiceApp.Domain.Extension
+@using CarServiceApp.Domain.Repository
+@using CarServiceApp.Domain.Service
+@using CarServiceApp.Domain.Model
+@model List<TotalInfoServicesByOrder>
+
+<h4 style="text-align:center">1. Выполненные работы</h4>
+<table class="table table-condensed table-striped table-bordered">
+    <tr>
+        <th width="30%">Наименование</th>
+        <th width="8%">ID</th>
+        <th width="1%">Цена<br>норма-часа<br>(BYN)</th>
+        <th width="1%">Норма времени<br>(час)</th>
+        <th width="1%">Затр. времени<br>(час)</th>
+        <th width="1%">%<br>надб.</th>
+        <th width="1%">Стоимость<br>услуг</th>
+        <th width="8%">Дата и время завершения</th>
+        <th width="8%">Исполнитель</th>
+    </tr>
+    @foreach (var i in Model)
+    {
+        if (i.ServiceId != null)
+        {
+            <tr>
+                <td>@i.ServiceName</td>
+                <td>@i.ServiceId</td>
+                <td>@i.PriceHour</td>
+                <td>@i.RateTime</td>
+                <td>@i.TakeTime</td>
+                <td>@i.TaxAddedValue</td>
+                <td>@i.SummMoney</td>
+                <td>@(i.DateCompleting != null ? i.DateCompleting?.ToString() : "В процессе...")</td>
+                <td>@i.FullName.ConvertToShortName()</td>
+            </tr>
+        }
+        else
+        {
+            <tr style="background-color:#99FFCC">
+                <th colspan="4">Итого:</th>
+                <th>@i.TakeTime</th>
+                <th>X</th>
+                <th>@i.SummMoney</th>
+                <th>X</th>
+                <th>X</th>
+            </tr>
+        }
+    }
+</table>

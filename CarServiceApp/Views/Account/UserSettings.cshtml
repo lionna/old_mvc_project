@@ -1,0 +1,64 @@
+﻿@model CarServiceApp.Models.User.UserSettingsViewModel
+
+@{
+    ViewData["Title"] = "Изменение личных данных";
+    Layout = "_DefaultLayout";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div class="row">
+    <div class="col-md-auto">
+        <form asp-action="UserSettings" method="post">
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <input type="hidden" asp-for="Id" />
+
+            
+            @if (!string.IsNullOrWhiteSpace(ViewBag?.ModelMessage?.ToString()))
+            {
+                <div class="alert alert-success" role="alert">
+                    ViewBag?.ModelMessage
+            </div>
+            }
+            <div class="form-group">
+                <label asp-for="UserName"></label>
+                <input asp-for="UserName" class="form-control" />
+                <span asp-validation-for="UserName" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Email"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Phone"></label>
+                <input asp-for="Phone" class="form-control" />
+                <span asp-validation-for="Phone" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Password"></label>
+                <input asp-for="Password" type="password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="ConfirmPassword"></label>
+                <input asp-for="ConfirmPassword" type="password" class="form-control" />
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            </div>
+            <br>
+            <div class="form-group">
+                <button type="submit" class="btn btn-outline-primary">
+                    <i class="fas fa-check"></i> Сохранить
+                </button>
+                <a asp-action="Index" asp-controller="Home" class="btn btn-outline-secondary">
+                    <i class="fas fa-times"></i> Отмена
+                </a>
+            </div>
+        </form>
+    </div>
+</div>

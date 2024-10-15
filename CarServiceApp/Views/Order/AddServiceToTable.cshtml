@@ -1,0 +1,77 @@
+﻿@using CarServiceApp.Domain.Common
+@using CarServiceApp.Helper
+@using CarServiceApp.Domain.Entity.Models
+@using CarServiceApp.Domain.Extension
+@using CarServiceApp.Domain.Repository  
+@model GridItem
+@* @{
+    ViewBag.Title = "Список";
+    Layout = "_DefaultLayout";
+} *@
+
+
+<table class="table table-condensed table-striped table-bordered" id="execServices">
+    <tr>
+        <th width="30%">Наименование</th>
+        <th>ID</th>
+        <th width="5%">Цена<br>норма-часа<br>(BYN)</th>
+        <th width="5%">Норма времени<br>(час)</th>
+        <th width="5%">Затр. времени<br>(час)</th>
+        <th width="5%">%<br>надб.</th>
+        <th width="5%">Стоимость<br>услуг</th>
+        <th width="15%">Дата и время завершения</th>
+        <th width="10%">Исполнитель</th>
+        <th width="20%">Примечание</th>
+        <th>Материалы<br>(М./К.)</th>
+        <th>Удл.Ред.</th>
+    </tr>
+    @foreach (var item in (IEnumerable<ExecutingService>)Model?.Data)
+    {
+        <tr>
+            <td>@item.Service.Name</td>
+            <td>@item.ServiceId</td>
+            <td>@item.Service.PriceHour</td>
+            <td>@item.Service.RateTime.Value.ToString()</td>
+            <td>@item.TakeTime.ToString()</td>
+            <td>@item.TaxAddedValue</td>
+            <td>@((double)(item.Price ?? (decimal)0.0) * ((item.TaxAddedValue ?? 0) * 0.01 + 1))</td>
+            <td>@item.DateCompleting.ToString()</td>
+            <td>@(item.Employee != null ? item.Employee.FullName.ConvertToShortName() : "")</td>
+            <td>@(item.Notes ?? "-")</td>
+            <td style="text-align:center;vertical-align:middle">
+             !!   @* <span class="badge" style="display: @(item.ServiceId == "mngopen"? "none" : "") @(item.ServiceId == "mngclose"? "none" : ""); cursor: pointer" onclick="AttachedParts('@item.ServiceId')">(IEnumerable<ExecutingService>)Model?.Data?.Where(s => s.ServiceId == item.ServiceId).FirstOrDefault().UsingPartMaterials.Count/(IEnumerable<ExecutingService>)Model?.Data.Where(s => s.ServiceId == item.ServiceId).FirstOrDefault().UsingCustomSPartMats.Count</span> *@
+            </td>
+            <td style="text-align: center; vertical-align: middle; display: @(item.ServiceId == "mngopen"? "none" : "") @(item.ServiceId == "mngclose"? "none" : "")">
+                <i class="fas fa-times-circle" onclick="confirmDialog('Вы уверены,  что хотите исключить @item.Service.Name ?', DeleteAttachedService, '@item.ServiceId');"></i>
+                <i class="fas fa-edit" onclick="EditAttachedService('@item.ServiceId')"> </i>
+            </td>
+        </tr>
+    }
+    <tr style="background-color:#9DD0D0">
+        <td colspan="2"><strong />Итого:</td>
+        <td><strong />X</td>
+        <td><strong />X</td>
+        <td><strong />@((ViewBag.TotalInfoForTable).TotalTakeTime)</td>
+        <td><strong />X</td>
+        <td><strong />@((double)((ViewBag.TotalInfoForTable).TotalMoney ?? decimal.Zero))</td>
+        <td><strong />X</td>
+        <td><strong />X</td>
+        <td><strong />X</td>
+        <td><strong />X</td>
+        <td><strong />X</td>
+    </tr>
+</table>
+<pager paged-result="@Model" page-handler="AddServiceToTable" css-class="pagination"></pager>
+<script>
+
+    $(document).ready(function () {
+    $('#modal_close').click();
+    if ('@ViewBag.IsSuccess' == 'True') {
+        $("#popSuccess").html('@(ViewBag.IsAdding?"Услуга успешно добавлена!":"Услуга успешно изменена!")').slideDown(300).delay(3000).slideUp(300);
+        }
+        else
+        {
+            $("#popErorr").html('@(ViewBag.IsAdding?"Ошибка добавления услуги!":"Ошибка изменения услуги!")').slideDown(300).delay(3000).slideUp(300);
+        }
+    })
+</script>

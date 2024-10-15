@@ -1,0 +1,379 @@
+﻿@model CarServiceApp.Models.ChoosingParamsAnalysis
+@using CarServiceApp.Domain.Common
+@using CarServiceApp.Domain.Model
+@using CarServiceApp.Helper
+@{
+    ViewBag.Title = "Анализ реализации услуг (работ) автосервиса";
+    Layout = "_DefaultLayout";
+    int count = 0;
+}
+
+<!-- Подключение jQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<!-- Подключение bootstrap-datepicker -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+
+<style>
+    .anlzA {
+        background: linear-gradient(to top, #00CA6C 40%, #13DD7F 100%);
+    }
+
+    .anlzB {
+        background: linear-gradient(to top, #E4ED5C 40%, #FFFF83 100%);
+    }
+
+    .anlzC {
+        background: linear-gradient(to top, #FF5918 40%, #FF803F 100%);
+    }
+
+    .anlzAZ {
+        background: linear-gradient(to top, #974478 40%, #B15E92 100%);
+        color: white;
+    }
+
+    .anlzBZ {
+        background: linear-gradient(to top, #F8C301 40%, #FFE422 100%);
+        color: white;
+    }
+
+    .anlzCZ {
+        background: linear-gradient(to top, #DA251C 40%, #ED564D 100%);
+        color: white;
+    }
+
+    .anlzAY {
+        background: linear-gradient(to top, #797196 40%, #938BB0 100%);
+        color: white;
+    }
+
+    .anlzBY {
+        background: linear-gradient(to top, #42929D 40%, #5EAEB9 100%);
+        color: white;
+    }
+
+    .anlzCY {
+        background: linear-gradient(to top, #F19ABD 40%, #FFA8CB 100%);
+        color: white;
+    }
+
+    .anlzAX {
+        background: linear-gradient(to top, #00923F 40%, #17A956 100%);
+        color: white;
+    }
+
+    .anlzBX {
+        background: linear-gradient(to top, #0093DD 40%, #1DB0FA 100%);
+        color: white;
+    }
+
+    .anlzCX {
+        background: linear-gradient(to top, #BAB223 40%, #CCC435 100%);
+        color: white;
+    }
+
+    #contents_result table td:nth-child(n+5) {
+        text-align: center;
+        border-radius: 25px;
+    }
+
+    #contents_result table th:nth-child(n+5) {
+        text-align: center;
+    }
+
+    /*     #contents_result table tr > th {
+                    border: 1px solid #DDDDDD;
+                    background: linear-gradient(to top, #EDEDED 40%, #F9F9F9 100%);
+                } */
+
+    .anls-info-block {
+        width: 100%;
+        justify-content: flex-start;
+        -ms-flex-pack: justify;
+        flex-direction: row;
+        display: flex;
+        display: -ms-flexbox;
+        margin-left: -10px;
+        margin-top: 10px;
+    }
+
+
+    .info-block-item {
+        border-radius: 5px;
+        padding: 5px;
+        width: 180px;
+        margin-left: 10px;
+    }
+
+        .info-block-item&amp;amp;gt;div {
+            display: inline-block;
+        }
+
+    .text-lable {
+        color: white;
+        line-height: 15px;
+        float: left;
+    }
+
+    .stock-style {
+        border: 5px solid white;
+        padding: 5px;
+        color: white;
+        margin-right: 5px;
+        position: relative;
+        top: -2px;
+        font-size: 16px;
+        width: 110px;
+        display: inline-block;
+        height: 50px;
+        position: relative;
+    }
+
+        .stock-style .glyphicon-arrow-right {
+            font-size: 20px;
+            left: 100%;
+            margin-left: -10px;
+            top: 50%;
+            margin-top: -13px;
+            padding-top: 2px;
+            padding-bottom: 3px;
+            position: absolute;
+        }
+
+        .stock-style .glyphicon-star {
+            font-size: 25px;
+            position: relative;
+            left: 0px;
+        }
+
+    #type_result {
+        color: white;
+        font-size: 40px;
+    }
+
+    .redefined {
+        padding: 0px;
+        margin: 0;
+    }
+</style>
+ 
+<div class="alert alert-secondary" role="alert">
+    Анализ реализации услуг (работ) автосервиса
+</div>
+<div class="col-md-12 bs-callout bs-callout-info">
+    <div id="popErorr" style="height: 50px; margin: 10px;background-color: #F2DEDE; border-radius: 10px; font-size: 16px; color: #A94442; display: none; text-align: center; padding-top: 10px"></div>
+    <form id="form-search" asp-controller="ReportView" asp-action="AnalyseServicesTrade" method="get">
+
+        <input type="hidden" name="page" />
+        <div class="row">
+            <div class="col-md-2 form-group">
+                <select asp-for="TypePeriodId" asp-items="Model.TypePeriod" class="form-control"></select>
+            </div>
+            <div class="col-md-2 form-group">
+                <input asp-for="StartDate" type="date" id="dtPickFrom" placeholder="Интервал с" class="form-control" required>
+            </div>
+            <div class="col-md-2 form-group">
+                <input asp-for="EndDate" type="date" id="dtPickTo" placeholder="Интервал до" class="form-control" required>
+            </div>
+            <div class="col-md-2 form-group">
+                <button type="button" id="showAnalysisBtn" class="btn btn-outline-primary">Показать анализ</button>
+            </div>
+        </div>
+    </form>
+    <br />
+    <div id="contents_result">
+
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>№ п/п</th>
+                    <th>ID</th>
+                    <th>Наименование</th>
+                    <th>Сумма BYN</th>
+                    <th>ABC</th>
+                    <th>XYZ</th>
+                    <th>ABC/XYZ</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (var item in (IEnumerable<ReportResultModel>)Model?.GridItem?.Data)
+                {
+                    <tr>
+                        <td>@(count = count + 1)</td>
+                        <td>@item.Id</td>
+                        <td>@item.Name</td>
+                        <td>@item.SaleAmount</td>
+                        <td>@item.ABC</td>
+                        <td>@item.XYZ</td>
+                        <td>@item.ABC_XYZ</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <pager paged-result="@Model.GridItem" page-handler="AnalyseServicesTrade" css-class="pagination"></pager>
+    </div>
+</div>
+<img id="loading" src="~/img/loading.gif" style="display: none; position: absolute; margin: auto; top: 0; bottom: 0; left: 0; right: 0" />
+<div class="anls-info-block">
+    <div class="info-block-item" id="info-item" style="display:none">
+        <div>
+            <span id="type_result"></span>
+            <div class="stock-style"><i class="fas fa-star"></i> <i class="fas fa-arrow-right"></i></div>
+
+        </div>
+        <div class="text-lable"></div>
+    </div>
+</div>
+
+
+
+<script>
+    $(document).ready(function () {
+        // Инициализация dtPick_From и dtPick_Before
+        // $(".date").datetimepicker({ locale: 'ru', format: 'YYYY-MM-DD', buttons: { showToday: true } });
+
+        // При изменении даты в dtPick_From, она устанавливается как минимальная для dtPick_Before
+        // $("#dtPick_From").on("change.datetimepicker", function (e) {
+        //     $("#dtPick_Before").datetimepicker('minDate', e.date);
+        // });
+
+        // При изменении даты в dtPick_Before, она устанавливается как максимальная для dtPick_From
+        // $("#dtPick_Before").on("change.datetimepicker", function (e) {
+        //     $("#dtPick_From").datetimepicker('maxDate', e.date);
+        // });
+    });
+
+    // Функция для отображения информации
+    function createItemInfo(color_one, color_two, star_shift, txt_anlz, txt_content, _timeOut) {
+        var info_item = $('#info-item').clone(); // Клонируем info элемент
+        info_item.css('background', 'linear-gradient(to top, ' + color_one + ' 40%, ' + color_two + ' 100%)');
+        if (star_shift != 1)
+            info_item.find('.glyphicon-star').css('left', star_shift);
+        else
+            info_item.find('.glyphicon-star').css('opacity', 0);
+        info_item.find('.glyphicon-arrow-right').css('background', 'linear-gradient(to top, ' + color_one + ' -50%, ' + color_two + ' 150%)');
+        info_item.find('#type_result').text(txt_anlz);
+        info_item.find('.text-lable').html(txt_content);
+        info_item.removeAttr('id');
+        $('.anls-info-block').append(info_item);
+        info_item.delay(_timeOut).show(400);
+    }
+</script>
+
+
+<script>
+    $().ready(function () {
+
+        // Получаем значение параметра page из URL
+        var urlParams = new URLSearchParams(window.location.search);
+        var page = urlParams.get('page') || 1; // Если значение параметра не найдено, устанавливаем значение по умолчанию 1
+
+        // Обработчик события нажатия на кнопку
+        $("#showAnalysisBtn").click(function () {
+            // Получаем значения параметров из формы
+            var typePeriodId = $("#TypePeriodId").val();
+            var startDate = $("#dtPickFrom").val();
+            var endDate = $("#dtPickTo").val();
+
+            // Обновляем URL с новыми параметрами
+            var url = "@Url.Action("AnalyseServicesTrade", "ReportView")" +
+                "?typePeriodId=" + typePeriodId +
+                "&startDate=" + startDate +
+                "&endDate=" + endDate +
+                "&page=" + page; // Добавляем параметр page
+
+            // Переходим по новому URL
+            window.location.href = url;
+        });
+
+        ////для визуализации анализа
+        var arr = [];
+        $('table tr:has(td)').each(function () {
+            if ($(this).children().eq(4).text() == 'A')
+                $(this).children().eq(4).addClass('anlzA');
+            if ($(this).children().eq(4).text() == 'B')
+                $(this).children().eq(4).addClass('anlzB');
+            if ($(this).children().eq(4).text() == 'C')
+                $(this).children().eq(4).addClass('anlzC');
+
+            if ($(this).children().eq(5).text() == 'X')
+                $(this).children().eq(5).addClass('anlzA');
+            if ($(this).children().eq(5).text() == 'Y')
+                $(this).children().eq(5).addClass('anlzB');
+            if ($(this).children().eq(5).text() == 'Z')
+                $(this).children().eq(5).addClass('anlzC');
+
+            if ($(this).children().eq(6).text() == 'AZ') {
+                $(this).children().eq(6).addClass('anlzAZ');
+                var df = arr.indexOf('AZ');
+                if (arr.indexOf('AZ') < 0)
+                    arr.push('AZ');
+            }
+
+            if ($(this).children().eq(6).text() == 'BZ') {
+                $(this).children().eq(6).addClass('anlzBZ');
+                if (arr.indexOf('BZ') < 0)
+                    arr.push('BZ');
+            }
+            if ($(this).children().eq(6).text() == 'CZ') {
+                $(this).children().eq(6).addClass('anlzCZ');
+                if (arr.indexOf('CZ') < 0)
+                    arr.push('CZ');
+            }
+
+            if ($(this).children().eq(6).text() == 'AX') {
+                $(this).children().eq(6).addClass('anlzAX');
+                var df = arr.indexOf('AX');
+                if (arr.indexOf('AX') < 0)
+                    arr.push('AX');
+            }
+
+            if ($(this).children().eq(6).text() == 'BX') {
+                $(this).children().eq(6).addClass('anlzBX');
+                if (arr.indexOf('BX') < 0)
+                    arr.push('BX');
+            }
+            if ($(this).children().eq(6).text() == 'CX') {
+                $(this).children().eq(6).addClass('anlzCX');
+                if (arr.indexOf('CX') < 0)
+                    arr.push('CX');
+            }
+            if ($(this).children().eq(6).text() == 'AY') {
+                $(this).children().eq(6).addClass('anlzAY');
+                var df = arr.indexOf('AY');
+                if (arr.indexOf('AY') < 0)
+                    arr.push('AY');
+            }
+
+            if ($(this).children().eq(6).text() == 'BY') {
+                $(this).children().eq(6).addClass('anlzBY');
+                if (arr.indexOf('BY') < 0)
+                    arr.push('BY');
+            }
+            if ($(this).children().eq(6).text() == 'CY') {
+                $(this).children().eq(6).addClass('anlzCY');
+                if (arr.indexOf('CY') < 0)
+                    arr.push('CY');
+            }
+        })
+        /////// walk by everything items and  call function for render item-info
+        var timeOut = 0;
+        arr.forEach(function (elem) {
+            switch (elem) {
+                case 'AZ': createItemInfo('#974478', '#B15E92', 0, elem, 'Поставки = мин. партиями<br>Поставщики = дистрибьютеры<br>Контроль = ежедневно', timeOut); break;
+                case 'BZ': createItemInfo('#F8C301', '#FFE422', 0, elem, 'Поставки = мин. партиями<br>Поставщики = дистрибьютеры<br>Контроль = 2 раза в неделю', timeOut); break;
+                case 'CZ': createItemInfo('#DA251C', '#ED564D', 1, elem, 'Позиции данного раздела<br>исключаются из ассортимента', timeOut); break;
+
+                case 'AX': createItemInfo('#00923F', '#17A956', 55, elem, 'Поставки = ритмично<br>Поставщики = производители<br>Контроль = ежедневно', timeOut); break;
+                case 'BX': createItemInfo('#0093DD', '#1DB0FA', 55, elem, 'Поставки = ритмично<br>Поставщики = производители<br>Контроль = 2 раза в неделю', timeOut); break;
+                case 'CX': createItemInfo('#BAB223', '#CCC435', 55, elem, 'Поставки = редко, макс. партиями<br>Поставщики = производители<br>Контроль = раз в неделю', timeOut); break;
+
+                case 'AY': createItemInfo('#797196', '#938BB0', 30, elem, 'Поставки = умерен. партиями<br>Поставщики = производители<br>Контроль = ежедневно', timeOut); break;
+                case 'BY': createItemInfo('#42929D', '#5EAEB9', 30, elem, 'Поставки = умерен. партиями<br>Поставщики = производители<br>Контроль = 2 раза в неделю', timeOut); break;
+                case 'CY': createItemInfo('#F19ABD', '#FFA8CB', 30, elem, 'Поставки = редко, макс. партиями<br>Поставщики = дистрибьютеры<br>Контроль = раз в неделю', timeOut); break;
+            }
+            timeOut += 400;
+        })
+    })
+</script>

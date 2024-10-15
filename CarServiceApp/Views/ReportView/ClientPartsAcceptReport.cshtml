@@ -1,0 +1,253 @@
+﻿@model CarServiceApp.Models.AcceptedPartsReportViewModel
+@using static CarServiceApp.Domain.Extension.StringExtensions
+
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Отчет</title>
+<style>
+table {
+border-collapse: collapse;
+}
+
+h3 {
+text-align: center;
+}
+
+.border-report {
+position: absolute;
+width: 1044px;
+left: 50%;
+margin-left: -522px;
+}
+
+#header-info {
+font-size: 14px;
+border-collapse: collapse;
+width: 100%;
+}
+
+#header-info td, th {
+    border: 1px solid grey;
+    text-align: left;
+}
+
+#order-head div:first-child {
+float: left;
+width: 69%;
+text-align: center;
+}
+
+#order-head div:last-child {
+float: right;
+width: 30%;
+}
+
+#order-head table {
+text-align: left;
+width: 100%;
+}
+
+#order-head table tr td:last-child {
+    font-weight: bold;
+    border-bottom: 1px solid grey;
+}
+
+div #client-info {
+width: 100%;
+font-size: 16px;
+}
+
+#client-info table {
+width: 100%;
+}
+
+#client-info td {
+line-height: 18px;
+}
+
+#client-info tr td:first-child {
+width: 15%;
+}
+
+#client-info tr td:last-child {
+font-weight: bold;
+border-bottom: 1px solid grey;
+}
+
+
+.table {
+font-size: 16px;
+border-collapse: collapse;
+width: 100%;
+}
+
+.table tr:first-child {
+    background-color: #D5D5D5;
+}
+.table td {
+    border: 1px solid black;
+    text-align: center;
+}
+
+.table-numerable tr:nth-child(2) {
+background-color: #D5D5D5;
+}
+
+.table-wrap {
+height: 500px;
+}
+</style>
+</head>
+<body>
+    <div class="border-report">
+        <p/><p/>
+        <table id="header-info">
+            <tr>
+                <th>OOO "iCarService", УНП 790485810 </th>
+            <tr>
+            <tr>
+                <td>
+                    Адрес: 220096 г. Минск, пр. Независимости 65, тел 123-45-67<br>
+                    Р/сч.: 3012146548019 в Региональная дирекция №600 ОАО "БПС-Сбербанк", код 153001369, адрес: г.Минск, ул.Первомайская,56
+                </td>
+            <tr>
+        </table>
+        <div id="order-head">
+            <div style="font-size:18px">
+                <p>
+                    <h3>Акт № @Model.DocumentId <br>cдачи-приемки материалов (запчастей) заказчика</h3>
+                </p>
+            </div>
+            <div>
+                <table>
+                    <tr>
+                        <td>Дата оформления:</td>
+                        <td>@Model.Date</td>
+                    </tr>
+                    <tr>
+                        <td>Мастер:</td>
+                        <td>@Model.NameEmployee</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div id="container">
+            <div id="client-info">
+                <table>
+                    <tr>
+                        <td>Заказчик:</td>
+                        <td>@Model.NameClient</td>
+                    </tr>
+                    <tr>
+                        <td>Адрес:</td>
+                        <td>@Model.Adress</td>
+                    </tr>
+                    <tr>
+                        <td>Телефон:</td>
+                        <td>@Model.Phone</td>
+                    </tr>
+                    <tr></tr>
+                </table>
+            </div>
+            <div style="text-align:center;font-weight:bold; font-size:18px">
+                <p>Запасные части и материалы, принятые от заказчика</p>
+            </div>
+            <div class="table-wrap">
+                <table class="table table-numerable">
+                    <tr>
+                        <td width="5%">№ п/п</td>
+                        <td width="30%">Наименование запчасти</td>
+                        <td width="20%">Номенклатурный номер</td>
+                        <td width="5%">Ед.изм.</td>
+                        <td width="5%">Кол-во</td>
+                        <td width="10%">Состояние</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>2</td>
+                        <td>3</td>
+                        <td>4</td>
+                        <td>5</td>
+                        <td>6</td>
+                    </tr>
+                     @for (int item = 0; item < Model?.SpareParts?.Count; item++)
+                        {
+                        <tr>
+                            <td>@(item + 1)</td>
+                            <td>@Model?.SpareParts[item]?.SparePartMaterial?.Name</td>
+                            <td>@Model?.SpareParts[item]?.PartId</td>
+                            <td>@Model?.SpareParts[item]?.SparePartMaterial?.Unit</td>
+                            <td>@Model?.SpareParts[item]?.Number</td>
+                            <td>@Model?.SpareParts[item]?.StateSpart</td>
+                        </tr>
+                        }
+                </table>
+            </div>
+            <br>
+            <table style="font-size:16px; width:100%; border-collapse:collapse">
+                <tr>
+                    <td colspan="2" width="40%">Запчасти и материалы СДАЛ</td>
+                    <td width="20%"></td>
+                    <td colspan="2" width="40%" style="vertical-align:top">Запчасти и материалы  ПРИНЯЛ</td>
+                </tr>
+                <tr>
+                    <td height="30px"></td>
+
+                </tr>
+                <tr>
+                    <td colspan="2" style="border-top:1px solid black;text-align:center">(подпись заказчика)</td>
+                    <td></td>
+                    <td colspan="2" style="border-top:1px solid black;text-align:center">(подпись отв. лица)</td>
+                </tr>
+                <tr ></tr>
+                <tr>
+                    <td>@DateTime.Now.GetDateTimeFormats()[4]</td>
+                    <td>@Model?.NameClient?.ConvertToShortName()</td>
+                    <td height="30px"></td>
+                    <td>@DateTime.Now.GetDateTimeFormats()[4]</td>
+                    <td>@Model?.NameEmployee?.ConvertToShortName()</td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="border-top:1px solid black;text-align:center">(дата, ФИО заказчика)</td>
+                    <td></td>
+                    <td colspan="2" style="border-top:1px solid black;text-align:center">(дата, ФИО отв. лица)</td>
+                </tr>
+                <tr>
+                    <td colspan="5" style="border-top:1px dashed black;height:20px;"></td>
+
+                </tr>
+                <tr>
+                    <td colspan="2" width="40%">Запчасти и материалы ПРИНЯЛ</td>
+                    <td width="20%"></td>
+                    <td colspan="2" width="40%" style="vertical-align:top">Запчасти и материалы СДАЛ</td>
+                </tr>
+                <tr>
+                    <td height="30px"></td>
+
+                </tr>
+                <tr>
+                    <td colspan="2" style="border-top:1px solid black;text-align:center">(подпись заказчика)</td>
+                    <td></td>
+                    <td colspan="2" style="border-top:1px solid black;text-align:center">(подпись отв. лица)</td>
+                </tr>
+                <tr></tr>
+                <tr>
+                    <td height="30px"></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="border-top:1px solid black;text-align:center">(дата, ФИО заказчика)</td>
+                    <td></td>
+                    <td colspan="2" style="border-top:1px solid black;text-align:center">(дата, ФИО отв. лица)</td>
+                </tr>
+            </table>
+        </div>
+
+    </div>
+</body>
+</html>

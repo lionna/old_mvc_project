@@ -1,0 +1,4 @@
+packages/
+cmd.exe
+.gitconfig.txt
+CarServiceDiplom.v12.suo

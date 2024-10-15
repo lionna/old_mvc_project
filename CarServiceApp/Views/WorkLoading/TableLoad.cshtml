@@ -1,0 +1,653 @@
+﻿@using CarServiceApp.Domain.Extension
+@using CarServiceApp.Domain.Repository
+@using CarServiceApp.Domain.Entity.Models
+@model CarServiceApp.Domain.Model.TableLoadViewModel
+
+
+ 
+ @{
+    ViewBag.Title = "Информация";
+    Layout = "_DefaultLayout";
+}
+
+
+<style>
+    .vacancy {
+        background-color: #c0e9f9; /* Цвет для свободных ячеек */
+    }
+
+    .busy {
+        background-color: #fdd; /* Цвет для занятых ячеек заказом */
+    }
+
+    .busy-pre-reserv {
+        background-color: #fed; /* Цвет для занятых ячеек предварительной записью */
+    }
+
+    .busy-pre-reserv {
+        background-color: #709AE4;
+        border-radius: 20px;
+        color: white;
+        cursor: pointer;
+    }
+
+    .employee-block {
+        background-color: rgba(219,219,219, 0.8);
+        border-radius: 5px;
+        font-size: 12px;
+        text-align: center;
+        padding-left: 5px;
+        padding-right: 5px;
+        float: left;
+    }
+
+    .tbl-load {
+        width: 100%;
+        background-color: white;
+        border: 1px solid #DBDBDB;
+        border-collapse: collapse;
+    }
+
+        .tbl-load td, .tbl-load th {
+            text-align: center;
+            vertical-align: middle;
+            border-bottom: 1px solid #DBDBDB;
+            padding-right: 4px;
+        }
+
+            .tbl-load td:not(:first-child) span {
+                float: left;
+                width: 65%;
+                line-height: 200%;
+                padding-left: 25px;
+            }
+
+            .tbl-load td:not(:first-child) {
+                width: 5%;
+            }
+
+        .tbl-load th {
+            background-color: #DBDBDB;
+        }
+
+        .tbl-load td:first-child {
+            width: 20%;
+            padding: 5px;
+            border-right: 1px solid #DBDBDB;
+            background-color: #F3F3F3;
+        }
+
+            .tbl-load td:first-child span:nth-child(2) {
+                float: right;
+            }
+
+    .vacancy {
+        background-color: white;
+    }
+
+    .busy-pre-reserv:hover, .busy-current-order:hover {
+        text-shadow: 0px 0px 5px #FFFFFF;
+    }
+
+    .busy:hover {
+        color: #8E8E8E;
+        text-shadow: 0px 0px 5px #FFFFFF;
+    }
+
+    .busy-current-order {
+        background-color: #5CB85C;
+        border-radius: 20px;
+        color: white;
+        cursor: pointer;
+    }
+
+    .busy {
+        background-color: #FFCC00;
+        cursor: pointer;
+        border-radius: 20px;
+    }
+
+    .vacancy:hover {
+        background-color: #E15C5C;
+        color: white;
+        cursor: pointer;
+        border-radius: 20px;
+    }
+
+    .tbl-service {
+        border-collapse: collapse;
+        width: 100%;
+        background-color: white;
+    }
+
+        .tbl-service td:last-child {
+            text-align: center;
+            width: 5%;
+        }
+
+        .tbl-service tr:not(:first-child):not([class='reserv-row']):not([class='selected-row']):hover {
+            background-color: #DBDBDB;
+            cursor: pointer;
+        }
+
+    .reserv-row td:nth-child(1):before {
+        content: '\2714';
+        color: #5CB85C;
+        font-weight: bold;
+    }
+
+    .selected-row:hover {
+        cursor: pointer;
+        background-color: #458B45;
+    }
+
+    .tbl-service td, .tbl-service th {
+        border: 1px solid #DBDBDB;
+        line-height: 25px;
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+
+    .tbl-service th {
+        background-color: #DBDBDB;
+    }
+
+    .selected-row {
+        background-color: #5CB85C;
+        color: white;
+    }
+
+    .reserv-row {
+    }
+
+    #txtTotTime {
+        background-color: #5CA9E1;
+        padding: 5px;
+        border-bottom-left-radius: 10px;
+        border-top-left-radius: 10px;
+        color: white;
+    }
+
+    #totTime {
+        background-color: #E15C5C;
+        padding: 5px;
+        padding-right: 10px;
+        border-bottom-right-radius: 10px;
+        border-top-right-radius: 10px;
+        color: white;
+    }
+
+    .my-comment {
+        background-color: #e4bc97;
+        border-radius: 10px;
+        border: 1px solid #a3a3a3;
+        box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
+        color: white;
+        display: none;
+        height: auto;
+        left: 20%;
+        padding: 5px;
+        position: absolute;
+        text-shadow: 2px 2px 1px #858585;
+        top: 70%;
+        width: auto;
+        z-index: 5;
+    }
+
+    #contents_info div:first-child {
+        text-align: center;
+    }
+
+    #contents_info td {
+        padding-left: 10px;
+    }
+
+    #contents_info table {
+        width: 100%
+    }
+
+    .my-comment hr {
+        margin: 0px;
+    }
+
+
+    .my-comment #link_bottom {
+        color: #4096c1;
+        text-align: center;
+        text-shadow: none;
+    }
+
+    .my-comment::after {
+        border-bottom: 5px solid transparent;
+        border-right: 10px solid #e4bc97;
+        border-top: 5px solid transparent;
+        content: "";
+        height: 0px;
+        position: absolute;
+        right: 100%;
+        top: 50px;
+        width: 0px;
+    }
+
+    .my-comment::before {
+        border-bottom: 7px solid transparent;
+        border-right: 12px solid #a3a3a3;
+        border-top: 7px solid transparent;
+        content: "";
+        height: 0px;
+        position: absolute;
+        right: 100%;
+        top: 48px;
+        width: 0px;
+    }
+
+    .close-sign:hover {
+        cursor: pointer;
+    }
+
+    .close-sign::after {
+        content: "✖";
+        position: absolute;
+        right: 5px;
+        top: 3px;
+    }
+
+    .circle {
+        background-color: rgba(208, 150, 150, 0.7);
+        border-radius: 15px;
+        float: right;
+        height: 25px;
+        margin-top: 2px;
+        opacity: 0.1;
+        padding: 3px;
+        width: 25px;
+    }
+
+        .circle:hover {
+            opacity: 1;
+        }
+
+        .circle::after {
+            color: black;
+            content: "✘";
+            opacity: 1;
+        }
+
+    .backward-day {
+        position: absolute;
+        right: 100%;
+        font-size: 80px;
+        color: #CCCCCC;
+        line-height: 20px;
+    }
+
+    .forward-day {
+        /* position:absolute; */
+        bottom: 100%;
+        margin-bottom: -23px;
+        font-size: 80px;
+        line-height: 20px;
+        color: #CCCCCC;
+    }
+
+        .backward-day:hover, .forward-day:hover {
+            color: #5CA9E1;
+            cursor: pointer;
+        }
+
+    .legend-cell-load table {
+        width: 100%;
+    }
+
+        .legend-cell-load table tr {
+            font-size: 12px
+        }
+
+        .legend-cell-load table td:last-child {
+            padding-left: 5px;
+        }
+
+        .legend-cell-load table td:first-child {
+            width: 40px;
+            height: 15px;
+        }
+
+    #item-buisy-curr {
+        background-color: #5CB85C;
+        border-radius: 8px;
+    }
+
+    #item-pre-buisy {
+        background-color: #709AE4;
+        border-radius: 8px;
+    }
+
+    #item-buisy {
+        background-color: #FFCC00;
+        border-radius: 8px;
+    }
+</style>
+
+
+
+<div class="header-page">Распределение услуг по времени и мастерам</div>
+<div class="col-md-12 bs-callout bs-callout-info">
+    @Html.Hidden("OrderId", Model.Order.OrderId, new { @id = "OrderId" })
+    <ul class="list-inline" style="text-align: justify; font-size: 18px">
+        <li style="float:right">Клиент: @Model.Order.Client.FullName.ConvertToShortName() <span class="label label-success">ID: @Model.Order.Client.ClientId</span></li>
+        <li>@Html.ActionLink("Заказ №" +Model.Order.OrderId +" от "+ (Model.Order.DateMakingOrder!=null?Model.Order.DateMakingOrder.Value.ToString("dd MMMM yyyy"):""), "CaryOnOrder", "Order", new { orderId = @Model.Order.OrderId}, null) </li>
+    </ul>
+    <h4>Автомобиль: @Model.NameCar (@Model.Order.Car.RegistrationNumber)</h4>
+        <table class=" tbl-service">
+        <tr>
+            <th>Наименование услуги</th>
+            <th>Код работы (ID)</th>
+            <th width="10%">Затраты времени</th>
+            <th width="15%">Дата начала</th>
+            <th width="15%">Исполнитель</th>
+        </tr>
+        @foreach (var i in Model.Order.ExecutingServices.Where(e => e.ServiceId != "mngopen" && e.ServiceId != "mngclose").OrderByDescending(f => f.DateStart))
+        {
+            <tr class="@(i.DateStart != null ? "reserv-row":"")">
+                <td>@i.Service.Name</td>
+                <td>@i.ServiceId @Html.Hidden("ServiceId", i.ServiceId)</td>
+                <td>@i.TakeTime</td>
+                <td>@(i.DateStart!=null?i.DateStart.Value.GetDateTimeFormats()[7]:"")</td>
+                <td>@(i.Employee == null ? "" : i.Employee.FullName.ConvertToShortName())</td>
+            </tr>
+        }
+        </table>
+            <div  id="popErorr" style="height: 50px; margin-top: 10px;background-color: #F2DEDE; border-radius: 10px; font-size: 16px; color: #A94442; display: none; text-align: center; padding-top: 10px"></div>
+                <div style="padding:5px" class="col-md-4">
+                    <span class="control-label col-md-5">Общая загрузка мастеров цеха на</span>
+                    <div class="input-group date col-md-6">
+                        <div class="backward-day">&lsaquo;</div>
+                      @*   @Html.TextBoxFor(model => model.LoadEmployees.FirstOrDefault().CurrentDate, "{0:yyyy-MM-dd}", new {@readonly = "readonly", @class = "form-control" })
+                        <span class="input-group-addon">
+                            <i class="far fa-calendar"></i>
+                        </span> *@
+            <input asp-for="LoadEmployees.FirstOrDefault().CurrentDate" type="date" id="CurrentDate" placeholder="Дата" class="form-control" required>
+                       <div class="forward-day">&rsaquo;</div> 
+                   </div>
+                </div>
+              <div class="col-md-4 legend-cell-load">
+                  <table>
+                      <tr>
+                          <td><div id="item-buisy-curr" style="width:100%;height:100%"></div></td>
+                          <td> - выбранный заказ</td>
+                      </tr>
+                      <tr>
+                          <td><div id="item-pre-buisy" style="width:100%;height:100%"></div></td>
+                          <td> - предварительная запись</td>
+                      </tr>
+                      <tr>
+                          <td><div id="item-buisy" style="width:100%;height:100%"></div></td>
+                          <td> - занято заказом</td>
+                      </tr>
+                  </table>
+              </div>
+            <div class="col-md-4" style="padding: 0; text-align: right; padding-top: 15px">
+                <span id="txtTotTime">Суммарное время выбранных работ: </span>
+                <span id="totTime">0</span>
+            </div>
+        <table class="tbl-load">
+            <tr>
+                <th width="17%">Мастер</th>
+                <th>9:00</th>
+                <th>10:00</th>
+                <th>11:00</th>
+                <th>12:00</th>
+                <th>13:00</th>
+                <th>14:00</th>
+                <th>15:00</th>
+                <th>16:00</th>
+                <th>17:00</th>
+                <th>18:00</th>
+            </tr>
+            @foreach (var item in Model.LoadEmployees)
+            {
+                <tr>
+                    <td>
+                        <span class="employee-block">@(item.PostName ?? "n/a")</span>
+                        <span style="font-weight:bold">@item.FullName.ConvertToShortName() @Html.Hidden("PersonnelNumber", item.PersonnelNumber)</span>
+                    </td>
+
+                    <td @if (Model.Order.ExecutingServices.Where(e=>e.PersonnelNumber==item.PersonnelNumber&&e.DateStart==item.CurrentDate.Value.AddHours(item.h09_00.Value)).ToList().Count != 0) 
+                        { @Html.Raw("class='busy-current-order'")  } 
+                        else 
+                        { if (Model.PreRecordServices.Where(e => e.PersonnelNumber == item.PersonnelNumber && e.DateReservation == item.CurrentDate.Value.AddHours(item.h09_00.Value)).ToList().Count != 0) { @Html.Raw("class='busy-pre-reserv'") } }>
+                        <input type="hidden" name="hourSelect" value=9 />
+                        <input type="hidden" name="vb" value="@item.h09_00" />
+                    </td>
+
+                    <td @if (Model.Order.ExecutingServices.Where(e=>e.PersonnelNumber==item.PersonnelNumber&&e.DateStart==item.CurrentDate.Value.AddHours(item.h10_00.Value)).ToList().Count != 0)  { @Html.Raw("class='busy-current-order'")   }  else  {  if (Model.PreRecordServices.Where(e =>e.PersonnelNumber == item.PersonnelNumber && e.DateReservation == item.CurrentDate.Value.AddHours(item.h10_00.Value)).ToList().Count != 0)  { @Html.Raw("class='busy-pre-reserv'")   }  }>
+                        <input type="hidden" name="hourSelect" value=10 />
+                        <input type="hidden" name="vb" value="@item.h10_00" />
+                    </td>
+
+                    <td @if (Model.Order.ExecutingServices.Where(e=>e.PersonnelNumber==item.PersonnelNumber&&e.DateStart==item.CurrentDate.Value.AddHours(item.h11_00.Value)).ToList().Count != 0) { @Html.Raw("class='busy-current-order'")    } else { if (Model.PreRecordServices.Where(e =>e.PersonnelNumber == item.PersonnelNumber && e.DateReservation == item.CurrentDate.Value.AddHours(item.h11_00.Value)).ToList().Count != 0) { @Html.Raw("class='busy-pre-reserv'")    } }>
+                        <input type="hidden" name="hourSelect" value=11 />
+                        <input type="hidden" name="vb" value="@item.h11_00" />
+                    </td>
+
+                    <td @if (Model.Order.ExecutingServices.Where(e=>e.PersonnelNumber==item.PersonnelNumber&&e.DateStart==item.CurrentDate.Value.AddHours(item.h12_00.Value)).ToList().Count != 0) { @Html.Raw("class='busy-current-order'")    } else { if (Model.PreRecordServices.Where(e =>e.PersonnelNumber == item.PersonnelNumber && e.DateReservation == item.CurrentDate.Value.AddHours(item.h12_00.Value)).ToList().Count != 0) { @Html.Raw("class='busy-pre-reserv'")    } }>
+                        <input type="hidden" name="hourSelect" value=12 />
+                        <input type="hidden" name="vb" value="@item.h12_00" />
+                    </td>
+
+                <td @if (Model.Order.ExecutingServices.Where(e => e.PersonnelNumber == item.PersonnelNumber && e.DateStart == item.CurrentDate.Value.AddHours(item.h13_00.Value)).ToList().Count != 0)
+                {
+                    @Html.Raw("class='busy-current-order'")
+                }
+                else
+                {
+                    if (Model.PreRecordServices.Where(e => e.PersonnelNumber == item.PersonnelNumber && e.DateReservation == item.CurrentDate.Value.AddHours(item.h13_00.Value)).ToList().Count != 0)
+                    {
+                        @Html.Raw("class='busy-pre-reserv'")
+                    }
+                }>
+                        <input type="hidden" name="hourSelect" value=13 />
+                        <input type="hidden" name="vb" value="@item.h13_00" />
+                    </td>
+
+                    <td @if (Model.Order.ExecutingServices.Where(e=>e.PersonnelNumber==item.PersonnelNumber&&e.DateStart==item.CurrentDate.Value.AddHours(item.h14_00.Value)).ToList().Count != 0) { @Html.Raw("class='busy-current-order'")    } else { if (Model.PreRecordServices.Where(e =>e.PersonnelNumber == item.PersonnelNumber && e.DateReservation == item.CurrentDate.Value.AddHours(item.h14_00.Value)).ToList().Count != 0) { @Html.Raw("class='busy-pre-reserv'")    } }>
+                        <input type="hidden" name="hourSelect" value=14 />
+                        <input type="hidden" name="vb" value="@item.h14_00" />
+                    </td>
+
+                    <td @if (Model.Order.ExecutingServices.Where(e=>e.PersonnelNumber==item.PersonnelNumber&&e.DateStart==item.CurrentDate.Value.AddHours(item.h15_00.Value)).ToList().Count != 0) { @Html.Raw("class='busy-current-order'")    } else { if (Model.PreRecordServices.Where(e =>e.PersonnelNumber == item.PersonnelNumber && e.DateReservation == item.CurrentDate.Value.AddHours(item.h15_00.Value)).ToList().Count != 0) { @Html.Raw("class='busy-pre-reserv'")    } }>
+                        <input type="hidden" name="hourSelect" value=15 />
+                        <input type="hidden" name="vb" value="@item.h15_00" />
+                    </td>
+
+                    <td @if (Model.Order.ExecutingServices.Where(e=>e.PersonnelNumber==item.PersonnelNumber&&e.DateStart==item.CurrentDate.Value.AddHours(item.h16_00.Value)).ToList().Count != 0) { @Html.Raw("class='busy-current-order'")    } else { if (Model.PreRecordServices.Where(e =>e.PersonnelNumber == item.PersonnelNumber && e.DateReservation == item.CurrentDate.Value.AddHours(item.h16_00.Value)).ToList().Count != 0) { @Html.Raw("class='busy-pre-reserv'")    } }>
+                        <input type="hidden" name="hourSelect" value=16 />
+                        <input type="hidden" name="vb" value="@item.h16_00" />
+                    </td>
+
+                <td @if (Model.Order.ExecutingServices.Where(e => e.PersonnelNumber == item.PersonnelNumber && e.DateStart == item.CurrentDate.Value.AddHours(item.h17_00.Value)).ToList().Count != 0)
+                {
+                    @Html.Raw("class='busy-current-order'")
+                }
+                else
+                {
+                    if (Model.PreRecordServices.Where(e => e.PersonnelNumber == item.PersonnelNumber && e.DateReservation == item.CurrentDate.Value.AddHours(item.h17_00.Value)).ToList().Count != 0)
+                    {
+                        @Html.Raw("class='busy-pre-reserv'")
+                    }
+                }>
+                        <input type="hidden" name="hourSelect" value=17 />
+                        <input type="hidden" name="vb" value="@item.h17_00" />
+                    </td>
+
+                <td @if (Model.Order.ExecutingServices.Where(e => e.PersonnelNumber == item.PersonnelNumber && e.DateStart == item.CurrentDate.Value.AddHours(item.h18_00.Value)).ToList().Count != 0)
+                {
+                    @Html.Raw("class='busy-current-order'")
+                }
+                else
+                {
+                    if (Model.PreRecordServices.Where(e => e.PersonnelNumber == item.PersonnelNumber && e.DateReservation == item.CurrentDate.Value.AddHours(item.h18_00.Value)).ToList().Count != 0)
+                    {
+                        @Html.Raw("class='busy-pre-reserv'")
+                    }
+                }>
+                        <input type="hidden" name="hourSelect" value=18 />
+                        <input type="hidden" name="vb" value="@item.h18_00" />
+                    </td>
+                    
+
+                </tr>
+            }
+        </table>
+    </div>
+@* <script src="~/Scripts/forViews/work-loading-tableload.js"></script> *@
+
+@* @section Script{
+    @Scripts.Render("~/Scripts/moment-with-locales.min.js")
+    @Scripts.Render("~/Scripts/bootstrap-datetimepicker.min.js")
+    @Styles.Render("~/Content/bootstrap-datetimepicker.min.css")
+}
+ *@
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+
+    $(document).ready(function () {
+        //для календаря
+        $('.date').datetimepicker({ language: 'ru', pickTime: false, format: 'YYYY-MM-DD' });
+        //выделяем по цветам график загрузки мастеров
+        $('.tbl-load  td:not(:first-child)').each(function () {
+            if ($(this).children(':last-child').val() == 0)
+                $(this).addClass('vacancy');
+            else {
+                if (!$(this).hasClass('busy-current-order')) {
+                    if ($(this).hasClass('busy-pre-reserv')) {
+                        $(this).append('<span>' + $(this).children(':last-child').val() + ':00' + '</span>'); return 0;
+                    }
+                    $(this).addClass('busy');
+                    $(this).append($(this).children(':last-child').val() + ':00');
+
+                }
+                else
+                    $(this).append('<span>' + $(this).children(':last-child').val() + ':00' + '</span><div class="circle"></div>');
+            }
+
+        })
+        //вешаем на строки с услугами выделение при нажатии
+        $('.tbl-service tr:has(td)').click(function () {
+            var summTime = 0;
+            if ($(this).children().eq(3).html() == '') //можно выделять только те, что еще не задействаованны
+                if ($(this).hasClass('selected-row'))
+                    $(this).removeClass('selected-row')
+                else
+                    $(this).addClass('selected-row');
+            $(".selected-row td:nth-child(3)").each(function () {
+                summTime += Number($(this).html().replace(",", "."));
+            })
+            $('#totTime').html(summTime.toFixed(2));
+
+        })
+
+        //вешаем на ячейки на таблице загрузок выделение для добавления
+        $('.tbl-load td:not(:first-child)').click(function () {
+            if ($(this).hasClass('vacancy')) {
+                // var sender = $(this).children('input:first-child').add($(this).parent().children().eq(0).find('input'));
+
+                const sender = [
+                    this.querySelector('input:first-child'),
+                    this.parentElement.querySelector(':first-child input')
+                ];
+
+                const selectedRowInputs = document.querySelectorAll(".selected-row td input");
+                const currentDateInput = document.querySelector('input[name="CurrentDate"]');
+                const orderIdInput = document.querySelector('#OrderId');
+
+                const formData = new FormData();
+                selectedRowInputs.forEach(input => formData.append(input.name, input.value));
+                sender.forEach(input => formData.append(input.name, input.value));
+                formData.append('сurrentDate', currentDateInput.value);
+                formData.append('orderId', orderIdInput.value);
+
+                $.ajax(
+                    {
+                        url: '/WorkLoading/ReservationTime',
+                        data:formData,
+                        //data: $(".selected-row td input").add(sender).add('input[name="CurrentDate"]').add('#OrderId').serialize(),
+                        type: "POST",
+                        datatype: "json"
+                    });
+            }
+
+        })
+        //вешаем на ячейки на таблице загрузок для удаления услуги
+        $('.circle').click(function () {
+            $.ajax(
+                {
+                    url: '/WorkLoading/DeleteReservationTime',
+                    data: $(this).parent().children('input[name="vb"]').add('input[name="CurrentDate"]').add($(this).parent().parent().children().eq(0).find('input')).serialize(),
+                    type: "POST",
+                    datatype: "json"
+                });
+        })
+        //вешаем на календарь  на его изменение
+        $('.datepicker tbody, .backward-day, .forward-day').click(function () {
+            var culpritObject = $(this);
+            setTimeout(function () {
+                var currentDay = new Date($('#CurrentDate').val());
+
+                if (culpritObject.hasClass('backward-day'))
+                    currentDay.setDate(currentDay.getDate() - 1)
+                else
+                    if (culpritObject.hasClass('forward-day'))
+                        currentDay.setDate(currentDay.getDate() + 1)
+                var stringDate = currentDay.getFullYear() + '-' + (currentDay.getMonth() + 1) + '-' + (currentDay.getDate() >= 10 ? currentDay.getDate() : '0' + currentDay.getDate());
+
+                window.location = '/WorkLoading/TableLoad/?orderId=' + $('#orderId').val() + '&currentDate=' + stringDate;
+
+            }, 1)
+
+        })
+        /////для закрытия инфо-окна
+        $('.close-sign').click(function () {
+            $('.my-comment').fadeOut(400);
+        })
+        //вешаем на ячейки на таблице загрузок для подгрузки инфы
+        $('.busy, .busy-current-order span, .busy-pre-reserv').click(function () {
+            if ($(this).hasClass('busy') || $(this).hasClass('busy-pre-reserv'))
+                var my_data = $(this).children('input[name="vb"]').add('input[name="CurrentDate"]').add($(this).parent().children().eq(0).find('input'));
+            else
+                var my_data = $(this).parent().children('input[name="vb"]').add('input[name="CurrentDate"]').add($(this).parent().parent().children().eq(0).find('input'));
+            var elem = $(this);
+            $.ajax(
+                {
+                    url: '/WorkLoading/GetDetailsForTime',
+                    data: my_data.serialize(),
+                    type: "POST",
+                    datatype: "json",
+                    success: function (content) {
+                        $('#contents_info').html(content);
+                        var coord = elem.offset();
+                        var w = elem.width();
+                        var h = elem.height();
+                        var h_box = $('.my-comment').height();
+                        $('.my-comment').hide();
+                        $('.my-comment').css('top', coord.top + h * 0.5 - 0.5 * h_box + 5).css('left', coord.left + w + 12);
+                        $('.my-comment').fadeIn(400);
+                    }
+                });
+        })
+    })
+
+</script> 
+
+
+
+
+<div class="my-comment">
+
+    <div id="contents_info">
+        
+    </div>
+    <div class="close-sign"></div>
+</div>

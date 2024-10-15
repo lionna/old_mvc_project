@@ -1,0 +1,48 @@
+﻿@model List<CarServiceApp.Domain.Entity.Models.SparePartMaterial>
+@{
+    ViewBag.Title = "Материалы";
+}
+<style>
+    input {
+        width: 50px;
+    }
+
+    .glyphicon-arrow-right:hover {
+        cursor: pointer;
+        color: green;
+    }
+</style>
+<table class="table" style="border-top:2px none white">
+    <tr style=" background-color: #BEC7F2">
+        <th>Найменование</th>
+        <th>ID</th>
+        <th>Ед.изм.</th>
+        <th>Кол-во</th>
+        <th>Состояние</th>
+        <th></th>
+    </tr>
+    @foreach (var i in Model)
+    {
+        <tr>
+            <input type="hidden" value='@i.Id' name='PartId'>
+            <td><a href="#" class="alert-link popover-top" data-trigger="focus" data-toggle="popover" title="Производитель" data-content="@i.Manufacture">@i.Name</a> </td>
+            <td>@i.Id</td>
+            <td>@i.Unit</td>
+            <td><input type="text" name="Number" /></td>
+            <td>
+                <select name="State">
+                    <option selected="selected">Новое</option>
+                    <option>БУ</option>
+                </select>
+            </td>
+            <td><i class="fas fa-arrow-right" onclick="AddPart(this)" /></td>
+        </tr>
+    }
+</table>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.popover-top').popover({
+            placement: 'left'
+        });
+    });
+</script>

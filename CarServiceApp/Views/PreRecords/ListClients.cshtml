@@ -1,0 +1,31 @@
+﻿
+@model IEnumerable<CarServiceApp.Domain.Entity.Models.Client>
+
+@if (Model.Count() > 1)
+{
+    <h4>Выберите подходящего клиента для перехода к оформлению заказа</h4>
+}
+else
+{
+    <h4>Это требуемый клиент для регистрации заказа?</h4>
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <ol>
+                @foreach (var item in Model)
+                {
+                    <li>
+                        <a href="@Url.Action("AddOrder", "Order", new { clientId = item.ClientId, recordId = ViewBag.RecordId })">@item.FullName</a>
+                        <ul>
+                            <li>Номер прав: @item.NumberDriveLicense</li>
+                            <li>Адрес: @item.Address</li>
+                        </ul>
+                    </li>
+                }
+            </ol>
+            <a class="d-block text-center" href="@Url.Action("CreateNewClient", "Clients", new { recordId = ViewBag.RecordId })">Привязать заявку № @ViewBag.RecordId для нового клиента</a>
+        </div>
+    </div>
+</div>

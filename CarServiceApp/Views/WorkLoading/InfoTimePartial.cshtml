@@ -1,0 +1,19 @@
+﻿@using CarServiceApp.Domain.Extension
+@using CarServiceApp.Domain.Repository
+@model List<CarServiceApp.Domain.Entity.Models.ExecutingService>
+
+<div><strong>
+    Информация о заказе
+</strong></div>
+<hr>
+<table>
+   <tr> <th>Автомобиль:</th><td> @ViewBag.NameCar (@Model.FirstOrDefault()?.OrderService?.Car?.RegistrationNumber)</td></tr>
+    <tr><th>ID заказа:</th><td> @Model.FirstOrDefault()?.OrderId</td></tr>
+    <tr>
+        <th>Число работ:</th><td> @Model.Count</td></tr>
+    <tr>
+        <th>Клиент:</th> <td>@Model.FirstOrDefault()?.OrderService?.Client?.FullName?.ConvertToShortName()</td></tr>
+         
+</table>
+<hr>
+<div id="link_bottom">@Html.ActionLink("На страницу заказа", "TableLoad", "WorkLoading", new { orderId = @Model.FirstOrDefault()?.OrderId, currentDate = ViewBag.SelectedDate }, null)</div>

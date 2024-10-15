@@ -1,0 +1,58 @@
+﻿@model CarServiceApp.Domain.Model.CustomInvoiceInfo
+@{
+    ViewBag.Title = "Информация";
+}
+<style>
+    input {
+        width: 50px;
+    }
+
+    .glyphicon-remove-circle:hover {
+        cursor: pointer;
+        color: red;
+    }
+
+    #infoInvoice:hover {
+        cursor: pointer;
+    }
+</style>
+<div style="overflow-y: scroll; height: 470px;">
+    <i class="fas fa-arrow-circle-left" onclick="extend()" style="position: absolute; float: left; margin-top: 250px; margin-left: -15px; font-size: 30px;opacity:0.3; color: orange; "></i>
+    <table class="table" style="border-top: 2px none white;">
+        <tr style="background-color: #82B98F">
+            <th>Наименование</th>
+            <th>ID</th>
+            <th>Ед.изм.</th>
+            <th>Кол-во</th>
+            <th>Состояние</th>
+            <th></th>
+        </tr>
+        <tr style="height:300px; text-align:center;">
+            <td colspan="6" style="padding-top:35%">Для добавления позиций в акт сдачи приемки, нажмите <a href="#" onclick="showFindSearch()">поиск</a> материалов, а затем <i class="fas fa-arrow-right" /></td>
+        </tr>
+    </table>
+</div>
+<hr style="margin:0">
+<div id="invoice">
+    <div id="infoInvoice" style="text-align: center; background-color: #FFFFCC" onmouseover="showMenu()">
+        <strong>Акт сдачи-приемки №: </strong>
+        <input type="hidden" value='@Model.AcceptanceId' name="ID_doc" id="idAccept" />
+        @Html.DisplayFor(m => m.AcceptanceId)
+        от @Html.DisplayFor(m => m.Date)
+        <br>
+        <strong>Клиент:</strong>
+        @Html.DisplayFor(m => m.ClientName)
+        <br>
+        <strong>
+            Принял в работу:
+        </strong>
+        @Html.DisplayFor(m => m.EmployeeName)
+    </div>
+    <div id="menuInvoice" class="row" style="display: none; z-index: 10; position: absolute; display: none; left: 50%; margin-left: -160px">
+        <ul class="list-inline" style="text-align:center;">
+            <li><button onclick="DeleteInvoice()" class="btn btn-sm">Удалить акт</button> </li>
+            <li><button onclick="EditInvoice()" class="btn btn-sm">Изменить данные</button> </li>
+        </ul>
+    </div>
+</div>
+<script src="~/Scripts/forViews/acceptance-custom-upd-tble.js"></script>
