@@ -1,0 +1,152 @@
+﻿@model CarServiceApp.Domain.Model.CarViewModel
+@{
+    ViewBag.Title = "Информация о машине";
+    Layout = "_DefaultLayout";
+}
+<style>
+    table tr:first-child {
+        background: linear-gradient(to top, #ffffff,50%, #CCCCCC);
+        font-size: 16px;
+        text-align: center;
+    }
+
+    tr:first-child td {
+        border-top-left-radius: 10px;
+    }
+</style>
+<div class="header-page">Информация об автомобиле</div>
+<div class="col-md-12 bs-callout bs-callout-info">
+
+    <div class="row g-2 align-items-center">
+        <div class="col-auto">
+            <i class="fas fa-info-circle"></i>
+            <label asp-for="VinNumber"></label>
+        </div>
+        <div class="col-auto">
+            @Html.DisplayFor(model => model.VinNumber)
+        </div>
+    </div>
+    <div class="row g-2 align-items-center">
+        <div class="col-auto">
+            <i class="fas fa-th-large"></i>
+            <label asp-for="Brand"></label>
+        </div>
+        <div class="col-auto">
+            @Html.DisplayFor(model => model.Brand)
+        </div>
+    </div>
+    <div class="row g-2 align-items-center">
+        <div class="col-auto">
+            <i class="fas fa-th-large"></i>
+            <label asp-for="Model"></label>
+        </div>
+        <div class="col-auto">
+            @Html.DisplayFor(model => model.Model)
+        </div>
+    </div>
+    <div class="row g-2 align-items-center">
+        <div class="col-auto">
+            <i class="fas fa-th-large"></i>
+            <label asp-for="Series"></label>
+        </div>
+        <div class="col-auto">
+            @Html.DisplayFor(model => model.Series)
+        </div>
+    </div>
+    <div class="row g-2 align-items-center">
+        <div class="col-auto">
+            <i class="fas fa-th-large"></i>
+            <label asp-for="Modification"></label>
+        </div>
+        <div class="col-auto">
+            @Html.DisplayFor(model => model.Modification)
+        </div>
+    </div>
+    <div class="row g-2 align-items-center">
+        <div class="col-auto">
+            <i class="fas fa-th-large"></i>
+            <label asp-for="IssueYear"></label>
+        </div>
+        <div class="col-auto">
+            @Html.DisplayFor(model => model.IssueYear)
+        </div>
+    </div>
+    <div class="row g-2 align-items-center">
+        <div class="col-auto">
+            <i class="fas fa-compress"> </i>
+            <label asp-for="TransmissionType"></label>
+        </div>
+        <div class="col-auto">
+            @Html.DisplayFor(model => model.TransmissionType)
+        </div>
+    </div>
+    <div class="row g-2 align-items-center">
+        <div class="col-auto">
+            <i class="fas fa-registered"> </i>
+            <label asp-for="RegistrationNumber"></label>
+        </div>
+        <div class="col-auto">
+            @Html.DisplayFor(model => model.RegistrationNumber)
+        </div>
+    </div>
+    <div class="row g-3 align-items-center">
+        <div class="col-auto">
+            <i class="fas fa-registered"> </i>
+            <label asp-for="ColorCode"></label>
+        </div>
+        <div class="col-auto">
+            <div style="background:@Model.ColorCode; color:white; width:150px; border-radius:15px;text-align:center;text-shadow: 2px 2px 1px black; border:1px solid grey">Цвет</div>
+        </div>
+        <div class="col-auto">
+            @Html.DisplayFor(model => model.PaintName)
+            @Html.DisplayFor(model => model.ColorName)
+        </div>
+    </div>
+
+    <div class="row g-2 align-items-center">
+        <div class="col-auto">
+            <i class="fas fa-barcode"> </i>
+            <label asp-for="DataSheetCar"></label>
+        </div>
+        <div class="col-auto">
+            @Html.DisplayFor(model => model.DataSheetCar)
+        </div>
+    </div>
+
+    <div class="row g-2 align-items-center">
+        <div class="col-auto">
+            <i class="fas fa-user"> </i>
+            <label asp-for="OwnerName"></label>
+        </div>
+        <div class="col-auto">
+            @Html.DisplayFor(model => model.OwnerName)
+        </div>
+    </div>
+
+  
+    <div class="col-md-5" style="background: white; border-radius: 20px; border: 1px solid #E4E4E4">
+        @if (Model.ViewCar != null)
+        {
+            @Html.Raw("<img style='width:100%;' src=\"data:image/jpg;base64," + Convert.ToBase64String(Model.ViewCar) + "\" />")
+        }
+    </div>
+
+    <div class="form-group">
+        <a asp-action="Search" class="btn btn-outline-secondary">
+            <i class="fas fa-times"></i> Отмена
+        </a>
+        <button type="button" class="btn btn-outline-primary" onclick="window.location='@Url.Action("Edit", "Cars", new {@vin=Model.VinNumber})'">
+            <i class="fas fa-pencil-alt"></i> Изменить данные
+        </button>
+
+        @if (Model.CountRepare == 0)
+        {
+            <button type="button" class="btn btn-outline-danger" onclick="confirmDialog('Вы уверены,  что автомобиль, @Model.VinNumber, будет удален?', GoDelete, '@Model.VinNumber');"><i class="fas fa-trash-alt"></i> Удалить</button>
+        }
+    </div>
+</div>
+<script>
+    function GoDelete() {
+        javascript: window.location = '@Url.Action("Delete", "Cars", new { vin = Model.VinNumber })';
+    }
+</script>

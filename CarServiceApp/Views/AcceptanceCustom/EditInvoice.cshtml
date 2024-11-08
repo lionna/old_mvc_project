@@ -1,0 +1,52 @@
+﻿@model CarServiceApp.Domain.Model.CustomInvoiceInfo
+@{
+    ViewBag.Title = "Редактирование фактуры";
+}
+<form method="post" id="infoInvoice" class="col-md-12" style="background-color: #FFFFCC" onmouseover="showMenu()">
+    @Html.ValidationSummary()
+    @Html.AntiForgeryToken()
+    <input type="hidden" value="@Model.AcceptanceId" name="AcceptanceId" id="idAccept" />
+    <div class="form-group row">
+        <label class="control-label col-md-6" style="padding:5px 0 0 0">Акт сдачи-приемки № @Model.AcceptanceId от</label>
+        <div class="col-md-6">
+            <input type="text" asp-for="Date" class="form-control" style="width:150px;" />
+            @Html.ValidationMessageFor(model => model.Date, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="control-label col-md-6" style="padding:0">Клиент:</label>
+        <div class="col-md-6">
+            <select asp-for="ClientId" asp-items="@(ViewBag.ListClients as SelectList)" class="form-control" style="width:150px;"></select>
+            @Html.ValidationMessageFor(model => model.ClientId, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="control-label col-md-6" style="padding:0">Принял в работу:</label>
+        <div class="col-md-6">
+            <select asp-for="PersonnelNumber" asp-items="@(ViewBag.ListEmployee as SelectList)" class="form-control" style="width:150px;"></select>
+            @Html.ValidationMessageFor(model => model.PersonnelNumber, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div id="menuInvoice" class="row" style="display: none; z-index: 10; position: absolute; left: 50%; margin-left: -150px; top: 70px;">
+        <ul class="list-inline" style="text-align:center;">
+            <li><button type="submit" class="btn btn-sm">Сохранить</button></li>
+            <li><button type="button" class="btn btn-sm" onclick="Cancel()">Отмена</button></li>
+        </ul>
+    </div>
+</form>
+<script>
+    $(document).ready(function () {
+
+    })
+    function Cancel() {
+        $.ajax({
+            url: '@Url.Action("CancelEditInvoice", "AcceptanceCustom")',
+            data: { acceptanceId: '@Model.AcceptanceId' },
+            type: "Get",
+            dataType: "json",
+            success: function (result) {
+                $('#invoice').html(result);
+            }
+        });
+    }
+</script>

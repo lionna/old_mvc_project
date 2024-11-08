@@ -1,0 +1,40 @@
+﻿@* @using CarServiceDiplom.Services
+@model PagedList.IPagedList<CarServiceDiplom.Entity.Models.Service> *@
+
+@using CarServiceApp.Domain.Common
+@using CarServiceApp.Helper
+@using CarServiceApp.Domain.Entity.Models
+@using CarServiceApp.Domain.Extension
+@using CarServiceApp.Domain.Repository
+@using CarServiceApp.Domain.Service
+@model GridItem
+
+<table class="table table-striped table-hover">
+    <tbody>
+    @foreach (var item in (IEnumerable<CarServiceApp.Domain.Entity.Models.Service>)Model?.Data)
+    {<tr>
+        <td>@item.Name</td>
+                <td><span class="badge badge-pill bg-info">ID:@item.Id</span></td>
+               
+                    <td>@item.ServiceType.Name</td>
+                        <td>
+                        <button style="width:30px;height:30px;padding-top:3px;color:#5CB85C" id="btnAdd" onclick="addSertoOrd('@item.Id')">
+                                <span class="fas fa-plus"></span>
+                            </button>
+        </td>
+            </tr>
+    }
+    </tbody>
+</table>
+@* @Html.Hidden("page", Model.PageNumber)
+Страница @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) из @Model.PageCount
+@Html.PageLinksFor(Model, page => "setPage(" + page + ")") *@
+<pager paged-result="@Model" page-handler="ServiceSearch" css-class="pagination"></pager>
+@* <link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
+<script type="text/javascript">
+    function setPage(p) {
+        $("#page").attr('value', p);
+    }
+</script> *@
+

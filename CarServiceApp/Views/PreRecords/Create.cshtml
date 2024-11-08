@@ -1,0 +1,309 @@
+﻿@model CarServiceApp.Models.PreRecordRecivedDataViewModel
+@{
+    ViewBag.Title = "Регистрация заявки";
+    Layout = "_DefaultLayout";
+}
+ 
+<style>
+
+    input[type="button"] {
+        width: 100%;
+    }
+
+    .redefined {
+        padding: 0px;
+        margin: 0;
+    }
+
+    .form-horizontal {
+        box-shadow: 0 0 2px grey;
+        background-color: white;
+        padding: 10px;
+    }
+
+        .form-horizontal:nth-child(3), .form-horizontal:nth-child(4) {
+            height: 210px;
+        }
+
+        .form-horizontal:nth-child(5), .form-horizontal:nth-child(2) {
+            height: 340px;
+            margin-bottom: 5px;
+        }
+
+    .col-md-3 {
+        padding-right: 5px !important;
+    }
+
+    input {
+        max-width: none;
+    }
+
+    h4 {
+        border-bottom: 1px solid #EAEAEA;
+        padding-bottom: 5px;
+    }
+
+    .tbl-service-search {
+        width: 100%;
+        background-color: white;
+    }
+
+        .tbl-service-search td, .tbl-service-search th {
+            border: 1px solid #DBDBDB;
+            line-height: 25px;
+            padding-left: 5px;
+            padding-right: 5px;
+        }
+
+        .tbl-service-search th {
+            background-color: #DBDBDB;
+        }
+
+        .tbl-service-search td:last-child {
+            text-align: center;
+        }
+
+    #form_search {
+        padding: 0;
+    }
+
+    .glyphicon-plus {
+        cursor: pointer;
+        color: #5CB85C;
+        vertical-align: middle;
+    }
+
+    .glyphicon-remove {
+        cursor: pointer;
+        color: #D35545;
+        vertical-align: middle;
+    }
+
+    #wrap_tbl {
+        max-height: 245px;
+        overflow-y: scroll;
+    }
+</style>
+
+@* @using CarServiceApp.Domain.Common
+@using CarServiceApp.Helper
+@using CarServiceApp.Domain.Entity.Models
+@using CarServiceApp.Domain.Extension
+@using CarServiceApp.Domain.Repository
+@using CarServiceApp.Domain.Service
+@model GridItem
+<div class="header-page">Регистрация предварительной заявки клиента</div>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12 bs-callout bs-callout-info">
+            @using (Html.BeginForm("Create", "PreRecords", FormMethod.Post, new { id = "form_record" }))
+            {
+                @Html.ValidationSummary()
+                @Html.AntiForgeryToken()
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4>Информация о заказчике</h4>
+                        <div class="form-group row">
+                            @Html.LabelFor(model => model.FullName, new { @class = "col-md-3 col-form-label" })
+                            <div class="col-md-9">
+                                @Html.EditorFor(model => model.FullName, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(m => m.FullName)
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            @Html.LabelFor(model => model.PhoneNumber, new { @class = "col-md-3 col-form-label" })
+                            <div class="col-md-9">
+                                @Html.EditorFor(model => model.PhoneNumber, new { htmlAttributes = new { @class = "form-control" } })
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <h4>Информация об автомобиле</h4>
+                        <div class="form-group row">
+                            @Html.LabelFor(model => model.MarkModelCar, new { @class = "col-md-3 col-form-label" })
+                            <div class="col-md-9">
+                                @Html.EditorFor(model => model.MarkModelCar, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(m => m.MarkModelCar)
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            @Html.LabelFor(model => model.IssueYear, new { @class = "col-md-3 col-form-label" })
+                            <div class="col-md-9">
+                                @Html.EditorFor(model => model.IssueYear, new { htmlAttributes = new { @class = "form-control" } })
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            @Html.LabelFor(model => model.RegNumberCar, new { @class = "col-md-3 col-form-label" })
+                            <div class="col-md-9">
+                                @Html.EditorFor(model => model.RegNumberCar, new { htmlAttributes = new { @class = "form-control" } })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4>Требуемые услуги (работы)</h4>
+                        <table class="tbl-service-search">
+                            <!-- Таблица с требуемыми услугами -->
+                        </table>
+                        <div id="wrap_tbl">
+                            <table class="tbl-service-search" id="required"></table>
+                            @Html.ValidationMessageFor(m => m.ServiceId)
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <h4>Добавить услуги (работы)</h4>
+                        <form id="form_search" asp-controller="PreRecords" asp-action="SearchService" data-ajax="true" data-ajax-method="post" data-ajax-update="#contents" class="mb-3">
+                            <div class="input-group">
+                                <input type="text" name="serviceId" placeholder="ID услуги" class="form-control">
+                            </div>
+                            <div class="input-group">
+                                <input type="text" name="servname" placeholder="Наименование услуги" class="form-control">
+                            </div>
+                            <div class="input-group">
+                                <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i></button>
+                            </div>
+                        </form>
+                        <div id="contents"></div>
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <input value="Отмена" class="btn btn-default w-100" onclick="window.history.back()" type="button">
+                            </div>
+                            <div class="col-md-3">
+                                <input value="Добавить" class="btn btn-success w-100" type="button" onclick="$('#form_record').submit();">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div> *@
+
+
+<div class="header-page">Регистрация предварительной заявки клиента</div>
+<div class="container bs-callout bs-callout-info">
+    <form id="form_record" method="post" action="@Url.Action("Create", "PreRecords")">
+        @Html.ValidationSummary()
+        @Html.AntiForgeryToken()
+
+        <div class="row">
+            <div class="col-md-6">
+                <h4>Информация о заказчике</h4>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.FullName, new { @class = "control-label" })
+                    @Html.EditorFor(model => model.FullName, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(m => m.FullName)
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PhoneNumber, new { @class = "control-label" })
+                    @Html.EditorFor(model => model.PhoneNumber, new { htmlAttributes = new { @class = "form-control" } })
+                </div>
+            </div>
+            <div class="col-md-6">
+                <h4>Информация об автомобиле</h4>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MarkModelCar, new { @class = "control-label" })
+                    @Html.EditorFor(model => model.MarkModelCar, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(m => m.MarkModelCar)
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IssueYear, new { @class = "control-label" })
+                    @Html.EditorFor(model => model.IssueYear, new { htmlAttributes = new { @class = "form-control" } })
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.RegNumberCar, new { @class = "control-label" })
+                    @Html.EditorFor(model => model.RegNumberCar, new { htmlAttributes = new { @class = "form-control" } })
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <h4>Требуемые услуги (работы)</h4>
+                <div class="row g-3 align-items-center">
+                    <div class="col-auto">
+                        <input type="text" name="serviceId" placeholder="ID услуги" style="width:41%" class="form-control">
+                    </div>
+                    <div class="col-auto">
+                        <input type="text" name="servname" placeholder="Наименование услуги" style="width:50%" class="form-control">
+                    </div>
+                    <div class="col-auto">
+                        <button class="btn btn-info" type="submit">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+                <div id="contents"></div>
+            </div>
+        </div>
+
+        <div class="row">
+            
+                <div class="col-md-3">
+                    <input value="Отмена" class="btn btn-info" onclick="window.history.back()" type="button">
+                </div>
+                <div class="col-md-3">
+                    <input value="Добавить" class="btn btn-success" type="submit">
+                </div>
+             
+        </div>
+    </form>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    document.getElementById("form_record").addEventListener("submit", function (event) {
+        event.preventDefault();
+        const formData = new FormData(this);
+        fetch(this.action, {
+            method: this.method,
+            body: formData
+        })
+            .then(response => response.text())
+            .then(data => {
+                // Обработка ответа
+                document.getElementById("contents").innerHTML = data;
+            })
+            .catch(error => {
+                console.error('Ошибка при отправке запроса:', error);
+            });
+    });
+</script>
+
+
+
+<script>
+    $(document).ready(function () {
+        //прикрепить услугу
+        $('#contents').on('click', '.glyphicon-plus', function () {
+            var flag = null;
+           
+            var serviceId = $(this).parent().parent().children().eq(1).html();
+            $('#required tr').each(function () {
+                var service_Id = $(this).children().eq(1).find('input').val();
+                if (serviceId == service_Id)
+                    flag=true;
+            });
+
+            if (flag)// если уже есть в таблице, то не добавляем
+                return null;   
+            var serviceName = $(this).parent().parent().children().eq(0).html();
+            var serviceTime = $(this).parent().parent().children().eq(2).html();
+            var targetRow = '<tr><td width="60%">' + serviceName + '</td><td width="25%">' + serviceId + '<input type="hidden" name="serviceId" value="' + serviceId + '"/></td><td width="10%">' + serviceTime + '</td><td width="5%"><i class="fas fa-times"></i></td></tr>'
+            $('#required').append(targetRow);
+        })
+        // открепить услугу
+        $('#required').on('click', '.glyphicon-remove', function () {
+            $(this).parent().parent().remove();
+        })
+    })
+</script>

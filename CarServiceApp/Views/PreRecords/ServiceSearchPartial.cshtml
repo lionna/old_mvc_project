@@ -1,0 +1,25 @@
+﻿@model List<CarServiceApp.Domain.Entity.Models.Service>
+
+<div class="table-responsive">
+    <table class="table tbl-service-search">
+        <thead>
+            <tr>
+                <th scope="col">Наименование услуги</th>
+                <th scope="col">Код работы (ID)</th>
+                <th scope="col">Время</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var i in Model)
+            {
+                <tr>
+                    <td>@i.Name</td>
+                    <td>@i.Id</td>
+                    <td>@i.RateTime</td>
+                    <td><i class="fas fa-plus"></i></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

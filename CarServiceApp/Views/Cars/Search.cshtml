@@ -1,0 +1,98 @@
+﻿@using CarServiceApp.Domain.Common
+@using CarServiceApp.Helper
+@using CarServiceApp.Domain.Entity.Models
+@using CarServiceApp.Domain.Extension
+@model GridItem
+
+@{
+    ViewBag.Title = "Поиск машины";
+    Layout = "_DefaultLayout";
+}
+
+<div class="header-page">Поиск клиентских автомобилей</div>
+@Html.ValidationSummary()
+@Html.AntiForgeryToken()
+<form id="searchForm" asp-action="Search" asp-controller="Cars" method="post" class="row g-3">
+    <div class="col-md-12 bs-callout bs-callout-dark">
+
+        <div class="mb-2 row">
+            <div class="col-6">
+                <input type="text" class="form-control" name="vin" id="search" placeholder="Введите VIN номер кузова" />
+            </div>
+            <div class="col-auto">
+                <button class="btn btn-outline-dark" type="submit">
+                    <i class="fas fa-search"></i> Поиск авто
+                </button>
+            </div>
+        </div>
+
+        <div class="col-sm-10">
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="searchOptions" id="searchByVin" value="vin" checked onchange="changePlHolder(this)">
+                <label class="form-check-label" for="searchByVin">VIN номер кузова</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="searchOptions" id="searchByMark" value="mark" onchange="changePlHolder(this)">
+                <label class="form-check-label" for="searchByMark">Марка автомобиля</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="searchOptions" id="searchByRegNumber" value="regNumber" onchange="changePlHolder(this)">
+                <label class="form-check-label" for="searchByRegNumber">Регистрационный номер</label>
+            </div>
+        </div>
+    </div>
+</form>
+<div id="results">
+
+    @foreach (var item in (IEnumerable<Car>)Model?.Data)
+    {
+        <div class="card border-secondary mb-3">
+            <div class="col-md-12 bs-callout bs-callout-danger linkList" onclick="javascript:window.location='@Url.Action("Detail", "Cars", new { @vin = item.VinNumber})'" style="margin-bottom: 5px; margin-top: 5px; cursor: pointer;">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="mb-0">[@(item?.CarModification?.Series?.CarModel?.CarBrand?.Name) @(item?.CarModification?.Series?.Name)]</h5>
+                        <span class="badge bg-dark">Владелец: @(item.OwnerName != null ? item.OwnerName.ConvertToShortName() : "")</span>
+                        <span class="badge bg-secondary">VIN: @(item?.VinNumber)</span>
+                        <span class="badge bg-secondary">Рег. номер: @(item?.RegistrationNumber)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    }
+
+    <pager paged-result="@Model" page-handler="Search" css-class="pagination"></pager>
+
+    <button class="btn btn-outline-success" type="button" onclick="window.location='@Url.Action("Create", "Cars")'">
+        <i class="fas fa-plus"></i> Регистрация нового авто
+    </button>
+</div>
+<img id="loading" src="@Url.Content("~/img/loading.gif")" style="display: none; position: absolute; margin: auto; top: 0; bottom: 0; left: 0; right: 0" />
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    //для пейджинга-сброс номера отсылаемой страницы при изменении строки поиска
+    $(document).ready(function () {
+        $('#search').change(function () {
+            $('#page').attr('value', '');
+        });
+    });
+
+    //для смены плейсхолдера в поисковой строке
+    function changePlHolder(chBox) {
+        switch (chBox.id) {
+            case "searchByVin":
+                $("#search").attr("placeholder", "Введите VIN номер кузова");
+                $("#search").attr("name", "vin");
+                break;
+            case "searchByMark":
+                $("#search").attr("placeholder", "Введите марку автомобиля");
+                $("#search").attr("name", "mark");
+                break;
+            case "searchByRegNumber":
+                $("#search").attr("placeholder", "Введите регистрационный номер автомобиля");
+                $("#search").attr("name", "regNumber");
+                break;
+        }
+    }
+</script>

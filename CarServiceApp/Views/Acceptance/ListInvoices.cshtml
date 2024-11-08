@@ -1,0 +1,41 @@
+﻿@model List<CarServiceApp.Domain.Entity.Models.Invoice>
+@{
+    ViewBag.Title = "Список фактур";
+}
+<style>
+    input {
+        width: 50px;
+    }
+
+    .table tr:not(:first-child):hover {
+        background: #F0F0F0;
+        cursor: pointer;
+    }
+</style>
+<div style="overflow-y: scroll; height: 535px;">
+    <table class="table" style="border-top: 2px none white;">
+        <tr style="background-color: #82B98F">
+            <th>№ документа</th>
+            <th>Поставщик</th>
+            <th>Дата</th>
+        </tr>
+        @foreach (var i in Model)
+        {
+            <tr>
+                <td>@i.LotNumber @Html.Hidden("lotNumber", i.LotNumber)</td>
+                <td>@i.Provider.Name</td>
+                <td>@(i.DeliveryDate!=null?i.DeliveryDate.Value.ToString("d MMMM yyyy"):"")</td>
+            </tr>
+        }
+    </table>
+</div>
+<script>
+    $().ready(function () {
+        $('.table tr:not(:first-child)').click(function () {
+            var lotNumb = $(this).children().find('input').val();
+            $('#frm_search_invoice input').attr('value', '');
+            $('#frm_search_invoice input[name="LotNumber"]').val(lotNumb);
+            $('#frm_search_invoice').submit();
+        })
+    })
+</script>

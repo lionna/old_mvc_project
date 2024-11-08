@@ -1,0 +1,361 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="NameAndType">
+  <Class Name="CarServiceApp.Domain.Entity.Models.SparePartMaterial" BaseTypeListCollapsed="true">
+    <Position X="34.25" Y="11" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAgCAAAAAAAAAAAAIICAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entity\Models\Common\SparePartMaterial.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CarServiceApp.Domain.Entity.Models.CarModification" BaseTypeListCollapsed="true">
+    <Position X="17.25" Y="13.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>IAADAAAKAAAAAAAAAAgAAAQAAAAAAAAAAAAAAAAAAAE=</HashCode>
+      <FileName>Entity\Models\Common\CarModification.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Series" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="CarServiceApp.Domain.Entity.Models.TypeOfPayment" BaseTypeListCollapsed="true">
+    <Position X="24.75" Y="11.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAAQAEAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entity\Models\Common\TypeOfPayment.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CarServiceApp.Domain.Entity.Models.ServiceType" BaseTypeListCollapsed="true">
+    <Position X="31.5" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAACAAAAAAAAAAAABAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entity\Models\Common\ServiceType.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CarServiceApp.Domain.Entity.Models.Department" BaseTypeListCollapsed="true">
+    <Position X="22.75" Y="3.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAACAAAAAAAQACAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entity\Models\Common\Department.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CarServiceApp.Domain.Entity.Models.CarSeries" BaseTypeListCollapsed="true">
+    <Position X="17.25" Y="11" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACCAAAIAAAAAAAAAQQAAIQAAAAAgAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entity\Models\Common\CarSeries.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="CarGeneration" />
+      <Property Name="CarModel" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CarServiceApp.Domain.Entity.Models.CarColor" BaseTypeListCollapsed="true">
+    <Position X="19.25" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAACAAAgAAgAAAAAAAQAAAAAABAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entity\Models\Common\CarColor.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CarServiceApp.Domain.Entity.Models.CarBrand" BaseTypeListCollapsed="true">
+    <Position X="21" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACCAAAAAAAAAAAAAAAAAQAAAAAgAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entity\Models\Common\CarBrand.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CarServiceApp.Domain.Entity.Models.CarModel" BaseTypeListCollapsed="true">
+    <Position X="20" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAIAQAAAAAAAAAAAAQAAAAQAAAAAAgAAAAQAAA=</HashCode>
+      <FileName>Entity\Models\Common\CarModel.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="CarBrand" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CarServiceApp.Domain.Entity.Models.Provider" BaseTypeListCollapsed="true">
+    <Position X="34.25" Y="7.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAACAAAAAAAAAAAAQAAAAAAAIDAAAAICAAAAA=</HashCode>
+      <FileName>Entity\Models\Common\Provider.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CarServiceApp.Domain.Entity.Models.Service" BaseTypeListCollapsed="true">
+    <Position X="34.25" Y="4.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAKAAgIAAAAAAAAAAAAAhRAAAAAAAAgAAEAAAAAAAA=</HashCode>
+      <FileName>Entity\Models\Common\Service.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="ServiceType" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CarServiceApp.Domain.Entity.Models.Post" BaseTypeListCollapsed="true">
+    <Position X="23.75" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAKAAAAAAAAAAAAAAAAAAQACAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entity\Models\Common\Post.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CarServiceApp.Domain.Entity.Models.Car">
+    <Position X="19.25" Y="11" Width="1.75" />
+    <AssociationLine Name="CarColor" Type="CarServiceApp.Domain.Entity.Models.CarColor">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-0.959" Y="0.143" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <AssociationLine Name="CarModification" Type="CarServiceApp.Domain.Entity.Models.CarModification" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="19.25" Y="13.5" />
+        <Point X="18.125" Y="13.5" />
+        <Point X="18.125" Y="13.75" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAACIAAAAABAAAAAAAgCAACEgAAIEAAAgAAAAAEAAA=</HashCode>
+      <FileName>Entity\Models\Common\Car.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="CarColor" />
+      <Property Name="CarModification" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="CarServiceApp.Domain.Entity.Models.AcceptanceCustomSpart">
+    <Position X="34.25" Y="14" Width="2" />
+    <TypeIdentifier>
+      <HashCode>BAACABAAAAAAAAAgAEAAAAAAAABAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entity\Models\AcceptanceCustomSpart.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="AcceptDocument" />
+      <Property Name="SparePartMaterial" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="CarServiceApp.Domain.Entity.Models.AcceptanceDocument">
+    <Position X="31.5" Y="12" Width="2" />
+    <AssociationLine Name="Employee" Type="CarServiceApp.Domain.Entity.Models.Employee">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.034" Y="0.199" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAACAAAAAAEgIAAAAAACABAAAAAAAAAAAAAAAQ=</HashCode>
+      <FileName>Entity\Models\AcceptanceDocument.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Client" />
+      <Property Name="Employee" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="CarServiceApp.Domain.Entity.Models.AcceptanceInvoice">
+    <Position X="29.5" Y="9.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAAAIQAAAAAgAEAAAAAAAACAAAAAAAAAQgAAAQA=</HashCode>
+      <FileName>Entity\Models\AcceptanceInvoice.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="SparePartMaterial" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="CarServiceApp.Domain.Entity.Models.CarGeneration" BaseTypeListCollapsed="true">
+    <Position X="17.25" Y="9.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAEIAQAAAAAAAAAAAIQAAAAAgAAAAAAAIAAAAAA=</HashCode>
+      <FileName>Entity\Models\Common\CarGeneration.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CarServiceApp.Domain.Entity.Models.Client">
+    <Position X="28.5" Y="12.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAACQAAAIAAgAAAAAgAUAAAAAgCAAAAIAAAAAA=</HashCode>
+      <FileName>Entity\Models\Client.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CarServiceApp.Domain.Entity.Models.ContractToEmployee">
+    <Position X="29.5" Y="6.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEAAAAAAAACAACAIIAEQAAAAAAAAA=</HashCode>
+      <FileName>Entity\Models\ContractToEmployee.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Employee" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="CarServiceApp.Domain.Entity.Models.Employee">
+    <Position X="26.5" Y="3.5" Width="2" />
+    <AssociationLine Name="Department" Type="CarServiceApp.Domain.Entity.Models.Department" ManuallyRouted="true" FixedFromPoint="true">
+      <Path>
+        <Point X="26.5" Y="4.125" />
+        <Point X="24.75" Y="4.125" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="Post" Type="CarServiceApp.Domain.Entity.Models.Post" FixedFromPoint="true">
+      <Path>
+        <Point X="26.5" Y="5.875" />
+        <Point X="25.25" Y="5.875" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAEggADAAAgIEEgEARAggAGAgAAAAAAIAAYCAAAIA=</HashCode>
+      <FileName>Entity\Models\Employee.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Department" />
+      <Property Name="Post" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="CarServiceApp.Domain.Entity.Models.ExecutingService">
+    <Position X="23.25" Y="7.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>FAAgADAAAQAABAAEgAAAAAAACAAAQAACBAAAQAAAAAA=</HashCode>
+      <FileName>Entity\Models\ExecutingService.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="OrderService" />
+      <Property Name="Employee" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="CarServiceApp.Domain.Entity.Models.Invoice">
+    <Position X="31.5" Y="8.75" Width="1.75" />
+    <AssociationLine Name="Employee" Type="CarServiceApp.Domain.Entity.Models.Employee" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="31.5" Y="8.907" />
+        <Point X="28.957" Y="8.907" />
+        <Point X="28.957" Y="8.25" />
+        <Point X="28.5" Y="8.25" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAEAAAEBACAAAAACAAAAAAAAAAAAgAAAAA=</HashCode>
+      <FileName>Entity\Models\Invoice.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Provider" />
+      <Property Name="Employee" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="CarServiceApp.Domain.Entity.Models.OrderService">
+    <Position X="21.5" Y="11" Width="1.75" />
+    <AssociationLine Name="Client" Type="CarServiceApp.Domain.Entity.Models.Client" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="23.25" Y="13" />
+        <Point X="23.724" Y="13" />
+        <Point X="23.724" Y="13.062" />
+        <Point X="23.997" Y="13.062" Type="JumpStart" />
+        <Point X="24.164" Y="13.062" Type="JumpEnd" />
+        <Point X="27.292" Y="13.062" Type="JumpStart" />
+        <Point X="27.458" Y="13.062" Type="JumpEnd" />
+        <Point X="28.5" Y="13.062" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>EgAAIAAJIQQgBAAAoAAgAggAAAAQCBAAAAgAYQAAAAQ=</HashCode>
+      <FileName>Entity\Models\OrderService.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Client" />
+      <Property Name="TypeOfPayment" />
+      <Property Name="Car" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="CarServiceApp.Domain.Entity.Models.PreRecord">
+    <Position X="32" Y="3" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAAAAAAIAEICAAQAAACAAAAAAAAQAAIAIEAAA=</HashCode>
+      <FileName>Entity\Models\PreRecord.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Employee" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="CarServiceApp.Domain.Entity.Models.PreRecordService">
+    <Position X="29.5" Y="4.25" Width="1.75" />
+    <AssociationLine Name="Service" Type="CarServiceApp.Domain.Entity.Models.Service" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="30.625" Y="5.93" />
+        <Point X="30.625" Y="6.18" />
+        <Point X="31.5" Y="6.18" />
+        <Point X="31.5" Y="6.188" />
+        <Point X="34.25" Y="6.188" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAACAAAAAAAAAFAAAAAIAACAAAQAAAAAAAAAIAAAA=</HashCode>
+      <FileName>Entity\Models\PreRecordService.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="PreRecord" />
+      <Property Name="Service" />
+      <Property Name="Employee" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="CarServiceApp.Domain.Entity.Models.RemarkToStateCar">
+    <Position X="24.5" Y="13.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>EAAAAACAAAAAAIAAAAAAAAAACAAAAAACABAAAABAAAA=</HashCode>
+      <FileName>Entity\Models\RemarkToStateCar.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="OrderService" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="CarServiceApp.Domain.Entity.Models.UsingCustomSpartMat">
+    <Position X="26.5" Y="14" Width="1.75" />
+    <AssociationLine Name="ExecutingService" Type="CarServiceApp.Domain.Entity.Models.ExecutingService" ManuallyRouted="true">
+      <Path>
+        <Point X="27.375" Y="14" />
+        <Point X="27.375" Y="11.08" />
+        <Point X="24.531" Y="11.08" />
+        <Point X="24.531" Y="10.469" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>FAAAACAAAAAAAAAAAUAAABAAAABAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entity\Models\UsingCustomSpartMat.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="AcceptanceCustomSpart" />
+      <Property Name="ExecutingService" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="CarServiceApp.Domain.Entity.Models.UsingPartMaterial">
+    <Position X="26.5" Y="9" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>EAAAACAAAAAAAAAEAECAABAACACAAAAEAAAAAAAAAAA=</HashCode>
+      <FileName>Entity\Models\UsingPartMaterial.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="ExecutingService" />
+      <Property Name="AcceptanceInvoice" />
+      <Property Name="Employee" />
+    </ShowAsAssociation>
+  </Class>
+  <Interface Name="CarServiceApp.Domain.Entity.Abstract.ICommonEntity&lt;TKey&gt;">
+    <Position X="17.75" Y="5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entity\Abstract\ICommonEntity.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="CarServiceApp.Domain.Entity.Abstract.ICommonEntityWithDictinary&lt;TKey&gt;">
+    <Position X="17.25" Y="6.75" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entity\Abstract\ICommonEntity.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

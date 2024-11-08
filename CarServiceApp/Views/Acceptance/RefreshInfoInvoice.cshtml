@@ -1,0 +1,25 @@
+﻿@model CarServiceApp.Domain.Model.InvoiceInformation
+@{
+    ViewBag.Title = "Фактура";
+}
+<div id="infoInvoice" style="text-align: center; background-color: #FFFFCC" onmouseover="showMenu()">
+    <strong>Акт сдачи-приемки №: </strong>
+    <input type="hidden" value='@Model.LotNumber' name="LotNumber" id="idLotNumb" />
+    @Html.DisplayFor(m => m.LotNumber)
+    от @Html.Raw(Model.DeliveryDate != null ? Model.DeliveryDate.Value.ToString("dd MMMM yyyy") : "")
+    <br>
+    <strong>Поставщик:</strong>
+    @Html.DisplayFor(m => m.ProviderName)
+    <br>
+    <strong>
+        Принял:
+    </strong>
+    @Html.DisplayFor(m => m.FullName)
+</div>
+<div id="menuInvoice" class="row" style="display: none; z-index: 10; position: absolute; display: none; left: 50%; margin-left: -240px">
+    <ul class="list-inline" style="text-align:center;">
+        <li><button onclick="DeleteInvoice()" class="btn btn-sm">Удалить акт</button> </li>
+        <li><button onclick="EditInvoice()" class="btn btn-sm">Изменить данные</button> </li>
+        <li><button onclick="ClearInvoice()" class="btn btn-sm">Убрать все материалы</button> </li>
+    </ul>
+</div>

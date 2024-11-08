@@ -1,0 +1,203 @@
+﻿@model CarServiceApp.Models.CarEditViewModel
+
+@{
+    ViewBag.Title = "Изменить данные о машине";
+    Layout = "_DefaultLayout";
+    var modelCarList = Model.ModelCarList ?? ViewBag.emptylist as SelectList;
+    var seriesCarList = Model.SeriesCarList ?? ViewBag.emptylist as SelectList;
+    var modifCarList = Model.CarModifications ?? ViewBag.emptylist as SelectList;
+    var issueYearList = Model.YearList ?? ViewBag.emptylist as SelectList;
+}
+
+<h4>Редактировать автомобиль VIN: @Model.VinNumber</h4>
+
+<form asp-action="Edit" asp-controller="Cars" method="post" id="formcar" class="form-horizontal" style="padding:0" data-ajax="true" data-ajax-begin="onBegin" data-ajax-complete="onComplete" data-ajax-success="onSuccess">
+    @Html.ValidationSummary()
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.VinNumber)
+
+    <div asp-validation-summary="All" class="text-danger"></div>
+    @* <div asp-validation-summary="ModelOnly" class="text-danger"></div> *@
+
+    <div class="mb-3 row">
+        <label asp-for="VinNumber" class="control-label col-sm-2"></label>
+        <div class="col-sm-10">
+            <input asp-for="VinNumber" class="form-control" />
+            <span asp-validation-for="VinNumber" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="mb-3 row">
+        <label asp-for="BrandId" class="control-label col-sm-2"></label>
+        <div class="col-sm-10">
+            <select asp-for="BrandId" asp-items="@Model.CarBrands" class="form-control"></select>
+            <span asp-validation-for="BrandId" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="mb-3 row">
+        <label asp-for="ModelId" class="control-label col-sm-2"></label>
+        <div class="col-sm-10">
+            <select asp-for="ModelId" asp-items="modelCarList" class="form-control"></select>
+            <span asp-validation-for="ModelId" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="mb-3 row">
+        <label asp-for="SeriesId" class="control-label col-sm-2"></label>
+        <div class="col-sm-10">
+            <select asp-for="SeriesId" asp-items="seriesCarList" class="form-control"></select>
+            <span asp-validation-for="SeriesId" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="mb-3 row">
+        <label asp-for="ModificationId" class="control-label col-sm-2"></label>
+        <div class="col-sm-10">
+            <select asp-for="ModificationId" asp-items="modifCarList" class="form-control"></select>
+            <span asp-validation-for="ModificationId" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="mb-3 row">
+        <label asp-for="IssueYear" class="control-label col-sm-2"></label>
+        <div class="col-sm-10">
+            <select asp-for="IssueYear" asp-items="issueYearList" class="form-control"></select>
+            <span asp-validation-for="IssueYear" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="mb-3 row">
+        <label asp-for="TransmissionType" class="control-label col-sm-2"></label>
+        <div class="col-sm-10">
+            <select asp-for="TransmissionType" asp-items="@ViewBag.Transmiss as SelectList" class="form-control"></select>
+            <span asp-validation-for="TransmissionType" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="mb-3 row">
+        <label asp-for="RegistrationNumber" class="control-label col-sm-2"></label>
+        <div class="col-sm-10">
+            <input asp-for="RegistrationNumber" class="form-control" />
+            <span asp-validation-for="RegistrationNumber" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="mb-3 row">
+        <label asp-for="ColorId" class="control-label col-sm-2"></label>
+        <div class="col-sm-10">
+            <select asp-for="ColorId" asp-items="@Model.BodyColorList" class="form-control"></select>
+            <span asp-validation-for="ColorId" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="mb-3 row">
+        <label asp-for="DataSheetCar" class="control-label col-sm-2"></label>
+        <div class="col-sm-10">
+            <input asp-for="DataSheetCar" class="form-control" />
+            <span asp-validation-for="DataSheetCar" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="mb-3 row">
+        <label asp-for="OwnerName" class="control-label col-sm-2"></label>
+        <div class="col-sm-10">
+            <input asp-for="OwnerName" class="form-control" />
+            <span asp-validation-for="OwnerName" class="text-danger"></span>
+        </div>
+    </div>
+
+
+    <div class="form-group">
+        <button type="submit" class="btn btn-outline-success">
+            <i class="fas fa-plus"></i> Изменить
+        </button>
+        <a asp-action="Search" class="btn btn-outline-secondary">
+            <i class="fas fa-times"></i> Отмена
+        </a>
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+        function onBegin() {
+            document.getElementById('loading').classList.remove('d-none');
+        }
+
+        function onComplete() {
+            document.getElementById('loading').classList.add('d-none');
+        }
+
+        function onSuccess(result) {
+            // Обработка успешного завершения запроса AJAX
+            attachToList(result);
+        }
+    </script>
+}
+
+
+@* <script src="~/Scripts/forViews/car-create.js"></script>
+@Scripts.Render("~/scripts/jquery.validate.js")
+@Scripts.Render("~/Scripts/jquery.validate.unobtrusive.js") *@
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+
+    function attachToList() {
+        $('#ddlist option').each(function () {
+            $(this).removeAttr('selected');
+        });
+        $("#ddlist").prepend($('<option value=' + $("#VinNumber").val() + '>' + $("#BrandId option:selected").text() + '(' + $("#RegistrationNumber").val() + ')' + '</option>'));
+        $("#ddlist :first").attr("selected", "selected");
+        $('#modal_close').click();
+    }
+    $().ready(function () {
+        //для маски vin кода
+        try {
+            $('#formcar input[name="VinNumber"]').mask("*****************");
+        } catch (e) { };
+        //для манипуляциями дроп даун листов
+        $('#formcar').on('change', '#BrandId, #ModelId, #SeriesId,#ModificationId', function () {
+            var selectedValue = $(this).val();
+            var nameSelectList = $(this).attr('name');
+            $.ajax(
+                {
+                    url: '/Cars/GetSelectList',
+                    data: { 'selectedValue': selectedValue, 'nameSelectList': nameSelectList },
+                    type: "POST",
+                    datatype: "json",
+                    success: function (result) {
+                        if (result != '') {
+                            switch (nameSelectList) { //замена соответствующего дроп даун листа
+                                case "BrandId":
+                                    {
+                                        $('#SeriesId,#ModificationId, #IssueYear').attr('disabled', 'disabled').empty();
+                                        $("#ModelId").html(result).removeAttr('disabled'); break;
+                                    }
+                                case "ModelId":
+                                    {
+                                        $('#ModificationId, #IssueYear').attr('disabled', 'disabled').empty();
+                                        $("#SeriesId").html(result).removeAttr('disabled'); break;
+                                    }
+                                case "SeriesId":
+                                    {
+                                        $('#IssueYear').attr('disabled', 'disabled').empty();
+                                        $("#ModificationId").html(result).removeAttr('disabled'); break;
+                                    }
+                                case "ModificationId":
+                                    {
+                                        $("#IssueYear").html(result).removeAttr('disabled'); break;
+                                    }
+                                default: return null;
+                            }
+                        }
+                    }
+                })
+        })
+    })
+
+    //for close modal window
+    function attachToList() {
+        $('#modal_close').click();
+    }
+</script>

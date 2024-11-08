@@ -1,0 +1,254 @@
+﻿@model CarServiceApp.Models.AcceptanceCustomParamsViewModel
+@{
+    ViewBag.Title = "Управление";
+    Layout = "_DefaultLayout";
+}
+<style>
+    .glyphicon {
+        cursor: pointer;
+    }
+
+    #menuInvoice button {
+        border-radius: 0px 0px 10px 10px !important;
+        width: 150px;
+        background-color: #82B98F;
+    }
+
+    #updTable, #resultSearch {
+        background-color: white;
+    }
+
+    #btn-report {
+    }
+
+    #findClientsControl {
+        display: none;
+        position: absolute;
+        z-index: 5;
+        width: 400px;
+        height: auto;
+        background: rgba(234,234,234, 0.9);
+        padding: 5px;
+        border-radius: 5px;
+        left: 50%;
+        top: 50%;
+        box-shadow: 0 0 5px 1px #53C2FA;
+    }
+
+        #findClientsControl table tr:hover {
+            cursor: pointer;
+        }
+</style>
+<div class="header-page">Прием материалов на склад</div>
+<div class="col-md-12 bs-callout bs-callout-info" style="padding-bottom:0">
+    <ul class="list-inline" style="text-align:justify">
+        <li style="font-size:16px"><a href="/acceptance/manage">от поставщиков</a></li>
+        <li style="font-size: 16px; cursor: pointer"><a style="text-decoration:underline">от клиентов</a></li>
+        <li style="float:right;padding-right:0"><button class="btn" onclick="showbar()" style="border: 1px solid rgb(196, 196, 196); width: 360px; border-radius: 10px;">Внести новый акт сдачи-приемки материалов</button></li>
+    </ul>
+    <div id="createInvoice" style="display:none">
+        <div class="row">
+            <div class="col-md-12 form-inline" style="padding-left:0">
+                <div class="col-md-3 control-label">
+                    Клиент
+                </div>
+                <div class="col-md-3 control-label">
+                    Принял в производство
+                </div>
+                <div class="col-md-2 control-label">
+                    Дата приема
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 form-inline">
+                <form id="Params">
+                    <div class="col-md-3 input-group">
+                        <span class="input-group-addon" onclick="addProvider(this)">
+                            <i class="fas fa-search"></i>
+                        </span>
+                        <select asp-for="ClientId" asp-items="@(new SelectList(Model.ListClients, "Value", "Text"))" class="form-control"></select>
+                    </div>
+                    <div class="col-md-3 input-group">
+                        <select asp-for="PersonnelNumber" asp-items="@(new SelectList(Model.ListEmployee, "Value", "Text"))" class="form-control"></select>
+                    </div>
+                    <div class="col-md-2 input-group">
+                        <div class="input-group date">
+                            <input asp-for="AcceptanceDate" class="form-control" readonly />
+                            <span class="input-group-addon">
+                                <i class="far fa-calendar"></i>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-md-1 input-group" style="float:right">
+                        <button class="btn btn-success" type="button" style="max-width:none;width:165px;" onclick="AddInvoice()">Оформить</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <hr style="margin:5px">
+    <div class="row">
+        <div class="col-md-6" id="row_find_part">
+            <div class="row"><div class="col-md-12">Найти материал, для добавления в акт сдачи-приемки</div></div>
+            <div class="row">
+                <div class="col-md-12">
+                    <form id="SearchParts" class="col-md-12 form-inline" style="padding:0" data-ajax="true" data-ajax-method="Post" data-ajax-mode="replace" data-ajax-update="#resultSearch" data-ajax-loading="#loading" data-ajax-loading-duration="100" action="/AcceptanceCustom/SearchParts">
+                        <div class="col-md-3 input-group">
+                            <input asp-for="PartId" class="form-control" placeholder="ID запчасти" />
+                        </div>
+                        <div class="col-md-6 input-group">
+                            <input asp-for="PartName" class="form-control" placeholder="Наименование запчасти" />
+                        </div>
+                        <div class="col-md-2 input-group">
+                            <button type="submit" class="btn " style="width: 125px; background-color: #AAAEB9; ">Найти</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6" id="row_find_invoice">
+            <div class="row"><div class="col-md-12">Поиск актов сдачи-приемки материалов</div></div>
+            <div class="row">
+                <div class="col-md-12">
+                    <form id="SearchInvoice" class="col-md-12 form-inline" style="padding:0" data-ajax="true" data-ajax-method="Post" data-ajax-mode="replace" data-ajax-update="#updTable" data-ajax-loading="#loading" data-ajax-loading-duration="100" action="/AcceptanceCustom/SearchInvoice">
+                        <div class="col-md-9 input-group">
+                            <input asp-for="AcceptanceId" class="form-control" style="max-width:none" placeholder="Введите № акта сдачи-приемки" />
+                        </div>
+                        <div class="col-md-1 input-group">
+                            <button type="submit" class="btn " style="width: 125px; background-color: #AAAEB9; ">Найти</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="popErorr" style="height: 50px; margin-top: 10px;background-color: #F2DEDE; border-radius: 10px; font-size: 16px; color: #A94442; display: none; text-align: center; padding-top: 10px"></div>
+    <div id="popSuccess" style="height: 50px; margin-top: 10px; background-color: #5EB986;color:white; border-radius: 10px; font-size: 16px; display: none; text-align: center; padding-top: 10px"></div>
+    <div class="row" style="padding:10px 0px 0px">
+        <div id="resultSearch" class="col-md-6" style="border-right: 1px solid #EEEEEE; border-top: 1px solid #EEEEEE; padding: 0px;">
+        </div>
+        <div id="updTable" class="col-md-6" style="border-top: 1px solid #EEEEEE; border-left: 1px solid #EEEEEE; padding: 0px;">
+        </div>
+    </div>
+</div>
+
+@*место для модального окна*@
+<div id="findClientsControl">
+    <div class="row">
+        <form id="SearchClients" class="col-md-12 form-inline" data-ajax="true" data-ajax-method="Post" data-ajax-mode="replace" data-ajax-update="#contents" action="/AcceptanceCustom/SearchClients">
+            <input type="text" name="id_client" placeholder="ID клиента" style="width:38%" class="form-control">
+            <input type="text" name="name_client" placeholder="ФИО клиента" style="width:50%" class="form-control">
+            <button type="submit" class="btn btn-default">
+                <i class="fas fa-search"></i>
+            </button>
+        </form>
+    </div>
+    <div class="row" id="contents">
+    </div>
+</div>
+
+@* @section Script{
+    @Scripts.Render("~/Scripts/moment-with-locales.min.js")
+    @Scripts.Render("~/Scripts/bootstrap-datetimepicker.min.js")
+    @Styles.Render("~/Content/bootstrap-datetimepicker.min.css")
+    @Scripts.Render("~/scripts/jquery.validate.js")
+    @Scripts.Render("~/Scripts/jquery.validate.unobtrusive.js")
+    @Scripts.Render("~/Scripts/jquery.maskedinput.js")
+} *@
+<script>
+        //показать контрол с поиском клиента
+    function addProvider(elem) {
+        var coord = $(elem).offset();
+        if ($('#findClientsControl').css('display') == "none")
+            $('#findClientsControl').css('top', coord.top + 35).css('left', coord.left).slideDown(300);
+        else
+            $('#findClientsControl').slideUp(300);
+    }
+    //добавление новго клиента в комбобокс
+    function addToSet(row) {
+        var name = $(row).children().eq(0).text();
+        var id = $(row).children().eq(1).text();
+        $("#ClientId").prepend($('<option selected="selected" value=' + id + '>' + name + '</option>'));
+        $("#findClientsControl").slideUp(500);
+    }
+
+    //функция для  отправки запроса на добавление  инвойс
+    function AddInvoice() {
+        if ($('#row_find_part').css('display') == 'none') {
+            $('i[onclick="extend()"]').click();
+        }
+        $.ajax(
+        {
+            url: '/AcceptanceCustom/AddInvoice',
+            data: $('#Params').serialize(),
+            type: "Post",
+            datatype: "json",
+            success: function (result) {
+                $('#updTable').html(result);
+            }
+        });
+    }
+    //для расширения таблицы инвойса
+    function extend() {
+        if ($('#resultSearch').css('display') != 'none') {
+            $('#resultSearch, #updTable, #row_find_part, #row_find_invoice').fadeOut(200);
+            setTimeout(function () {
+                $('#updTable table th:nth-child(3), #updTable table td:nth-child(3)').show();
+                $('#updTable, #row_find_invoice').attr('class', 'col-md-12');
+                $('#updTable, #row_find_invoice').fadeIn(200);
+            }, 200)
+            $('i[onclick="extend()"]').attr('class', 'glyphicon glyphicon-circle-arrow-right');
+        }
+        else {
+            $(' #updTable, #row_find_invoice').fadeOut(200);
+            setTimeout(function () {
+                $('#updTable table th:nth-child(3), #updTable table td:nth-child(3)').hide();
+                $('#updTable, #row_find_invoice').attr('class', 'col-md-6');
+                $('#resultSearch, #updTable, #row_find_part, #row_find_invoice').fadeIn(200);
+
+            }, 200)
+            $('i[onclick="extend()"]').attr('class', 'glyphicon glyphicon-circle-arrow-left');
+        }
+
+    }
+
+    //функция для  отправки запроса на добавление запчасти в инвойс
+    function AddPart(btn) {
+        $.ajax(
+        {
+            url: '/AcceptanceCustom/AddPart',
+            data: $(btn).parent().parent().find('input, select').add('#AcceptanceId').serialize(),////////
+            type: "Post",
+            datatype: "json",
+            success: function (result) {
+                if (result.indexOf('table') == -1) {
+                    $('#popErorr').html('Данная запчасть ID (' + result + ') уже есть в документе').slideDown(1000).delay(3000).slideUp(1000); return 0;
+                }
+                if (result != '') {
+                    $('#updTable').html(result);
+                    $('#popErorr').fadeOut(1000);
+                }
+            }
+        });
+    }
+
+    function showbar() {
+        if ($('#createInvoice').css('display') == 'none') {
+            $('#createInvoice').fadeIn(300);
+            $('button[onclick="showbar()"]').css('borderRadius', '10px').html('Оформление нового акта сдачи-приемки материалов');
+        }
+        else {
+            $("#findClientsControl").fadeOut(300);
+            $('#createInvoice').fadeOut(300);
+            $('button[onclick="showbar()"]').css('borderRadius', '0px').html('Оформить новый акт сдачи-приемки материалов');
+        }
+
+    }
+
+</script>
+@* <script type="text/javascript">
+    $(function () {
+        $('.date').datetimepicker({ language: 'ru', pickTime: false, format: 'YYYY-MM-DD' });
+    });
+</script> *@

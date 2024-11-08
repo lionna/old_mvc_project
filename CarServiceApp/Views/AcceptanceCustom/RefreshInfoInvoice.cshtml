@@ -1,0 +1,25 @@
+﻿@model CarServiceApp.Domain.Model.CustomInvoiceInfo
+@{
+    ViewBag.Title = "Обновление";
+}
+<div id="infoInvoice" style="text-align: center; background-color: #FFFFCC" onmouseover="showMenu()">
+    <strong>Акт сдачи-приемки №: </strong>
+    <input type="hidden" value='@Model.AcceptanceId' name="ID_doc" id="idAccept" />
+    @Html.DisplayFor(m => m.AcceptanceId)
+    от @Html.DisplayFor(m => m.Date)
+    <br>
+    <strong>Клиент:</strong>
+    @Html.DisplayFor(m => m.ClientName)
+    <br>
+    <strong>
+        Принял в работу:
+    </strong>
+    @Html.DisplayFor(m => m.EmployeeName)
+</div>
+<div id="menuInvoice" class="row" style="display: none; z-index: 10; position: absolute; display: none; left: 50%; margin-left: -240px">
+    <ul class="list-inline" style="text-align:center;">
+        <li><button onclick="DeleteInvoice()" class="btn btn-sm">Удалить акт</button> </li>
+        <li><button onclick="EditInvoice()" class="btn btn-sm">Изменить данные</button> </li>
+        <li><button onclick="ClearInvoice()" class="btn btn-sm">Убрать все материалы</button> </li>
+    </ul>
+</div>

@@ -1,0 +1,30 @@
+﻿@model CarServiceApp.Domain.Entity.Models.ServiceType
+
+@{
+    ViewBag.Title = "Редактирование типа";
+   Layout = "_DefaultLayout";
+}
+
+<div class="header-page">@ViewData["Title"]</div>
+
+<form asp-action="Edit" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <input type="hidden" asp-for="Id" />
+
+    <div class="form-group">
+        <label asp-for="Name" class="control-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <br>
+    <div class="form-group">
+        <button type="submit" class="btn btn-outline-primary">
+            <i class="fas fa-check"></i> Сохранить
+        </button>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="fas fa-times"></i> Отмена
+        </a>
+    </div>
+</form>

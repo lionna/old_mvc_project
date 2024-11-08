@@ -1,0 +1,33 @@
+﻿@using CarServiceApp.Domain.Common
+@using CarServiceApp.Helper
+@using CarServiceApp.Domain.Entity.Models
+@using CarServiceApp.Domain.Extension
+@using CarServiceApp.Domain.Repository
+@using CarServiceApp.Domain.Service
+@model List<CarServiceApp.Domain.Entity.Models.PreRecordService>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">Наименование услуги</th>
+            <th scope="col">Код работы (ID)</th>
+            <th scope="col">Время</th>
+            <th scope="col">Дата старта</th>
+            <th scope="col">Исполнитель</th>
+            <th scope="col">Действие</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var i in Model.OrderByDescending(f => f.DateReservation))
+        {
+            <tr class="@(i.DateReservation != null ? "reserv-row" : "")">
+                <td>@i.Service.Name</td>
+                <td>@i.ServiceId @Html.Hidden("ServiceId", i.ServiceId)</td>
+                <td>@i.Service.RateTime</td>
+                <td>@(i.DateReservation != null ? i.DateReservation?.GetDateTimeFormats()[7] : "")</td>
+                <td>@(i.Employee == null ? "" : i.Employee.FullName.ConvertToShortName())</td>
+                <td>@(i.DateReservation == null ? "<i class='glyphicon glyphicon-remove'></i>" : "")</td>
+            </tr>
+        }
+    </tbody>
+</table>

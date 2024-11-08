@@ -1,0 +1,169 @@
+﻿@model CarServiceApp.Models.AcceptedCustomPartsViewModel
+@{
+    ViewBag.Title = "Измненеие";
+}
+<style>
+    input {
+        width: 50px;
+    }
+
+    .glyphicon-remove-circle:hover {
+        color: red;
+    }
+
+    #infoInvoice:hover {
+        cursor: pointer;
+    }
+
+    #btn-report {
+        width: 100%;
+        border-radius: 0;
+        background: linear-gradient(to top, #3CB488, #53CB9F, #65DDB1);
+        color: white;
+        text-shadow: inset 1px 1px 2px black;
+    }
+
+        #btn-report:active {
+            background: #53CB9F;
+            box-shadow: inset 1px 2px 2px grey;
+        }
+
+        #btn-report:hover {
+            background: linear-gradient(to top, #44BC90, #2DA579, #44BC90);
+        }
+</style>
+<div style="overflow-y: scroll; height: 475px;">
+    <i class="fas fa-arrow-circle-left" onclick="extend()" style="position: absolute; float: left; margin-top: 250px; margin-left: -15px; font-size: 30px;opacity:0.3; color: orange; "></i>
+    <table class="table" style="border-top: 2px none white;">
+        <tr style="background-color: #82B98F">
+            <th>Наименование</th>
+            <th>ID</th>
+            <th style="display:none">Производитель</th>
+            <th>Ед.изм.</th>
+            <th>Кол-во</th>
+            <th>Состояние</th>
+            <th></th>
+        </tr>
+        @foreach (var i in Model.AcceptencedParts)
+        {
+            <tr>
+                <td>@i.Name</td>
+                <td>@i.PartId</td>
+                <td style="display:none">@i.Manufacture</td>
+                <td>@i.Unit</td>
+                <td>@i.Number</td>
+                <td>@i.StateSPart</td>
+                <td><i class="fas fa-times-circle" onclick="del('@i.PartId')" /></td>
+            </tr>
+        }
+        <tr>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th>Итого:</th>
+            <th>@Model.AcceptencedParts.Count</th>
+            <th></th>
+        </tr>
+    </table>
+</div>
+<div id="wrap-btn-report"><button id="btn-report" class="btn" onclick="window.location.href='@Url.Action("GetReportAcceptanceCustomPartsPdf", "Reports", new { ID_accept=@Model.CustomInvoiceInfo.AcceptanceId})'">Печать акт сдачи-приемки</button></div>
+<hr style="margin:0">
+<div id="invoice">
+    <div id="infoInvoice" style="text-align: center; background-color: #FFFFCC" onmouseover="showMenu()">
+        <strong>Акт сдачи-приемки №: </strong>
+        <input type="hidden" value='@Model.CustomInvoiceInfo.AcceptanceId' name="DocumentId" id="AcceptanceId" />
+        @Html.DisplayFor(m => m.CustomInvoiceInfo.AcceptanceId)
+        от @Html.Raw(Model.CustomInvoiceInfo.Date != null ? Model.CustomInvoiceInfo.Date.Value.ToString("dd MMMM yyyy") : "")
+        <br>
+        <strong>Клиент:</strong>
+        @Html.DisplayFor(m => m.CustomInvoiceInfo.ClientName)
+        <br>
+        <strong>
+            Принял в работу:
+        </strong>
+        @Html.DisplayFor(m => m.CustomInvoiceInfo.EmployeeName)
+    </div>
+    <div id="menuInvoice" class="row" style="display: none; z-index: 10; position: absolute; display: none; left: 50%; margin-left: -240px">
+        <ul class="list-inline" style="text-align:center;">
+            <li><button onclick="DeleteInvoice()" class="btn btn-sm" style="border-radius:0px 0px 10px 10px">Удалить акт</button> </li>
+            <li><button onclick="EditInvoice()" class="btn btn-sm" style="border-radius:0px 0px 10px 10px">Изменить данные</button> </li>
+            <li><button onclick="ClearInvoice()" class="btn btn-sm" style="border-radius:0px 0px 10px 10px">Убрать все материалы</button> </li>
+        </ul>
+    </div>
+</div>
+<script>
+
+    function showMenu() {
+        if ($('#menuInvoice').css('display') == 'none') {
+            $('#menuInvoice').slideDown(400);
+            setTimeout(function () {
+                $('#menuInvoice').slideUp(400);
+            }, 5000);
+        }
+    }
+    function showFindSearch() {
+        if ($('#row_find_part').css('display') == 'none')
+            $('i[onclick="extend()"]').click();
+    }
+
+    function DeleteInvoice() {
+        $.ajax(
+            {
+                url: '/AcceptanceCustom/DeleteInvoice',
+                data: 'acceptanceId=' + $('#acceptanceId').val(),
+                type: "Post",
+                datatype: "json"
+            })
+    }
+
+    function EditInvoice() {
+        $.ajax(
+            {
+                url: '/AcceptanceCustom/EditInvoice',
+                data: 'acceptanceId=' + $('#acceptanceId').val(),
+                type: "Post",
+                datatype: "json",
+                success: function (result) {
+                    if (result != '')
+                        $('#invoice').html(result);
+                }
+            })
+    }
+    function ClearInvoice() {
+        $.ajax(
+            {
+                url: '/AcceptanceCustom/ClearInvoice',
+                data: 'acceptanceId=' + $('#acceptanceId').val(),
+                type: "Get",
+                datatype: "json",
+                success: function (result) {
+                    if (result.indexOf('table') != -1)
+                        $('#updTable').html(result);
+                }
+            })
+    }
+    //функция для  удаления запчасти из акта приемки
+    function del(partId) {
+        $.ajax(
+            {
+                url: '/AcceptanceCustom/Delete',
+                data: 'partId=' + partId + '&' + 'acceptanceId=' + $('#acceptanceId').val(),
+                type: "Post",
+                datatype: "json",
+                success: function (result) {
+                    if (result.indexOf('table') != -1)
+                        $('#updTable').html(result);
+                }
+            })
+    }
+
+</script>
+<script type="text/javascript">
+        $(document).ready(function () {
+            if ($('#updTable').attr('class') == 'col-md-12')
+                $('#updTable table th:nth-child(3), #updTable table td:nth-child(3)').show();
+            else
+                $('#updTable table th:nth-child(3), #updTable table td:nth-child(3)').hide();
+ 
+        })
+</script>
