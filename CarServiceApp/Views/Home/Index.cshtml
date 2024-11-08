@@ -1,0 +1,432 @@
+﻿@{
+	ViewData["Title"] = "Информация о проекте";
+	Layout = "_DefaultLayout";
+}
+<style class="cp-pen-styles">
+
+	body {
+		background-color: #f5f5f7;
+	}
+
+	.text-information {
+		text-align: left;
+	}
+
+	img {
+		/* height: 50vh; */
+	}
+
+	.carousel-item {
+		/* background-color: #1d1d1f; */
+		background: -moz-linear-gradient(48deg, rgba(42,46,54,1) 0%, rgba(97,107,125,1) 100%);
+		background: -webkit-gradient(linear, left bottom, right top, color-stop(0%, rgba(42,46,54,1)), color-stop(100%, rgba(97,107,125,1)));
+		background: -webkit-linear-gradient(48deg, rgba(42,46,54,1) 0%, rgba(97,107,125,1) 100%);
+		background: linear-gradient(42deg, rgba(42,46,54,1) 0%, rgba(97,107,125,1) 100%);
+	}
+
+	.one {
+		/* background-image: url("../img/dots.png"); */
+		/*   background-repeat: no-repeat;
+					background-position: 0% 50%; */
+	}
+
+	.two {
+		background-image: url("../img/gears.png");
+		background-repeat: no-repeat;
+		background-position: 0% 50%;
+	}
+
+	.three {
+		/* background-image: url("../img/splat.png"); */
+		/*   background-repeat: no-repeat;
+					background-position: 0% 5%; */
+	}
+
+	.one {
+		/* background-position: 50% 130%; */
+	}
+
+	.two {
+		/* background-position: 50% 200%; */
+	}
+
+	.three {
+		/* background-position: 50% 300%; */
+	}
+
+
+
+	/* USER (FORM WRAPPER) */
+	.user {
+		position: relative;
+		z-index: 0;
+		float: none;
+		margin: 0 auto;
+		padding-top: 40px;
+		/*  width: 100%;
+					height: 100vh; */
+		overflow: auto;
+		background: -moz-linear-gradient(48deg, rgba(42,46,54,1) 0%, rgba(97,107,125,1) 100%);
+		background: -webkit-gradient(linear, left bottom, right top, color-stop(0%, rgba(42,46,54,1)), color-stop(100%, rgba(97,107,125,1)));
+		background: -webkit-linear-gradient(48deg, rgba(42,46,54,1) 0%, rgba(97,107,125,1) 100%);
+		background: linear-gradient(42deg, rgba(42,46,54,1) 0%, rgba(97,107,125,1) 100%);
+		-webkit-box-shadow: none;
+		-moz-box-shadow: none;
+		box-shadow: none;
+		border-radius: 0;
+		border-top: 1px solid #4FC1B7;
+	}
+
+		.user .actions {
+			margin: 1em 0 0;
+			padding-right: 10px;
+			width: 100%;
+			display: block;
+			text-align: center;
+		}
+
+			.user .actions a {
+				margin: 1em 0;
+				width: 90px;
+				display: inline-block;
+				padding: .2em 0em;
+				background-color: #5C6576;
+				border: none;
+				color: #999;
+				cursor: pointer;
+				text-align: center;
+				font-size: .8em;
+				border-radius: 30px 0 0 30px;
+				-webkit-box-shadow: 0px 0px 27px -9px rgba(0,0,0,0.75);
+				-moz-box-shadow: 0px 0px 27px -9px rgba(0,0,0,0.75);
+				box-shadow: 0px 0px 27px -9px rgba(0,0,0,0.75);
+			}
+
+				.user .actions a:last-child {
+					color: #fff;
+					border-radius: 0 30px 30px 0;
+					background-color: #28A55F;
+					background: -moz-linear-gradient(270deg, rgba(105,221,201,1) 0%, rgba(78,193,182,1) 100%);
+					background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgba(105,221,201,1)), color-stop(100%, rgba(78,193,182,1)));
+					background: -webkit-linear-gradient(270deg, rgba(105,221,201,1) 0%, rgba(78,193,182,1) 100%);
+					background: linear-gradient(180deg, rgba(105,221,201,1) 0%, rgba(78,193,182,1) 100%);
+				}
+
+
+
+	/* CONTENT */
+	.content {
+		position: fixed;
+		z-index: 1;
+		float: none;
+		margin: 0 auto;
+		width: 100%;
+		height: 40px;
+		background: -moz-linear-gradient(90deg, rgba(62,181,169,1) 0%, rgba(111,226,204,1) 100%);
+		background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgba(111,226,204,1)), color-stop(100%, rgba(62,181,169,1)));
+		background: -webkit-linear-gradient(90deg, rgba(62,181,169,1) 0%, rgba(111,226,204,1) 100%);
+		background: linear-gradient(0deg, rgba(62,181,169,1) 0%, rgba(111,226,204,1) 100%);
+		-webkit-box-shadow: none;
+		-moz-box-shadow: none;
+		box-shadow: none;
+		overflow: hidden;
+	}
+
+
+	/* FORM ELEMENTS */
+	input {
+		font: 16px/26px "Raleway", sans-serif;
+	}
+
+
+	.form-wrap {
+		width: 100%;
+		margin: 2em auto 0;
+	}
+
+	.login-tab {
+		color: #ccc;
+		padding-bottom: 10px;
+		/*   padding-left: 40px; */
+		border-bottom: 1px solid #5FD1C1;
+		text-align: center;
+	}
+
+	.form-wrap a {
+		color: #ccc;
+		padding-bottom: 4px;
+		border-bottom: 1px solid #5FD1C1;
+	}
+
+		.form-wrap a:hover {
+			color: #fff;
+		}
+
+	.form-wrap .tabs {
+		overflow: hidden;
+		padding-left: 40px;
+		padding-right: 40px;
+	}
+
+		.form-wrap .tabs * {
+			-webkit-transition: .25s ease-in-out;
+			-moz-transition: .25s ease-in-out;
+			-o-transition: .25s ease-in-out;
+			transition: .25s ease-in-out;
+		}
+
+
+		.form-wrap .tabs h3 a {
+			padding: 0.5em 0;
+			text-align: center;
+			font-weight: 400;
+			display: block;
+			color: #999;
+			border: 0;
+		}
+
+	.form-wrap form .input {
+		margin: 0 0 .8em 0;
+		padding: .8em 2em 10px 0;
+		width: 100%;
+		display: inline-block;
+		background: transparent;
+		border: 0;
+		border-bottom: 1px solid #5A6374;
+		outline: 0;
+		box-sizing: border-box;
+		-moz-box-sizing: border-box;
+		color: inherit;
+		font-family: inherit;
+		color: #fff;
+	}
+
+	.form-wrap form .button {
+		margin: 2em 0;
+		padding: .3em 4em;
+		width: auto;
+		display: block;
+		background-color: #28A55F;
+		border: none;
+		color: #fff;
+		cursor: pointer;
+		/* font-size: .8em;*/
+		border-radius: 30px;
+		background: -moz-linear-gradient(270deg, rgba(105,221,201,1) 0%, rgba(78,193,182,1) 100%);
+		background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgba(105,221,201,1)), color-stop(100%, rgba(78,193,182,1)));
+		background: -webkit-linear-gradient(270deg, rgba(105,221,201,1) 0%, rgba(78,193,182,1) 100%);
+		background: linear-gradient(180deg, rgba(105,221,201,1) 0%, rgba(78,193,182,1) 100%);
+		-webkit-box-shadow: 0px 0px 37px -9px rgba(0,0,0,0.75);
+		-moz-box-shadow: 0px 0px 37px -9px rgba(0,0,0,0.75);
+		box-shadow: 0px 0px 37px -9px rgba(0,0,0,0.75);
+	}
+
+
+
+	.form-wrap form label[for] {
+		position: relative;
+		padding-left: 20px;
+		cursor: pointer;
+	}
+
+		.form-wrap form label[for]:before {
+			position: absolute;
+			width: 17px;
+			height: 17px;
+			top: 0px;
+			left: -14px;
+			content: '';
+			border: 1px solid #5A6374;
+		}
+
+		.form-wrap form label[for]:after {
+			position: absolute;
+			top: 1px;
+			left: -10px;
+			width: 15px;
+			height: 8px;
+			-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+			filter: alpha(opacity=0);
+			opacity: 0;
+			content: '';
+			background-color: transparent;
+			border: solid #67DAC6;
+			border-width: 0 0 3px 3px;
+			-webkit-transform: rotate(-45deg);
+			-moz-transform: rotate(-45deg);
+			-o-transform: rotate(-45deg);
+			transform: rotate(-45deg);
+		}
+
+
+
+	/* USER (FORM WRAPPER) */
+	.user {
+		padding-top: 0;
+		/* float: left; */
+		/*   width: 50%;
+					height: 50%; */
+		-webkit-box-shadow: -3px 0px 45px -6px rgba(56,75,99,0.61);
+		-moz-box-shadow: -3px 0px 45px -6px rgba(56,75,99,0.61);
+		box-shadow: -3px 0px 45px -6px rgba(56,75,99,0.61);
+		border-radius: 10px 10px 10px 10px;
+		border: 0;
+	}
+
+		.user .actions {
+			margin: 0;
+			text-align: right;
+		}
+	/* FORM ELEMENTS */
+	.form-wrap {
+		margin: 3em auto 0;
+	}
+
+		.form-wrap .tabs-content {
+			padding: 1.5em 2.5em;
+		}
+
+	.tabs-content p {
+		position: relative;
+	}
+
+
+
+
+	/* CSS */
+
+
+	.validation-summary-errors {
+		color: red;
+		text-align: left;
+	}
+
+	.field-validation-error {
+		color: #e74c3c;
+	}
+
+	/*.field-validation-valid {
+								display: none;
+							}*/
+
+	/*   .input-validation-error {
+										border: 1px solid #e74c3c;
+										background-color: #fee;
+									}*/
+
+	.validation-summary-errors {
+		font-weight: bold;
+		color: #e74c3c;
+	}
+
+	/*.validation-summary-valid {
+								display: none;
+							}*/
+
+	.field-validation-error {
+		color: #e74c3c;
+	}
+
+	.field-validation-valid {
+		display: none;
+	}
+
+	/*      .input-validation-error {
+										border: 1px solid #e74c3c;
+										background-color: #fee;
+
+									}*/
+
+	.validation-summary-errors {
+		font-weight: bold;
+		color: #e74c3c;
+	}
+
+	.validation-summary-valid {
+		display: none;
+	}
+
+	.field-validation-error {
+		color: #6699CC;
+		font-weight: bold;
+		text-decoration: underline;
+	}
+
+	.input-validation-error {
+		border-bottom: 3px solid #e74c3c !important;
+	}
+
+	ul {
+		list-style-type: none;
+	}
+
+	.text-information {
+		text-align: left;
+	}
+
+</style>
+
+<br />
+<div id="carouselExampleCaptions" class="carousel slide">
+	<div class="carousel-indicators">
+		<button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+		<button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1" aria-label="Slide 2"></button>
+	</div>
+	<div class="carousel-inner">
+		<div class="carousel-item active">
+			<div class="two" style="background-image: url('../img/ray.png'); background-position: 0% 50%; background-size: cover;">
+				<img src="../img/dots.png" class="d-block w-100 one rounded" alt="...">
+				<div class="carousel-caption d-none d-md-block">
+					<h5>Разработчик проекта: Tatsiana</h5>
+
+					<p class="text-information"><i class="fas fa-map"></i> Беларусь</p>
+					<p class="text-information"><i class="fas fa-map-marked-alt"></i> Минск</p>
+					<p class="text-information"><i class="fas fa-phone-square-alt"></i> +375 29 123 45 67</p>
+					<p class="text-information"><i class="fas fa-envelope"></i> test@test.test</p>
+				</div>
+			</div>
+		</div>
+		<div class="carousel-item">
+			<div class="two" style="background-image: url('../img/gears.png'); background-position: 0% 50%; background-size: cover;">
+				<img src="../img/dots.png" class="d-block w-100 one rounded" alt="...">
+				<div class="carousel-caption d-none d-md-block">
+					<h5>Используемые технологии</h5>
+					<p class="text-information"><i class="fas fa-star-of-life"></i><b> Backend: </b> .Net 8</p>
+					<p class="text-information"><i class="fas fa-star-of-life"></i><b> ORM: </b>Entity Framework</p>
+					<p class="text-information"><i class="fas fa-star-of-life"></i><b> База данных: </b>MS SQL Server 2022</p>
+					<p class="text-information"><i class="fas fa-star-of-life"></i><b> Fronted: </b>bootstrap 5, HTML, CSS, JavaScript, fontawesome</p>
+				</div>
+			</div>
+		</div>
+
+	</div>
+	<button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
+		<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+		<span class="visually-hidden">Previous</span>
+	</button>
+	<button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next">
+		<span class="carousel-control-next-icon" aria-hidden="true"></span>
+		<span class="visually-hidden">Next</span>
+	</button>
+</div>
+
+
+<div class="container py-5">
+	<h1 class="mb-4">О Компании</h1>
+	<p>Добро пожаловать в автосервис "iCarService" - ваш партнер по обслуживанию и ремонту автомобилей высокого качества!</p>
+	<p>Мы - команда профессионалов, специализирующихся на обслуживании и ремонте автомобилей любых марок и моделей. С самого основания нашей компании мы стремимся предоставить нашим клиентам высококлассное обслуживание, опираясь на опыт и профессионализм наших специалистов.</p>
+	<p>Наша миссия - обеспечить нашим клиентам надежность, качество и удовлетворение от нашей работы. Мы делаем все возможное, чтобы каждый наш клиент чувствовал себя уверенно на дорогах, зная, что его автомобиль находится под надежной защитой наших специалистов.</p>
+
+	<h2 class="mt-5">Ключевые принципы работы "iCarService":</h2>
+	<ul>
+		<li><strong>Профессионализм:</strong> Наши сотрудники - опытные специалисты, обладающие высокими навыками и знаниями в области обслуживания и ремонта автомобилей.</li>
+		<li><strong>Индивидуальный подход:</strong> Мы понимаем, что каждый автомобиль и каждый клиент уникален, поэтому мы предоставляем индивидуальный подход к каждому заказу.</li>
+		<li><strong>Качество:</strong> Мы используем только высококачественные материалы и запчасти, чтобы гарантировать долговечность и надежность нашей работы.</li>
+		<li><strong>Прозрачность:</strong> Мы ценим доверие наших клиентов, поэтому предоставляем полную прозрачность в нашей работе, объясняя каждый этап обслуживания или ремонта.</li>
+	</ul>
+
+	<p>Надеемся, что выбрав "iCarService", вы останетесь довольны качеством наших услуг и станете нашим постоянным клиентом. Спасибо за ваше доверие и выбор в пользу нашей компании!</p>
+</div>
+
+
+

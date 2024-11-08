@@ -1,0 +1,104 @@
+﻿@model CarServiceApp.Models.ServiceViewModel
+
+@using (Html.BeginForm("AddService", "Order", FormMethod.Post, new { @id = "formAddService" }))
+{
+    @Html.ValidationSummary()
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>Изменить параметры работы (услуги)</h4>
+        <hr />
+        @Html.ValidationSummary(true)
+        @Html.Hidden("ServiceId", @Model.Service.Id)
+        @Html.HiddenFor(model => model.OrderId)
+        <div class="form-group">
+          @*  @Html.Label("ID услуги", new { @class = "col-md-4 control-label ", @style = "padding-top:0px" })
+           *@
+            <label class="col-md-4 control-label" style="padding-top:0px">ID услуги</label>
+
+           <div class="col-md-8">
+                @Html.DisplayFor(model => model.Service.Id, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+        </div>
+        <div class="form-group">
+           @* @Html.Label("Наименование услуги", new { @class = "control-label col-md-4", @style = "padding-top:0px" }) *@
+            <label class="control-label col-md-4" style="padding-top:0px">Наименование услуги</label>
+           <div class="col-md-8">
+                @Html.DisplayFor(model => model.Service.Name, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+        </div>
+        <div class="form-group">
+           @*  @Html.Label("Норма времени", new { @class = "control-label col-md-4", @style = "padding-top:0px" })
+           *@
+            <label class="control-label col-md-4" style="padding-top:0px">Норма времени</label>
+           <div class="col-md-8">
+                @Html.DisplayFor(model => model.Service.RateTime, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+        </div>
+        <div class="form-group">
+          @*  @Html.Label("НДС", new { @class = "control-label col-md-4"}) *@
+            <label class="control-label col-md-4">НДС</label>
+            <div class="col-md-2" style="padding-left:0px">
+                @Html.EditorFor(model => model.TaxAddedValue, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.TaxAddedValue)
+            </div>
+        </div>
+        <div class="form-group">
+           @*  @Html.Label("Затрачено времени", new { @class = "control-label col-md-4"}) *@
+            <label class="control-label col-md-4">Затрачено времени</label>
+            <div class="col-md-2" style="padding-left:0px">
+                @Html.EditorFor(model => model.TakeTime, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.TakeTime)
+            </div>
+        </div>
+
+        <div class="form-group">
+          @*   @Html.Label("Дата и время завершения", new { @class = "control-label col-md-4" }) *@
+            <label class="control-label col-md-4">Дата и время завершения</label>
+            <div class="input-group date col-md-5" style=" padding-left:0px" id="dateb">
+                @Html.TextBoxFor(model => model.DateCompleting, "{0:yyyy-MM-dd hh:mm}", new {@readonly = "readonly", @class = "form-control" })
+                <span class="input-group-addon">
+                    <i class="far fa-calendar"></i>
+                </span>
+            </div>
+        </div>
+
+        <div class="form-group">
+          @*   @Html.Label("Сотрудник", new { @class = "control-label col-md-4" }) *@
+            <label class="control-label col-md-4">Сотрудник</label>
+            <div class="col-md-8" style="padding-left:0px">
+                <div class=" input-group ">
+                    @if(Model.IsEnableChange)
+                    {
+                        @Html.DropDownListFor(model => model.PersonnelNumber, Model.ListEmployees, new { @class = "form-control" })
+                    }
+                    else
+                    {
+                        @Html.DropDownListFor(model => model.PersonnelNumber, Model.ListEmployees, new { @class = "form-control", disabled = "disabled" })
+                        @Html.HiddenFor(model => model.PersonnelNumber)
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+           @*  @Html.Label("Примечание", new { @class = "control-label col-md-4" }) *@
+            <label class="control-label col-md-4">Примечание</label>
+            <div class="col-md-8" style="padding-left:0px">
+                <div class="input-group">
+                    @Html.TextAreaFor(model => model.Notes, new { @rows = 2, @cols = 30, @class = "form-control" })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12" id="for-button_apply">
+                <button type="button"  class="btn btn-success" onclick="addService()">Сохранить</button>
+            </div>
+        </div>
+    </div>
+}
+<script>
+        // $(function () {
+        //     $('#dateb').datetimepicker({ language: 'ru', format: 'YYYY-MM-DD HH:mm' });
+        //     $('#TakeTime').attr('value', '@Model.Service.RateTime');
+        // });
+</script>

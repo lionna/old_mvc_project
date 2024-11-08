@@ -1,0 +1,136 @@
+﻿@model CarServiceApp.Models.SearchOrdersViewModel
+@{
+    ViewBag.Title = "Заказы";
+    Layout = "_DefaultLayout";
+}
+<style>
+    li.green:hover {
+        background-color: #53C2FA;
+        cursor: pointer;
+        color: white;
+    }
+    .order {
+        font-size: 16px;
+    }
+    .tbl-row {
+        width: 100%;
+    }
+
+        .tbl-row td:nth-child(1) {
+            width: 50px;
+        }
+
+        .tbl-row td:nth-child(2) {
+            width: 145px;
+        }
+
+        .tbl-row td:nth-child(3) {
+            width: 90px;
+        }
+
+        .tbl-row td:nth-child(4) {
+            width: 130px;
+            white-space: nowrap;
+        }
+
+        .tbl-row td:nth-child(5) {
+            width: 315px;
+            white-space: nowrap;
+            display: block;
+            text-overflow: ellipsis;
+            overflow: hidden;
+        }
+
+        .tbl-row td:nth-child(6) {
+            width: 65px;
+            white-space: nowrap;
+        }
+</style>
+<div class="header-page">Поиск заказа</div>
+        <div class="col-md-12 bs-callout bs-callout-info">
+            <ul class="list-inline" style="text-align:justify">
+                <li style="font-size:18px">Клиент - @ViewBag.ShortName</li>
+                <li><span class="label label-success" style="font-size:16px">ID: @Model.ClientId</span></li>
+                <li>Всего заказов: @ViewBag.CountOfOrders</li>
+            </ul>
+@*             @using (Ajax.BeginForm("Search", "Order", null, new AjaxOptions { UpdateTargetId = "results", LoadingElementId = "loading", LoadingElementDuration = 0 }, new { @class = "form-horizontal", style = "margin-left:-15px" })) *@
+            @* {  *@
+    <form id="formSearch" class="form-horizontal" method="post" action="@Url.Action("Search", "Order")" data-ajax="true" data-ajax-update="#results" data-ajax-loading="#loading" data-ajax-loading-duration="0" style="margin-left:-15px">
+       
+   
+                @Html.HiddenFor(m=>m.ClientId)
+                <div class="col-md-12">
+                    <div class="col-md-3  form-group">
+                <input type="text" style="max-width:none" placeholder="Введите № заказа" name="OrderId" class="form-control" id="search"
+                               data-autocomplete-source='@Url.Action("AutocompleteSearch", "Order", new {Model.ClientId })' />
+                    </div>
+                    <div class="col-md-1" style="margin-top:-5px">
+                        <label>
+                            @Html.CheckBoxFor(m => m.IsClosed) Закрыт
+                            @Html.CheckBoxFor(m => m.IsRejection) Отказ
+                        </label>
+                    </div>
+                    <div class=" col-md-2">
+                        <div class="input-group date" id="dtPick_From">
+                            @Html.EditorFor(m => m.DateMakingFrom, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly", @placeholder = "От" } })
+                            <span class="input-group-addon">
+                                <i class="far fa-calendar"></i>
+                            </span>
+                        </div>
+                    </div>
+                    <div class=" col-md-2">
+                        <div class="input-group date" id="dtPick_Before">
+                            @Html.EditorFor(m => m.DateMakingBefore, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly", @placeholder = "До" } })
+                            <span class="input-group-addon">
+                                <i class="far fa-calendar"></i>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <button type="submit" class="btn btn-primary">Найти</button>
+                    </div>
+                </div>
+            @* } *@
+    </form>
+            <hr>
+            <hr>
+            <div id="results"></div>
+        </div>
+<img id="loading" src="@Url.Content("~/Content/Images/loading.gif")" style="display: none; position: absolute; margin: auto; top: 0; bottom: 0; left: 0; right: 0" />
+@section Script{
+@*     @Scripts.Render("~/Scripts/moment-with-locales.min.js")
+    @Scripts.Render("~/Scripts/bootstrap-datetimepicker.min.js")
+    @Styles.Render("~/Content/bootstrap-datetimepicker.min.css") *@
+@* <script src="~/Scripts/forViews/order-search.js"></script> *@
+    <script>
+        $(document).ready(function () {
+            //Инициализация dtPick_From и dtPick_Before
+            $(".date").datetimepicker({ language: 'ru', pickTime: false, format: 'YYYY-MM-DD' });
+            //При изменении даты в dtPick_From, она устанавливается как минимальная для dtPick_Before
+            $("#dtPick_From").on("dp.change", function (e) {
+                $("#dtPick_Before").data("DateTimePicker").setMinDate(e.date);
+            });
+            //При изменении даты в dtPick_Before, она устанавливается как максимальная для dtPick_From
+            $("#dtPick_Before").on("dp.change", function (e) {
+                $("#dtPick_From").data("DateTimePicker").setMaxDate(e.date);
+            });
+
+            //для автозаполнения строки поиска номер заказа
+            $("[data-autocomplete-source]").each(function () {
+                var target = $(this);
+                target.autocomplete({ minLength: 1, autoFocus: true, source: target.attr("data-autocomplete-source") });
+            });
+            //для чекбоксов
+            $('#IsRejection').change(function () {
+                if (!$('#IsClosed').prop('checked') && this.checked)
+                    $('#IsClosed').prop('checked', true);
+                else
+                    $('#IsClosed').prop('checked', false);
+            })
+            //для пейджинга-сброс номера отсылаемой страницы при изменении строки поиска
+            $('#search, #search2').change(function () {
+                $('input[name=page]').removeAttr('value');
+            })
+        })
+    </script>
+}

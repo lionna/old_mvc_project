@@ -1,0 +1,568 @@
+﻿@model CarServiceApp.Models.ReportOrderForClientModel
+@using static CarServiceApp.Domain.Extension.StringExtensions
+
+@{
+    ViewBag.Title = "Отчет";
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+        @* <link href='@Url.Content("~/Content/report-order.css")' rel="stylesheet" type="text/css" /> *@
+        <style>
+
+                .border-report {	
+		position:absolute;
+		width:1044px;
+		left:50%;
+		margin-left:-522px;
+        padding:10px;
+    }
+	#header-info{
+		font-size:14px;
+		border-collapse: collapse;
+		width:100%;
+		
+	}
+	#header-info td, th{
+		border:1px solid black;
+		text-align:left;
+	}
+	div #client-info 
+	{
+		width:70%;
+		font-size:14px;
+	}
+	#client-info table{
+    width: 100%;
+  }
+	#client-info td{
+    line-height: 14px;
+  }
+  #client-info tr td:first-child{
+		width:20%
+  }
+  #client-info tr td:last-child{
+		font-weight:bold;
+		border-bottom:1px solid black;
+  }
+  #time-info{
+    width:29%;
+  }
+  #time-info table {
+		font-size:14px;
+		border-collapse: collapse;
+		width:100%;
+		text-align:center;
+		vertical-align:middle;
+  }
+  #time-info table  td{
+	border:1px solid black;
+  }
+  
+  #container{
+	  /*центрируем ее*/
+width:1052px;
+    
+    }
+	#container div {
+		float: left; /*Задаем обтекание*/
+    }
+	
+	.table {
+		font-size:14px;
+		border-collapse: collapse;
+		width:100%;
+	}
+	.table   tr:first-child{
+		background-color:#D5D5D5;
+	}
+  .table   tr:last-child{
+		font-weight:bold;
+	}
+.table-no-last-bold tr:last-child {
+    font-weight:normal;
+}
+  .table  td{
+		border:1px solid black;
+    text-align:center;
+	}
+    .table-numerable tr:nth-child(2){
+		background-color:#D5D5D5;
+	}
+	/**/
+	.table-total-summ{
+		font-size:12px;
+		border-collapse: collapse;
+		width:100%;
+	}
+	.table-total-summ tr:nth-child(odd){
+		font-weight:bold;
+	}
+	.table-total-summ tr:nth-child(even){
+		background-color:#D5D5D5;
+	}
+	.table-total-summ tr:first-child td{
+		font-size:16px;
+		font-weight:bold;
+		border:none;
+	}
+	.table-total-summ td{
+		border:1px solid black;
+		text-align:center;
+	}
+  .table-total-summ tr:last-child>td{
+		border:none;
+		text-align:right;
+    background-color:white;
+	}
+	.table-total-summ tr td:last-child{
+		border:none;
+		text-align:right;
+    background-color:white;
+	}
+  .table-total-summ tr:first-child td:last-child{
+		text-align:center;
+	}  
+  .table-total-summ tr:nth-child(3) td:last-child{
+		border-top:1px solid black;
+		font-weight:normal;
+	}
+  .table-total-summ tr:nth-child(6) td:last-child{
+		border-top:1px solid black;
+		font-weight:normal;
+	}
+	li{
+		margin-left:25px;
+	}
+
+        </style>
+</head>
+<body>
+    <div class="border-report">
+        <p />
+        <table id="header-info">
+            <tr>
+                <th>OOO "iCarService", УНП 790485810 </th>
+            <tr>
+            <tr>
+                <td>
+                    Адрес: 220096 г. Минск, пр. Независимости 65, тел 123-45-67<br>
+                    Р/сч.: 3012146548019 в Региональная дирекция №600 ОАО "БПС-Сбербанк", код 153001369, адрес: г.Минск, ул.Первомайская,56
+                </td>
+            <tr>
+        </table>
+        <div style="text-align:center;">
+            <p>
+                <h3>
+                    АКТ № @Model?.Order?.OrderId от @Model.Order?.DateMakingOrder?.ToShortDateString()<br>
+                    сдачи-приемки выполненных работ
+                </h3>
+            </p>
+        </div>
+        <div id="container">
+            <div id="client-info">
+                <table>
+                    <tr>
+                        <td>Заказчик:</td>
+                        <td>@Model?.Order?.Client?.FullName</td>
+                    </tr>
+                    <tr>
+                        <td>Адрес:</td>
+                        <td>@Model?.Order?.Client?.Address</td>
+                    </tr>
+                    <tr>
+                        <td>Телефон:</td>
+                        <td>@Model?.Order?.Client?.Phone</td>
+                    </tr>
+                    <tr>
+                        <td>Владелец автомобиля</td>
+                        <td>@Model?.Order?.Car?.OwnerName</td>
+                    </tr>
+                    <tr>
+                        <td>Мастер:</td>
+                        <td>
+                            @if (@Model?.Order?.ExecutingServices.FirstOrDefault(i => i.ServiceId == "mngopen")!=null)
+                                {
+                                @Model?.Order?.ExecutingServices?.FirstOrDefault(i => i.ServiceId == "mngopen")?.Employee?.FullName
+                                }
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div id="time-info">
+
+                <table>
+                    <tr>
+                        <td rowspan="3">Дата</td>
+                        <td>оформления</td>
+                        <td>@(Model?.Order?.DateMakingOrder != null ? Model?.Order?.DateMakingOrder?.ToShortDateString():"")</td>
+                    </tr>
+                    <tr>
+                        <td>исполнения</td>
+                        <td>@(Model?.Order?.DateCompleting != null ? Model?.Order?.DateCompleting?.ToShortDateString() : "")</td>
+                    </tr>
+                    <tr>
+                        <td>факт.исполн.</td>
+                        <td>@(Model?.Order?.DateFactCompleting != null ? Model?.Order?.DateFactCompleting?.ToShortDateString() : "")</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">принадлежность</td>
+                        <td>код оплаты</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">физ.лицо</td>
+                        <td>@(Model?.Order?.PaymentId) - @(Model?.Order?.TypeOfPayment!=null?Model?.Order?.TypeOfPayment?.Name:"")</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div style="text-align:center;font-weight:bold;">
+            <p>1. Общие сведение</p>
+        </div>
+        <table class="table">
+            <tr>
+                <td width="10%" rowspan="2">Транспортное средство</td>
+                <td width="25%">Марка/модель</td>
+                <td width="5%">Год выпуска</td>
+                <td width="10%">Пробег</td>
+                <td width="20%">Двигатель №</td>
+                <td width="15%">VIN или номер кузова</td>
+                <td>Регистрационный номер</td>
+            </tr>
+            <tr>
+                <td>@Model?.Order?.Car?.CarModification?.Series?.CarModel?.CarBrand?.Name @Model?.Order?.Car?.CarModification?.Series?.CarModel?.Name</td>
+                <td>@Model?.Order?.Car?.IssueYear</td>
+                <td>@Model?.Order?.CurrentMileageCar</td>
+                <td>@Model?.Order?.Car?.CarModification?.Name</td>
+                <td>@Model?.Order?.VinNumber</td>
+                <td>@Model?.Order?.Car?.RegistrationNumber</td>
+            </tr>
+        </table>
+        <div style="text-align:center;font-weight:bold;">
+            <p>2. Выполненные работы</p>
+        </div>
+        <table class="table table-numerable">
+            <tr>
+                <td width="5%">№ п/п</td>
+                <td width="15%">Код работ</td>
+                <td width="25%">Наименование работ</td>
+                <td width="5%">Цена нормо-часа, BYN</td>
+                <td width="5%">Норматив времени, час</td>
+                <td width="5%">Всего, час</td>
+                <td width="5%">% надб.</td>
+                <td width="10%">Стоимость услуг</td>
+                <td>Исполнитель</td>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>2</td>
+                <td>3</td>
+                <td>4</td>
+                <td>5</td>
+                <td>6</td>
+                <td>7</td>
+                <td>8</td>
+                <td>9</td>
+            </tr>
+            @for (int  item=0;item<Model?.ServiceList?.Count; item++)
+            { 
+                if (@Model.ServiceList[item]?.ServiceId!=null)
+                {
+                <tr>
+                    <td>@(item+1)</td>
+                    <td>@Model.ServiceList[item]?.ServiceId</td>
+                    <td>@Model.ServiceList[item]?.ServiceName</td>
+                    <td>@Model.ServiceList[item]?.PriceHour</td>
+                    <td>@Model.ServiceList[item]?.RateTime</td>
+                    <td>@Model.ServiceList[item]?.TakeTime</td>
+                    <td>@Model.ServiceList[item]?.TaxAddedValue</td>
+                    <td>@Model.ServiceList[item]?.SummMoney</td>
+                    <td>@Model.ServiceList[item]?.FullName?.ConvertToShortName()</td>
+                </tr>
+                }
+                else
+                {
+                    <tr style="font-weight:bold;">
+                    <td colspan="3">Итого:</td>
+                    <td>X</td>
+                    <td>X</td>
+                    <td>@Model?.ServiceList[item]?.TakeTime</td>
+                    <td>X</td>
+                    <td>@Model?.ServiceList[item]?.SummMoney</td>
+                    <td>X</td>
+                </tr>
+                }
+            }
+        </table>
+        <div style="text-align:center;font-weight:bold;">
+            <p>3. Запасные части и материалы, оплачиваемые заказчиком</p>
+        </div>
+        <table class="table table-numerable">
+            <tr>
+                <td width="5%">№ п/п</td>
+                <td width="25%">Наименование запчасти</td>
+                <td width="15%">Номенклатурный номер</td>
+                <td width="5%">Ед.изм.</td>
+                <td width="5%">Кол-во</td>
+                <td width="10%">Цена, BYN</td>
+                <td width="15%">Сумма</td>
+                <td>Отпустил</td>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>2</td>
+                <td>3</td>
+                <td>4</td>
+                <td>5</td>
+                <td>6</td>
+                <td>7</td>
+                <td>8</td>
+            </tr>
+
+            @for (int item = 0; item < Model?.PartList?.Count; item++)
+            {
+                if (@Model.PartList[item]?.PartId != null)
+                {
+                    <tr>
+                        <td>@(item + 1)</td>
+                        <td>@Model.PartList[item]?.Name</td>
+                        <td>@Model.PartList[item]?.PartId</td>
+                        <td>@Model.PartList[item]?.Unit</td>
+                        <td>@Model.PartList[item]?.Number</td>
+                        <td>@Model.PartList[item]?.CostPart</td>
+                        <td>@Model.PartList[item]?.Summ</td>
+                        <td>@(Model.PartList[item]?.FullName != null ? Model.PartList[item]?.FullName?.ConvertToShortName() : "")</td>
+                    </tr>
+                }
+                else
+                {
+                    <tr style="font-weight:bold;">
+                        <td colspan="3">Итого:</td>
+                        <td>X</td>
+                        <td>X</td>   
+                        <td>X</td>
+                        <td>@Model.PartList[item]?.Summ</td>
+                        <td>X</td>
+                    </tr>
+                }
+            }
+        </table>
+        <div style="text-align:center;font-weight:bold;">
+            <p>4. Запасные части и материалы, принятые от заказчика</p>
+        </div>
+        <table class="table table-numerable table-no-last-bold">
+            <tr>
+                <td width="5%">№ п/п</td>
+                <td width="25%">Наименование запчасти</td>
+                <td width="15%">Номенклатурный номер</td>
+                <td width="5%">Ед.изм.</td>
+                <td width="5%">Кол-во</td>
+                <td width="20%">Состояние</td>
+                <td>Отпустил</td>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>2</td>
+                <td>3</td>
+                <td>4</td>
+                <td>5</td>
+                <td>6</td>
+                <td>7</td>
+            </tr>
+            @for (int item = 0; item < Model?.PartCustomList?.Count; item++)
+            {
+                <tr>
+                    <td>@(item + 1)</td>
+                    <td>@Model.PartCustomList[item]?.AcceptanceCustomSpart?.SparePartMaterial?.Name</td>
+                    <td>@Model.PartCustomList[item]?.PartId</td>
+                    <td>@Model.PartCustomList[item]?.AcceptanceCustomSpart?.SparePartMaterial?.Unit</td>
+                    <td>@Model.PartCustomList[item]?.Number</td>
+                    <td>@Model.PartCustomList[item]?.AcceptanceCustomSpart?.StateSpart</td>
+                    <td>@(Model.PartCustomList[item]?.AcceptanceCustomSpart?.AcceptDocument?.Employee?.FullName != null ? Model?.PartCustomList[item]?.AcceptanceCustomSpart?.AcceptDocument?.Employee?.FullName?.ConvertToShortName() : "")</td>
+                </tr>
+            }
+        </table>
+        <br>
+        <table style="border-collapse:collapse;font-size:14px; text-align:center">
+            <tr>
+                <td colspan="3" style="font-size:16px; font-weight:bold;">Первоначальная стоимость заказа</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td width="100px" style="border:1px solid black;background-color:#D5D5D5">Работ</td>
+                <td width="100px" style="border:1px solid black; background-color:#D5D5D5">Зап. частей</td>
+                <td width="150px" style="border:1px solid black; background-color:#D5D5D5">Всего</td>
+                <td width="70px">
+                <td style="text-align:left">С объемом работ согласен</td>
+            </tr>
+            <tr>
+                <td style="border:1px solid black">@ViewData["totMoneyServFull"]</td>
+                <td style="border:1px solid black">@ViewData["totMoneyPartsFull"]</td>
+                <td style="border:1px solid black">@ViewData["totMoneyFullByOrder"]</td>
+                <td></td>
+                <td>С правилами пользования услугами СТО ознакомлен</td>
+            </tr>
+        </table>
+        <table style="border-collapse:collapse;font-size:14px; width:100%">
+            <tr>
+                <td style="border-bottom:1px solid black; font-weight:bold; width:40%">@(CarServiceApp.Domain.Extension.RuDateAndMoneyConverter.CurrencyToTxt((double)@ViewData["totMoneyFullByOrder"], true))</td>
+                <td style="border-bottom:1px solid black;"></td>
+            </tr>
+            <tr>
+                <td style="text-align:center">(сумма прописью)</td>
+                <td style="text-align:center">(подпись заказчика)</td>
+            </tr>
+        </table>
+        <br>
+        <table style="border-collapse:collapse; font-size:14px; width:100%; border:1px solid black;">
+            <tr>
+                <td width="20%">Получил аванс по квитанции №: </td>
+                <td style="border-bottom:1px solid black;" width="50%"></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Сумма</td>
+                <td style="border-bottom:1px solid black;"></td>
+                <td>Штамп</td>
+            </tr>
+            <tr>
+                <td>Кассир</td>
+                <td></td>
+            </tr>
+        </table>
+        <table class="table-total-summ">
+            <tr>
+                <td colspan="5">Окончательная стоимость</td>
+                <td>Акт оформил</td>
+            </tr>
+            <tr>
+                <td>Стоимость работ</td>
+                <td>Стоимость запчастей</td>
+                <td>% скидки на услуги</td>
+                <td>Сумма скидки на услуги</td>
+                <td>Итого стоимость без НДС</td>
+                <td> 
+                    @ViewBag.PostManagerComplete    
+                    @ViewBag.ManagerNameComplete
+                </td>
+            </tr>
+            <tr>
+                <td>@ViewData["totMoneyServ"]</td>
+                <td>@ViewData["totMoneyPartsFull"]</td>
+                <td>нет</td>
+                <td>0</td>
+                <td>@((double)ViewData["totMoneyServ"] + (double)ViewData["totMoneyPartsFull"])</td>
+                <td>подпись   (должность, ФИО)</td>
+            </tr>
+            <tr>
+                <td>% НДС</td>
+                <td>Сумма НДС</td>
+                <td>Стоимость с НДС</td>
+                <td colspan="2">Окончательная стоимость</td>
+                <td>Контроль качества, компактности и тех. состояния автомобиля произведен</td>
+            </tr>
+            <tr>
+                <td>20</td>
+                <td>@((double)ViewData["totMoneyServFull"] - (double)ViewData["totMoneyServ"])</td>
+                <td>@ViewData["totMoneyFullByOrder"]</td>
+                <td colspan="2">@ViewData["totMoneyFullByOrder"]</td>
+                <td>
+                    @ViewBag.PostManagerComplete
+                    @ViewBag.ManagerNameComplete
+                </td>
+            </tr>
+            <tr>
+                <td colspan="6">подпись   (должность, ФИО)</td>
+            </tr>
+        </table>
+        <table style="font-size:14px; width:100%">
+            <tr>
+                <td width="30%"> Окончательная стоимость заказ-наряда</td>
+                <td style="font-weight:bold">@(CarServiceApp.Domain.Extension.RuDateAndMoneyConverter.CurrencyToTxt((double)ViewData["totMoneyFullByOrder"], true))</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="border-top:1px solid black; text-align:center">(прописью)</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Получено в окончательный расчет</td>
+                <td style="font-weight:bold">@(CarServiceApp.Domain.Extension.RuDateAndMoneyConverter.CurrencyToTxt((double)ViewData["totMoneyFullByOrder"], true))</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="border-top:1px solid black; text-align:center">(прописью)</td>
+            </tr>
+        </table>
+        <p style="font-size:14px;">Основания: подпункт 3.12 пункт 3 статья 286 НК РБ</p>
+        <table style="font-size:14px; width:100%; border:1px solid black">
+            <tr>
+                <td style="font-weight:bold; text-align:center">Место для письменных замечаний и рекомендаций по техническому состоянию автомобиля заказчика</td>
+            </tr>
+            <tr>
+                <td>@Model.Order.Descriptions</td>
+            </tr>
+        </table>
+        <br>
+        <table style="font-size:14px; width:100%; border:1px solid black">
+            <tr>
+                <td style="font-weight:bold; text-align:center">Гарантийные обязательства</td>
+            </tr>
+            <tr>
+                <td>
+                    <ol style="padding-left:0">
+                        <li>На оригинальные запчасти VW, приобретенные и установленные у исполнителя - 1(один) год*</li>
+                        <li>На работы по установке оригинальных запчастей VW приобретенных у исполнителя - 1(один) год*</li>
+                        <li>На техническое обслуживание - 20 дней или пробег не более 2000 км</li>
+                        <li>На прочие ремонты - 30 дней или пробег не более 2000 км</li>
+                        <li>На остальные работы - в соответствии с СТБ 1175-2011</li>
+                    </ol>
+                </td>
+            </tr>
+            <tr>
+                <td style="border-top:1px solid black">* при условии соблюдения требований VW по обслуживанию и эксплуатации.</td>
+            </tr>
+        </table>
+        <br>
+        <table style="font-size:14px; width:100%; border-collapse:collapse">
+            <tr>
+                <td colspan="2" width="40%">С объемом и стоимостью заказа согласен, с правилами оказания услуг СТО, замечаниями по техсостоянию автомобиля ознакомлен. Претензий по качеству выполненных работ не имею, автомобиль  получил</td>
+                <td width="20%"></td>
+                <td colspan="2" width="40%" style="vertical-align:top">Замененные за плату дефектные узлы, блоки, модули, и другие детали получил / отказался получить (ненужное зачеркнуть)</td>
+            </tr>
+            <tr>
+                <td height="30px"></td>
+                <td height="30px"></td>
+                <td height="30px"></td>
+                <td height="30px"></td>
+                <td height="30px"></td>
+
+            </tr>
+            <tr>
+                <td colspan="2" style="border-top:1px solid black;text-align:center">(подпись заказчика)</td>
+                <td></td>
+                <td colspan="2" style="border-top:1px solid black;text-align:center">(подпись заказчика)</td>
+            </tr>
+            <tr ></tr>
+            <tr>
+                <td height="30px" style="text-align:left">@DateTime.Now.ToShortDateString()</td>
+                <td style="text-align:right">@Model?.Order?.Client?.FullName?.ConvertToShortName()</td>
+                <td></td>
+                <td height="30px" style="text-align:left">@DateTime.Now.ToShortDateString()</td>
+                <td style="text-align:right">@Model?.Order?.Client?.FullName?.ConvertToShortName()</td>
+            </tr>
+            <tr>
+                <td colspan="2" style="border-top:1px solid black;text-align:center">(дата, ФИО заказчика)</td>
+                <td></td>
+                <td colspan="2" style="border-top:1px solid black;text-align:center">(дата, ФИО заказчика)</td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

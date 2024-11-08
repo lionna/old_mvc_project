@@ -1,0 +1,43 @@
+﻿@* @model List<CarServiceDiplom.Entity.Models.UsingCustomSPartMat> *@
+    @using CarServiceApp.Domain.Common
+@using CarServiceApp.Helper
+@using CarServiceApp.Domain.Entity.Models
+@using CarServiceApp.Domain.Extension
+@using CarServiceApp.Domain.Repository
+@using CarServiceApp.Domain.Service
+@using CarServiceApp.Domain.Model
+@model List<UsingCustomSpartMat>
+
+<h4 style="text-align:center">3. Запасные части и материалы, принятые от заказчика</h4>
+@if (Model.Count != 0)
+{
+    <table class="table table-condensed table-striped table-bordered" id="updatedCustomTable">
+        <tr>
+            <th width="30%">Наименование</th>
+            <th width="15%">ID</th>
+            <th width="10%">Производитель</th>
+            <th width="5%">Состояние</th>
+            <th width="5%">Акт #</th>
+            <th width="5%">Ед.изм.</th>
+            <th width="2%">Кол.</th>
+        </tr>
+        @foreach (var i in Model)
+        {
+            <tr>
+                <td>@i.AcceptanceCustomSpart?.SparePartMaterial?.Name </td>
+                <td>@i.PartId </td>
+                <td>@i.AcceptanceCustomSpart?.SparePartMaterial?.Manufacture </td>
+                <td>@i.AcceptanceCustomSpart?.StateSpart </td>
+                <td>@i.AcceptanceId </td>
+                <td>@i.AcceptanceCustomSpart?.SparePartMaterial?.Unit</td>
+                <td>@i.Number </td>
+            </tr>
+        }
+    </table>
+}
+else
+{
+    <div class="alert alert-warning" role="alert">
+        Нет материалов
+    </div>
+}

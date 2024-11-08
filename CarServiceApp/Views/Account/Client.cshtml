@@ -1,0 +1,43 @@
+﻿@{
+    ViewBag.Title = "Главная страница Клиента";
+    Layout = "_ClientLayout";
+}
+<div class="row">
+
+    <div class="col-sm-3">
+        <div class="card-body text-center">
+            <a class="btn btn-outline-info d-flex flex-column align-items-center" asp-area="" asp-controller="PrePrecords" asp-action="ClientView">
+                <i class="fas fa-car-crash fa-3x" aria-hidden="true"></i>
+                <span class="text-truncate text-dark fw-bold">Машины</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="col-sm-3">
+        <div class="card-body text-center">
+            <a class="btn btn-outline-info d-flex flex-column align-items-center" asp-area="" asp-controller="Services" asp-action="Search">
+                <i class="fa fa-wrench fa-3x" aria-hidden="true"></i>
+                <span class="text-truncate text-dark fw-bold">Услуги</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="col-sm-3">
+        <div class="card-body text-center">
+            <a class="btn btn-outline-info d-flex flex-column align-items-center" asp-area="" asp-controller="Account" asp-action="UserSettings">
+                <i class="fas fa-user-cog fa-3x" aria-hidden="true"></i>
+                <span class="text-truncate text-dark fw-bold">Личные настройки</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="col-sm-3">
+        <div class="card-body text-center">
+            <a class="btn btn-outline-info d-flex flex-column align-items-center" asp-area="" asp-controller="Home" asp-action="Contact">
+                <i class="fas fa-file-signature fa-3x" aria-hidden="true"></i>
+                <span class="text-truncate text-dark fw-bold">Контакты</span>
+            </a>
+        </div>
+    </div>
+</div>
+ 

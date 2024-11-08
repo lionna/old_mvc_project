@@ -1,0 +1,113 @@
+﻿@using CarServiceApp.Domain.Common
+@using CarServiceApp.Helper
+@using CarServiceApp.Domain.Extension
+@model List<CarServiceApp.Domain.Model.ReportByExecServiceByMonthForEmployee>
+@{
+    ViewBag.Title = "Информация о выполненных заказах за месяц мастерами";
+    Layout = "_DefaultLayout";
+}
+<style>
+    .redefined {
+        padding: 0px;
+        margin: 0;
+    }
+
+    table {
+        background-color: white;
+        margin-top: 20px;
+    }
+
+        table tr:first-child {
+            background: linear-gradient(to top, #EDEDED 40%, #F9F9F9 100%);
+        }
+
+        table span {
+            float: right;
+            margin-right: 15px;
+            height: 100%;
+            margin: -6px;
+            padding: 3px;
+            margin-right: 10px;
+            border: 1px solid #DDDDDD;
+            border-radius: 5px;
+        }
+
+    .my-label {
+        float: left;
+        padding-top: 5px;
+        padding-right: 5px;
+    }
+
+    #year, #month {
+        width: 100px !important;
+    }
+</style>
+ 
+<div class="alert alert-secondary" role="alert">
+    Информация о выполненных заказах за месяц мастерами
+</div>
+<div class="col-md-12 bs-callout bs-callout-info">
+    <div id="popErorr" style="height: 50px; margin: 10px;background-color: #F2DEDE; border-radius: 10px; font-size: 16px; color: #A94442; display: none; text-align: center; padding-top: 10px"></div>
+
+    <form id="form-search" method="post" action="/ReportView/ReportByMonthForEmployee"
+          data-ajax="true" data-ajax-update="#contents_result" data-ajax-loading="#loading"
+          data-ajax-duration="0">
+
+        <div class="row">
+            <div class="col-md-2 form-group">
+                <span class="my-label">
+                    Выбрать год:
+                </span>
+                @Html.DropDownList("year", ViewBag.SelectListYear as SelectList, new { @class = "form-control" })
+            </div>
+            <div class="col-md-2 form-group">
+                <span class="my-label">Выбрать месяц:</span>
+                @Html.DropDownList("month", ViewBag.SelectListMonth as SelectList, new { @class = "form-control" })
+            </div>
+
+            <div class="col-md-3 form-group d-grid gap-1">
+                <button type="submit" class="btn btn-outline-primary"> <i class="far fa-file-alt"></i> Сформировать отчет</button>
+                <button type="button" class="btn btn-outline-success" onclick="window.location.href = '/ReportView/PrintReportByMonthForEmployee/?year=' + $('#year option:selected').val() + '&month=' + $('#month option:selected').val()"> <i class="fas fa-print"></i> Печать</button>
+            </div>
+        </div>
+    </form>
+
+    <table class="my-table table table-striped table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>ФИО</th>
+                <th>Таб. ном.</th>
+                <th>Должность</th>
+                <th>N заказов</th>
+                <th>N услуг</th>
+                <th>Время</th>
+                <th>Средн. цена услуги</th>
+                <th>Средн. цена заказа</th>
+                <th>Сумма</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.FullName</td>
+                    <td>@item.PersonnelNumber</td>
+                    <td>@item.NamePost</td>
+                    <td>@item.CountOfOrders</td>
+                    <td>@item.CountOfServices</td>
+                    <td>@item.TakeTime ч.</td>
+                    <td>@(Math.Round(item.AveragePriceServ ?? 0, 0)) <span>BYN</span></td>
+                    <td>@(Math.Round(item.AveragePriceOrder ?? 0, 0))<span>BYN</span></td>
+                    <td>@(Math.Round(item.TotalMoney ?? 0, 0)) <span>BYN</span></td>
+                </tr>
+            }
+        </tbody>
+        <tr>
+            <td colspan="8" style="text-align:right;font-weight:bold">Итого:</td>
+            <td style="font-weight:bold">@(Math.Round(Model.Sum(s => s.TotalMoney ?? 0))) <span>BYN</span></td>
+        </tr>
+    </table>
+</div>
+<script>
+
+</script>

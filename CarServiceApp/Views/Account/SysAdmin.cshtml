@@ -1,0 +1,209 @@
+﻿@{
+    ViewBag.Title = "Главная страница Администратора";
+    Layout = "_SysAdminLayout";
+}
+<div class="row">
+    <div class="col-sm-3">
+        <div class="card-body text-center">
+            <a class="btn btn-outline-primary d-flex flex-column align-items-center" asp-area="" asp-controller="Users" asp-action="Index">
+                <i class="fa fa-users fa-3x" aria-hidden="true"></i>                
+                <span class="text-truncate text-dark fw-bold">Пользователи</span>
+            </a>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="card-body text-center">
+            <a class="btn btn-outline-primary d-flex flex-column align-items-center" asp-area="" asp-controller="Roles" asp-action="Index">
+                <i class="fa fa-user-circle fa-3x" aria-hidden="true"></i>                
+                <span class="text-truncate text-dark fw-bold">Роли</span>
+            </a>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="card-body text-center">
+            <a class="btn btn-outline-primary d-flex flex-column align-items-center" asp-area="" asp-controller="Employees" asp-action="Index">
+                <i class="fas fa-id-card-alt fa-3x" aria-hidden="true"></i>               
+                <span class="text-truncate text-dark fw-bold">Сотрудники</span>
+            </a>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="card-body text-center">
+            <a class="btn btn-outline-primary d-flex flex-column align-items-center" asp-area="" asp-controller="Clients" asp-action="Index">
+                <i class="fa fa-child fa-3x" aria-hidden="true"></i>                
+                <span class="text-truncate text-dark fw-bold">Клиенты</span>
+            </a>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-3">
+        <div class="card-body text-center">
+            <a class="btn btn-outline-primary d-flex flex-column align-items-center" asp-area="" asp-controller="Departments" asp-action="Index">
+                <i class="fa fa-building fa-3x" aria-hidden="true"></i>                 
+                <span class="text-truncate text-dark fw-bold">Отделы</span>
+            </a>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="card-body text-center">
+            <a class="btn btn-outline-primary d-flex flex-column align-items-center" asp-area="" asp-controller="Posts" asp-action="Index">
+                <i class="fas fa-user-shield fa-3x" aria-hidden="true"></i>                
+                <span class="text-truncate text-dark fw-bold">Должности</span>
+            </a>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="card-body text-center">
+            <a class="btn btn-outline-primary d-flex flex-column align-items-center" asp-area="" asp-controller="Services" asp-action="Index">
+                <i class="fa fa-wrench fa-3x" aria-hidden="true"></i>                
+                <span class="text-truncate text-dark fw-bold">Услуги</span>
+            </a>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="card-body text-center">
+            <a class="btn btn-outline-primary d-flex flex-column align-items-center" asp-area="" asp-controller="ServiceTypes" asp-action="Index">
+                <i class="fas fa-tools fa-3x" aria-hidden="true"></i>                 
+                <span class="text-truncate text-dark fw-bold">Тип услуги</span>
+            </a>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-3">
+        <div class="card-body text-center">
+            <a class="btn btn-outline-primary d-flex flex-column align-items-center" asp-area="" asp-controller="Providers" asp-action="Index">
+                <i class="fas fa-boxes fa-3x" aria-hidden="true"></i>                
+                <span class="text-truncate text-dark fw-bold">Поставщики</span>
+            </a>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="card-body text-center">
+            <a class="btn btn-outline-primary d-flex flex-column align-items-center" asp-area="" asp-controller="SparePartMaterials" asp-action="Index">
+                <i class="fa fa-cogs fa-3x" aria-hidden="true"></i>                
+                <span class="text-truncate text-dark fw-bold">Запчасти</span>
+            </a>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="card-body text-center">
+            <a class="btn btn-outline-primary d-flex flex-column align-items-center" asp-area="" asp-controller="TypeOfPayments" asp-action="Index">
+                <i class="fa fa-credit-card fa-3x" aria-hidden="true"></i>                
+                <span class="text-truncate text-dark fw-bold">Типы платежей</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="col-sm-3">
+        <div class="card-body text-center">
+            <a class="btn btn-outline-primary d-flex flex-column align-items-center" asp-area="" asp-controller="CarModels" asp-action="Index">
+                <i class="fas fa-truck-pickup fa-3x" aria-hidden="true"></i>
+                <span class="text-truncate text-dark fw-bold">Модели машин</span>
+            </a>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-3">
+        <div class="card-body text-center">
+            <a class="btn btn-outline-primary d-flex flex-column align-items-center" asp-area="" asp-controller="CarBrands" asp-action="Index">
+                <i class="fa fa-car-side fa-3x" aria-hidden="true"></i>                
+                <span class="text-truncate text-dark fw-bold">Бренды машин</span>
+            </a>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="card-body text-center">
+            <a class="btn btn-outline-primary d-flex flex-column align-items-center" asp-area="" asp-controller="CarColors" asp-action="Index">
+                <i class="fa fa-paint-brush fa-3x" aria-hidden="true"></i>                
+                <span class="text-truncate text-dark fw-bold">Цвета машин</span>
+            </a>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="card-body text-center">
+            <a class="btn btn-outline-primary d-flex flex-column align-items-center" asp-area="" asp-controller="CarSeries" asp-action="Index">
+                <i class="fa fa-car-alt fa-3x" aria-hidden="true"></i>                
+                <span class="text-truncate text-dark fw-bold">Серии машин</span>
+            </a>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="card-body text-center">
+            <a class="btn btn-outline-primary d-flex flex-column align-items-center" asp-area="" asp-controller="Cars" asp-action="Search">
+                <i class="fas fa-car-crash fa-3x" aria-hidden="true"></i>                
+                <span class="text-truncate text-dark fw-bold">Машины</span>
+            </a>
+        </div>
+    </div>
+</div>
+<div class="row">    
+    <div class="col-sm-3">
+        <div class="card-body text-center">
+            <a class="btn btn-outline-primary d-flex flex-column align-items-center" asp-area="" asp-controller="CarModifications" asp-action="Index">           
+                <i class="fas fa-truck-pickup fa-3x" aria-hidden="true"></i>
+                <span class="text-truncate text-dark fw-bold">Модификации машин</span>
+            </a>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="card-body text-center">
+            <a class="btn btn-outline-primary d-flex flex-column align-items-center" asp-area="" asp-controller="CarGenerations" asp-action="Index">
+                <i class="fas fa-taxi fa-3x" aria-hidden="true"></i>
+                <span class="text-truncate text-dark fw-bold">Поколение машины</span>
+            </a>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="card-body text-center">
+            <a class="btn btn-outline-primary d-flex flex-column align-items-center" asp-area="" asp-controller="Streets" asp-action="Index">
+                <i class="fas fa-street-view fa-3x" aria-hidden="true"></i>
+                <span class="text-truncate text-dark fw-bold">Улицы</span>
+            </a>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="card-body text-center">
+            <a class="btn btn-outline-primary d-flex flex-column align-items-center" asp-area="" asp-controller="Account" asp-action="UserSettings">
+                <i class="fas fa-user-cog fa-3x" aria-hidden="true"></i>
+                <span class="text-truncate text-dark fw-bold">Личные настройки</span>
+            </a>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-3">
+        <div class="card-body text-center">
+            <a class="btn btn-outline-primary d-flex flex-column align-items-center" asp-area="" asp-controller="Account" asp-action="Accountant">
+                <i class="fas fa-user-lock fa-3x" aria-hidden="true"></i>                
+                <span class="text-truncate text-dark fw-bold">Страница бухгалтера</span>
+            </a>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="card-body text-center">
+            <a class="btn btn-outline-primary d-flex flex-column align-items-center" asp-area="" asp-controller="Account" asp-action="Manager">
+                <i class="fas fa-universal-access fa-3x" aria-hidden="true"></i>                 
+                <span class="text-truncate text-dark fw-bold">Страница менеджера</span>
+            </a>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="card-body text-center">
+            <a class="btn btn-outline-primary d-flex flex-column align-items-center" asp-area="" asp-controller="Account" asp-action="Employee">
+                <i class="far fa-id-card fa-3x" aria-hidden="true"></i>                
+                <span class="text-truncate text-dark fw-bold">Страница сотрудника</span>
+            </a>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="card-body text-center">
+            <a class="btn btn-outline-primary d-flex flex-column align-items-center" asp-area="" asp-controller="Account" asp-action="Client">
+                <i class="far fa-address-book fa-3x" aria-hidden="true"></i>                
+                <span class="text-truncate text-dark fw-bold">Страница клиента</span>
+            </a>
+        </div>
+    </div>
+</div>

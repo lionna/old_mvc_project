@@ -1,0 +1,1226 @@
+﻿@using CarServiceApp.Domain.Common
+@using CarServiceApp.Helper
+@using CarServiceApp.Domain.Entity.Models
+@using CarServiceApp.Domain.Extension
+@using CarServiceApp.Domain.Repository
+@model CarServiceApp.Domain.Entity.Models.OrderService
+@{
+    ViewBag.Title = "Список";
+    Layout = "_DefaultLayout";
+}
+
+@Html.HiddenFor(model => model.OrderId)
+@Html.Hidden("clientId", Model.Client?.ClientId, new { id = "clientId" })
+@Html.Hidden("isclosed", false, new { id = "isclosed" })
+<div class="header-page">Работа с заказом</div>
+<div class="col-md-12 bs-callout bs-callout-info">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <ul class="list-inline" style="text-align: justify; font-size: 18px">
+                    <li>Клиент - @ViewBag.ShortName</li>
+                    <li><span class="badge badge-pill bg-info">ID: @Model?.Client?.ClientId</span></li>
+                </ul>
+            </div>
+            <div class="col-md-4">
+                <ul class="list-inline" style="text-align: justify; font-size: 18px">
+                    <li><span class="d-inline-block" style="white-space: nowrap;">Автомобиль @ViewBag.ModelName</span><span class="badge badge-pill bg-secondary"> @Model.Car.RegistrationNumber</span></li>
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <ul class="list-inline" style="text-align: justify; font-size: 18px">
+                    <li>Заказ № @Model.OrderId от @Model.DateMakingOrder?.ToString("dd MMMM yyyy")</li>
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div id="popError" class="alert alert-danger" role="alert" style="display: none;">
+                    Ошибка!
+                </div>
+                <div id="popSuccess" class="alert alert-success" role="alert" style="display: none;">
+                    Успешно!
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="panel-group" id="accordion">      
+        <div class="panel panel-default panel-my-head">
+            <div class="panel-heading">
+                <h2 class="accordion-header" id="headingOne">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse4" aria-expanded="true" aria-controls="collapse4">
+                        Комплектация, состояние кузова и ЛКП
+                    </button>
+                </h2>
+            </div>
+            <div id="collapse4" class="panel-collapse collapse">
+                <div class="panel-body" style="padding:10px;font-size: 12px;">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <table id="table_kit" class="table table-bordered">
+                                <tr>
+                                    <td colspan="2">Показатели</td>
+                                </tr>
+                                <tr>
+                                    <td>Спидометр, км</td>
+                                    <td>@Model.CurrentMileageCar</td>
+                                </tr>
+                                <tr>
+                                    <td>Уровень топлива, %</td>
+                                    <td>@Model.FuelLevelPercent</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">Комплектность</td>
+                                </tr>
+                                <tr>
+                                    <td>Колпаки колес</td>
+                                    <td>
+                                        @for (int n = 1; n <= Model.NumberWheelCaps; n++)
+                                        {
+                                            <input type="checkbox" checked disabled>
+                                        }
+                                        @for (int n = 4 - (Model.NumberWheelCaps ?? 0); n > 0; n--)
+                                        {
+                                            <input type="checkbox" disabled>
+                                        }
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Щетки стеклооч.</td>
+                                    <td>
+                                        @for (int n = 1; n <= Model.NumberWipers; n++)
+                                        {
+                                            <input type="checkbox" checked disabled>
+                                        }
+                                        @for (int n = 3 - (Model.NumberWipers ?? 0); n > 0; n--)
+                                        {
+                                            <input type="checkbox" disabled>
+                                        }
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Рычаги стеклооч.</td>
+                                    <td>
+                                        @for (int n = 1; n <= Model.NumberWipersArms; n++)
+                                        {
+                                            <input type="checkbox" checked disabled>
+                                        }
+                                        @for (int n = 3 - (Model.NumberWipersArms ?? 0); n > 0; n--)
+                                        {
+                                            <input type="checkbox" disabled>
+                                        }
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Антенна</td>
+                                    <td>
+                                        <input type="checkbox" @(Model.IsAntenna ?? false ? "checked" : "") disabled>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Радиоприемник</td>
+                                    <td>
+                                        <input type="checkbox" @(Model.IsTuner ?? false ? "checked" : "") disabled>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Декор крышки ДВС</td>
+                                    <td>
+                                        <input type="checkbox" @(Model.IsCoverDecorEngine ?? false ? "checked" : "") disabled>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Зап. колесо</td>
+                                    <td>
+                                        <input type="checkbox" @(Model.IsSpareWheel ?? false ? "checked" : "") disabled>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div id="wrapper" class="col-md-6">
+                            <div id="header-remark" class="col-md-12">Пометки на кузове автомобиля</div>
+                            <div id="state_car" class="col-md-12">
+                                <img src="~/img/views_car.jpg" class="img-fluid">
+                                <div id="item-remark-id" class="item-remark"><span></span><input type="hidden" name="id_item"></div>
+                                <div class="my-remark">
+                                    <div id="contents_remark">
+                                        <div>Информация о метке</div>
+                                        <label>
+                                            <input class="radio" type="radio" name="TypeMark" id="p" value="1" checked>
+                                            <span class="radio-custom"></span>
+                                            <span class="label">Р</span>
+                                        </label>
+                                        <label>
+                                            <input class="radio" type="radio" name="TypeMark" id="x" value="2">
+                                            <span class="radio-custom"></span>
+                                            <span class="label">X</span>
+                                        </label>
+                                        <label>
+                                            <input class="radio" type="radio" name="TypeMark" id="y" value="3">
+                                            <span class="radio-custom"></span>
+                                            <span class="label">Y</span>
+                                        </label>
+                                        <label>
+                                            <input class="radio" type="radio" name="TypeMark" id="o" value="4">
+                                            <span class="radio-custom"></span>
+                                            <span class="label">O</span>
+                                        </label>
+                                        <textarea class="form-control" disabled id="addonInfo" name="addonInfo" style="max-width: 100%; max-height: 40px;" placeholder="Комментарий"></textarea>
+                                        <input type="hidden" name="id_item">
+                                    </div>
+                                    <div class=" close-sign"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="panel panel-default panel-my-head">
+            <div class="panel-heading">
+
+                <h2 class="accordion-header" id="headingOne">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse3" aria-expanded="true" aria-controls="collapse3">
+                        Описание проблемы (комментарии клиента)
+                    </button>
+                </h2>
+
+            </div>
+            <div id="collapse3" class="panel-collapse collapse" style="">
+                <div class="panel-body" style="padding: 10px; font-size: 12px;">
+                    <div class="my_comment_order">
+                        @Model.Descriptions
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+        <div class="panel panel-default panel-my-head">
+            <div class="panel-heading">
+                <h2 class="accordion-header" id="headingOne">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                        Список требуемых работ
+                    </button>
+                </h2>
+
+            </div>
+            <div id="collapseOne" class="panel-collapse collapse">
+                <div class="panel-body" style="padding: 0;font-size: 14px;">
+                    <div class="table-responsive">
+                        <table class="table table-condensed table-striped table-bordered" id="execServices">
+                            <thead>
+                                <tr>
+                                    <th scope="col" width="30%">Наименование</th>
+                                    <th scope="col">ID</th>
+                                    <th scope="col" width="5%">Цена<br>норма-часа<br>(BYN)</th>
+                                    <th scope="col" width="5%">Норма времени<br>(час)</th>
+                                    <th scope="col" width="5%">Затр. времени<br>(час)</th>
+                                    <th scope="col" width="5%">%<br>надб.</th>
+                                    <th scope="col" width="5%">Стоимость<br>услуг</th>
+                                    <th scope="col" width="15%">Дата и время завершения</th>
+                                    <th scope="col" width="10%">Исполнитель</th>
+                                    <th scope="col" width="20%">Примечание</th>
+                                    <th scope="col">Материалы<br>(М./К.)</th>
+                                    <th scope="col">Удл.Ред.</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var work in Model.ExecutingServices.OrderByDescending(k => k.DateCompleting))
+                                {
+                                    <tr>
+                                        <td>@work.Service?.Name</td>
+                                        <td>@work.ServiceId</td>
+                                        <td>@work.Service?.PriceHour</td>
+                                        <td>@work.Service?.RateTime?.ToString()</td>
+                                        <td>@work.TakeTime.ToString()</td>
+                                        <td>@work.TaxAddedValue</td>
+                                        <td>@((double)(work.Price ?? (decimal)0.0) * ((work.TaxAddedValue ?? 0) * 0.01 + 1))</td>
+                                        <td>@work.DateCompleting.ToString()</td>
+                                        <td>@(work.Employee != null ? work.Employee?.FullName.ConvertToShortName() : "")</td>
+                                        <td>@(work.Notes ?? "-")</td>
+                                        <td style="text-align:center;vertical-align:middle">
+                                            <span class="badge" style="display: @(work.ServiceId == "mngopen"? "none" : "") @(work.ServiceId == "mngclose"? "none" : ""); cursor: pointer" onclick="AttachedParts('@work.ServiceId')">@Model.ExecutingServices.Where(s => s.ServiceId == work.ServiceId).FirstOrDefault().UsingPartMaterials.Count/@Model.ExecutingServices.Where(s => s.ServiceId == work.ServiceId).FirstOrDefault().UsingCustomSpartMats.Count</span>
+                                        </td>
+                                        <td style="text-align: center; vertical-align: middle; display: @(work.ServiceId == "mngopen"? "none" : "") @(work.ServiceId == "mngclose"? "none" : "")">
+                                            <i class="fas fa-times-circle" onclick="confirmDialog('Вы уверены,  что хотите исключить @work.Service.Name ?', DeleteAttachedService, '@work.ServiceId');"></i>
+                                            <i class="fas fa-edit" onclick="EditAttachedService('@work.ServiceId')"> </i>
+                                        </td>
+                                    </tr>
+                                }
+                                <tr style="background-color:#9DD0D0">
+                                    <td colspan="2"><strong />Итого:</td>
+                                    <td><strong />X</td>
+                                    <td><strong />X</td>
+                                    <td><strong />@((ViewBag.TotalInfoForTable).TotalTakeTime)</td>
+                                    <td><strong />X</td>
+                                    <td><strong />@((double)((ViewBag.TotalInfoForTable).TotalMoney ?? decimal.Zero))</td>
+                                    <td><strong />X</td>
+                                    <td><strong />X</td>
+                                    <td><strong />X</td>
+                                    <td><strong />X</td>
+                                    <td><strong />X</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+        <div class="panel panel-default panel-my-head">
+            <div class="panel-heading">
+             @*    <h4 class="panel-title">
+                    <a class="collapsed" data-bs-toggle="collapse" data-bs-parent="#accordion" href="#collapseTwo" aria-expanded="false">
+                        Добавить работы
+                    </a>
+                </h4> *@
+
+                <h2 class="accordion-header" id="headingOne">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+                        Добавить работы
+                    </button>
+                </h2>
+
+            </div>
+            <div id="collapseTwo" class="panel-collapse collapse">
+                <div class="panel-body">
+
+                    @* <form class="form-horizontal" id="ajaxForm" method="post" action="@Url.Action("ServiceSearch", "Order")" data-bs-toggle="collapse" data-bs-parent="#accordion" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" data-ajax="true" data-ajax-update="#results" data-ajax-loading="#loading1" data-ajax-loading-duration="0"> *@
+                    <form class="form-horizontal" style="" id="ajaxForm" method="post" action="@Url.Action("ServiceSearch", "Order")">
+                      </br>
+                        <div class="row">
+                            <div class="col-md-6 col-lg-3 mb-3 mb-lg-0">
+                                <select class="form-select" name="typeId">
+                                    @foreach (var item in ViewBag.ListTypeServ as SelectList)
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-md-6 col-lg-3 mb-3 mb-lg-0">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" name="serviceName" placeholder="Наименование услуги">
+                                    <button class="btn btn-outline-secondary" type="submit">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <hr />
+                        <div id="results" class="mt-3">
+                            <!-- Здесь будет отображаться результат поиска -->
+                        </div>
+                    </form>
+
+
+@* 
+
+
+                    <form class="form-horizontal" id="ajaxForm" method="post" action="@Url.Action("ServiceSearch", "Order")" data-bs-toggle="collapse" data-bs-parent="#accordion" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" data-ajax="true" data-ajax-update="#results" data-ajax-loading="#loading1" data-ajax-loading-duration="0">
+                        <div class="row">
+                            <div class="col-md-6 col-lg-3 mb-3 mb-lg-0">
+                                <select class="form-select" name="IDtype">
+                                    @foreach (var item in ViewBag.ListTypeServ as SelectList)
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-md-6 col-lg-3 mb-3 mb-lg-0">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" name="servname" placeholder="Наименование услуги">
+                                    <button class="btn btn-outline-secondary" type="submit">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <hr />
+                        <div id="results" class="mt-3">
+                            <img id="loading1" src="@Url.Content("~/img/loading.gif")" class="d-none position-absolute top-0 bottom-0 start-0 end-0 mx-auto" style="z-index: 10;" />
+                        </div>
+                    </form>
+ *@
+                </div>
+            </div>
+        </div>
+
+        
+        
+        <div class="panel panel-default panel-my-head">
+            <div class="panel-heading">
+
+
+                <h2 class="accordion-header" id="headingOne">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="true" aria-controls="collapseThree">
+                        Закрытие заказа
+                    </button>
+                </h2>
+
+            </div>
+            <div id="collapseThree" class="panel-collapse collapse">
+                <div class="panel-body">
+
+                    <div class="row">
+                        <div class="col">
+                            <input type="checkbox" id="toggle-accept">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-striped">
+                                    <tr>
+                                        <th>Продолжительность работ:</th>
+                                        <td>@ViewData["totTimeServ"] Часов</td>
+                                        <th>Стоимость работ без НДС:</th>
+                                        <td>@ViewData["totMoneyServ"] BYN</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Стоимость работ с НДС:</th>
+                                        <td>@ViewData["totMoneyServFull"] BYN</td>
+                                        <th>Стоимость материалов:</th>
+                                        <td>@ViewData["totMoneyPartsFull"] BYN</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Итого к оплате:</th>
+                                        <td colspan="3" style="color:red">@ViewData["totMoneyFullByOrder"] BYN</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <br>
+
+                    <form class="form-horizontal" id="formCloseSuccess" method="post" action="@Url.Action("Close", "Order")" data-bs-toggle="collapse" data-bs-parent="#accordion" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree" data-ajax="true" data-ajax-method="Post" data-ajax-update="#results" data-ajax-loading="#loading1" data-ajax-loading-duration="100">
+                        @Html.HiddenFor(model => model.OrderId)
+                        @Html.ValidationSummary()
+                        @Html.AntiForgeryToken()
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                     <label for="dateb1" class="form-label">Дата завершения</label>
+                                   <div class="input-group">
+                                     @*    <input type="date" class="form-control" id="dateCompleting" name="DateCompleting" readonly>
+                                        <span class="input-group-text">
+                                            <i class="far fa-calendar"></i>
+                                        </span>*@
+                                        <input asp-for="DateCompleting" id="dateCompleting" type="date" class="form-control" placeholder="Дата завершения" />
+                                    </div> 
+                                    
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="dateb2" class="form-label">Дата фактического завершения</label>
+                                    <div class="input-group">
+                                        @* <input type="date" class="form-control" id="dateFactCompleting" name="DateFactCompleting" readonly>
+                                        <span class="input-group-text">
+                                            <i class="far fa-calendar"></i>
+                                        </span> *@
+                                        <input asp-for="DateFactCompleting" id="dateFactCompleting" type="date" class="form-control" placeholder="Дата завершения" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="paymentId" class="form-label">Вид оплаты</label>
+                                    <div class="input-group">
+                                        @Html.DropDownListFor(model => model.PaymentId, ViewBag.ListOfPayment as SelectList, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="personnelNumber" class="form-label">Сотрудник закрыл</label>
+                                    <div class="input-group">
+                                        @Html.DropDownList("PersonnelNumber", ViewBag.ListEmployee as SelectList, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <button class="btn btn-success">Закрыть</button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <form class="form-horizontal" id="formCloseRejection" method="post" action="@Url.Action("Close", "Order")" data-bs-toggle="collapse" data-bs-parent="#accordion" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree" data-ajax="true" data-ajax-method="Post" data-ajax-update="#results" data-ajax-loading="#loading1" data-ajax-loading-duration="0" style="display:none">
+                        @Html.HiddenFor(model => model.OrderId)
+                        @Html.ValidationSummary()
+                        @Html.AntiForgeryToken()
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="dateb1" class="form-label">Дата завершения</label>
+                                    <div class="input-group">
+                                        <input type="date" class="form-control" id="dateCompleting" name="DateCompleting" readonly>
+                                        <span class="input-group-text">
+                                            <i class="far fa-calendar"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="personnelNumber" class="form-label">Сотрудник закрыл</label>
+                                    <div class="input-group">
+                                        @Html.DropDownList("PersonnelNumber", ViewBag.ListEmployee as SelectList, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="rejectionReason" class="form-label">Причина отказа</label>
+                                    <textarea id="rejectionReason" name="RejectionReason" class="form-control" rows="1"></textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <button class="btn btn-danger" style="margin-top:25px;">Закрыть</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                
+                </div>
+            </div>
+        </div>
+
+
+        <div class="panel panel-default panel-my-head">
+            <div class="panel-heading">
+               @*  <h4 class="panel-title">
+                    <a class="collapsed" data-bs-toggle="collapse" href="#collapse5" onclick="loadInfo()">
+                        Сводная информация по заказу
+                    </a>
+                </h4> *@
+
+                <h2 class="accordion-header" id="headingOne">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse5" aria-expanded="true" aria-controls="collapse5" onclick="loadInfo()">
+                        Сводная информация по заказу
+                    </button>
+                </h2>
+
+            </div>
+            <div id="collapse5" class="panel-collapse collapse">
+                <div class="panel-body" style="padding:0; font-size: 12px; overflow-y:scroll; max-height: 420px;" id="panelInfo">
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+    <br />
+    <div class="row g-3">
+  <div class="col-auto">
+     <button class="btn btn-outline-info" type="button" onclick="javascript:window.location='@Url.Action("GetReportOrderPdf","ReportView", new {@orderId=@Model.OrderId })'">Сформировать акт сдачи-приемки выполненных работ</button>              
+  </div>
+  <div class="col-auto">
+            <button class="btn btn-outline-info" type="button" onclick="javascript:window.location='@Url.Action("GetReportQueryClientPdf", "ReportView", new { @orderId = @Model.OrderId })'">Сформировать заявку-заказ</button>
+  </div>
+  <div class="col-auto">
+            <button class="btn btn-outline-info" type="button" onclick="javascript:window.location='@Url.Action("GetReportAcceptanceCarPdf", "ReportView", new { @orderId = @Model.OrderId, clientId=@Model.ClientId })'">Сформировать акт сдачи-приемки автомобиля и запчастей</button>
+        </div>
+</div>
+<br />
+<div class="d-grid gap-1">
+    
+        <button class="btn btn-outline-success" type="button" onclick="javascript:window.location='@Url.Action("TableLoad", "WorkLoading", new { orderId = @Model.OrderId})'">Резервировать время</button>
+ 
+    </div>
+
+</div>
+@* <link href="~/Content/order-carry-on-order.css" rel="stylesheet" /> *@
+
+
+
+<style>
+
+    #wrapper {
+        padding: 0;
+    }
+
+    #header-remark {
+        border-style: solid;
+        border-color: #CCCCCC;
+        border-width: 1px;
+        /* width: 524px; */
+        text-align: center;
+        background: #EEEEEE;
+        padding: 7px;
+        font-size: 14px;
+    }
+
+    #table_kit {
+        width: 100%;
+        background: white;
+        font-size: 14px;
+    }
+
+        #table_kit td:nth-child(1) {
+            width: 40%;
+        }
+
+        #table_kit tr:nth-child(1) td, #table_kit tr:nth-child(4) td {
+            text-align: center;
+            line-height: 28px;
+            background: #EEEEEE;
+        }
+
+        #table_kit td {
+            border: 1px solid #CCCCCC;
+            padding: 2px 2px 2px 10px;
+        }
+
+            #table_kit td [type] {
+                margin-right: 20px;
+            }
+
+    .radio {
+        display: none;
+    }
+
+    .radio-custom {
+        width: 20px;
+        height: 20px;
+        border: 2px solid #ccc;
+        border-radius: 3px;
+        position: relative;
+        margin-right: -5px;
+        margin-left: 5px;
+    }
+
+    .radio-custom, .my-remark .label {
+        display: inline-block;
+        vertical-align: middle;
+        color: #474539;
+        font-size: 85%;
+    }
+
+    .radio:checked + .radio-custom::before {
+        content: "";
+        display: block;
+        position: absolute;
+        top: 2px;
+        right: 2px;
+        bottom: 2px;
+        left: 2px;
+        background: #413548;
+        border-radius: 2px;
+    }
+
+    .radio-custom,
+    .radio:checked + .radio-custom::before {
+        border-radius: 50%;
+    }
+
+    #state_car {
+        /* width: 524px; */
+        border: 1px solid #cccccc;
+        border-top: none;
+        position: relative;
+        padding: 0;
+    }
+
+        #state_car img {
+            width: 100%;
+        }
+
+    .my-remark {
+        background-color: #DEEDDC;
+        border-radius: 10px;
+        border: 1px solid #a3a3a3;
+        box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
+        color: #404040;
+        display: block;
+        height: 120px;
+        padding: 5px;
+        position: absolute;
+        width: 200px;
+        z-index: 5;
+        display: none;
+        font-size: 14px;
+    }
+
+    #contents_remark {
+        width: 100%;
+    }
+
+    .my-remark hr {
+        margin: 0px;
+    }
+
+    .my-remark .close-sign {
+        color: #D9534F;
+    }
+
+    .my-remark::after {
+        border-bottom: 5px solid transparent;
+        border-right: 10px solid #DEEDDC;
+        border-top: 5px solid transparent;
+        content: "";
+        height: 0px;
+        position: absolute;
+        right: 100%;
+        top: 50px;
+        width: 0px;
+    }
+
+    .my-remark::before {
+        border-bottom: 7px solid transparent;
+        border-right: 12px solid #a3a3a3;
+        border-top: 7px solid transparent;
+        content: "";
+        height: 0px;
+        position: absolute;
+        right: 100%;
+        top: 48px;
+        width: 0px;
+    }
+
+    .item-remark {
+        height: 20px;
+        width: 20px;
+        border: 2px solid green;
+        border-radius: 10px;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        text-align: center;
+        background-color: #68BF68;
+        color: white;
+        cursor: pointer;
+        display: none;
+    }
+
+        .item-remark:hover {
+            box-shadow: 0 0 5px #68BF68;
+        }
+
+    #contents_remark div:nth-child(1) {
+        background-color: #61BF61;
+        border-radius: 10px 10px 0px 0px;
+        padding: 3px;
+        text-align: center;
+        margin: -5px -5px 5px -5px;
+        border-bottom: 1px solid #a3a3a3;
+        color: white;
+    }
+    /****************************************************/
+    .my_toggle {
+        position: relative;
+        left: 50%;
+        margin-left: -75px;
+    }
+
+        .my_toggle label {
+            line-height: 20px !important;
+        }
+
+    th {
+        text-align: center;
+    }
+
+    i {
+        font-size: 12px;
+        cursor: pointer;
+    }
+
+        i.glyphicon-remove-circle {
+            color: red;
+        }
+
+        i.glyphicon-edit {
+            color: green;
+        }
+
+        i.glyphicon-upload {
+            color: red;
+        }
+
+        i.glyphicon-download {
+            color: green;
+        }
+
+    table {
+        margin-bottom: 0 !important;
+    }
+
+    .my_comment_order {
+        padding: 5px;
+        background-color: #F9FAC9;
+        border: 1px solid #DDDDD0;
+        font-style: italic;
+        border-radius: 5px;
+        font-size: 12px;
+    }
+
+    #modal_form_attach .panel-heading {
+        background: linear-gradient(to top, white 10%, #4CB589) !important;
+    }
+
+    #modal_form_attach table {
+        font-size: 12px;
+    }
+
+    #modal_form_attach .panel-heading a {
+        color: grey;
+    }
+
+    #modal_form_attach .panel-warning {
+        box-shadow: 0px 0px 2px #4CB589;
+        border: solid 1px #4CB589;
+    }
+
+    #execServices td, th {
+        vertical-align: middle !important;
+    }
+
+    #execServices th {
+        background: #E7E7E7;
+    }
+
+    #execServices {
+        font-size: 12px;
+    }
+
+    .panel-my-head .panel-heading {
+        background: linear-gradient(to top, #5AA1DE 40%, #337AB7);
+        color: white;
+    }
+
+    .panel-my-head {
+        border: 1px solid #4DCAFF;
+    }
+
+    #panelInfo {
+        font-size: 12px;
+    }
+    /*окно добавления/редактирования услуг*/
+    #formAddService h4 {
+        text-align: center;
+    }
+
+    #for-button_apply {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+        #for-button_apply button {
+            width: 100%;
+        }
+</style>
+
+
+@* @section Script{
+    @Scripts.Render("~/Scripts/moment-with-locales.min.js")
+    @Scripts.Render("~/Scripts/bootstrap-datetimepicker.min.js")
+    @Styles.Render("~/Content/bootstrap-datetimepicker.min.css")
+    @Styles.Render("~/Content/MyModalWindowForAddService.css")
+    @Styles.Render("~/Content/MyModalWindowForAttachParts.css")
+    @Scripts.Render("~/scripts/jquery.validate.js")
+    @Scripts.Render("~/Scripts/jquery.validate.unobtrusive.js")
+    @Styles.Render("~/Content/bootstrap2-toggle.min.css")
+    @Scripts.Render("~/scripts/bootstrap2-toggle.min.js")
+    <script src="~/Scripts/forViews/order-carry-on-order.js"></script>
+} *@
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    //global var
+    var resultJsonRemarks;
+    // loading information about car's remarks
+    $().ready(function () {
+
+
+        $('#ajaxForm').submit(function (event) {
+            event.preventDefault();
+            var form = $(this);
+            $.ajax({
+                url: form.attr('action'),
+                type: form.attr('method'),
+                data: form.serialize(),
+                success: function (data) {
+                    $('#results').html(data);
+                },
+                error: function () {
+                    $('#popErorr').show();
+                }
+            });
+        });
+
+        $.ajax(
+            {
+                url: '/Order/GetInfoRemarkItemFromDB',
+                data: 'orderId=' + $('#OrderId').val(),
+                type: "Post",
+                datatype: "json",
+                success: function (result) {
+                   
+var resultJsonRemarks = result;
+for (var key in result) {
+    var new_mark_item = $('<div class="item-remark"><span></span><input type="hidden" name="id_item"></div>'); // Create new div element with class and structure
+    $('#state_car').append(new_mark_item);
+    new_mark_item.css('top', result[key].y_Axis_pos + 'px').css('left', result[key].x_Axis_pos + 'px'); // Set top and left positions with 'px' units
+    new_mark_item.find('input').val(result[key].remarkId);
+    switch (result[key].numberType) {
+        case 1: new_mark_item.find('span').text("P"); break;
+        case 2: {new_mark_item.find('span').text("X");new_mark_item.css({ borderColor: '#D56161', background: '#FF7474' }); }
+break;
+
+        case 3: { new_mark_item.find('span').text("Y");new_mark_item.css({ borderColor: '#5E8DC7', background: '#74AFF7' }); } break;
+                            case 4: { new_mark_item.find('span').text("O"); new_mark_item.css({ borderColor: '#A99A2C', background: '#D8C95B' }); } break;
+    }
+    new_mark_item.fadeIn(200);
+}
+
+
+                    // resultJsonRemarks = result;
+                    // for (key in result) {
+                    //     var new_mark_item = $('#item-remark-id').clone().removeAttr('id');//clone info item
+                    //     $('#state_car').append(new_mark_item);
+                    //     new_mark_item.css('top', result[key].Y_Axis_pos).css('left', result[key].X_Axis_pos);
+                    //     new_mark_item.find('input').attr('value', result[key].remarkId);
+                    //     switch (result[key].NumberType) {
+                    //         case 1: new_mark_item.find('span').text("P"); break;
+                    //         case 2: new_mark_item.find('span').text("X"); new_mark_item.css({ borderColor: '#D56161', background: '#FF7474' }); break;
+                    //         case 3: new_mark_item.find('span').text("Y"); new_mark_item.css({ borderColor: '#5E8DC7', background: '#74AFF7' }); break;
+                    //         case 4: new_mark_item.find('span').text("O"); new_mark_item.css({ borderColor: '#A99A2C', background: '#D8C95B' }); break;
+                    //     }
+                    //     new_mark_item.fadeIn(200);
+                    // }
+                }
+            });
+        //set onlclick for remark's item
+        $('#state_car').on('click', '.item-remark', function (e) {
+
+            for (key in resultJsonRemarks) {
+                if (resultJsonRemarks[key].remarkId == $(this).find('input').val()) {
+                    var xClick = resultJsonRemarks[key].X_Axis_pos;
+                    var yClick = resultJsonRemarks[key].Y_Axis_pos;
+                    $('#addonInfo').val(resultJsonRemarks[key].RemarkText);
+                    $('input[type="radio"][value="' + resultJsonRemarks[key].NumberType + '"]').click();
+                    var h = $('.my-remark').height();
+                    $('.my-remark').css('top', yClick - h * 0.5 + 8).css('left', xClick + 29);
+                    $('.my-remark').fadeIn(100);
+                    break;
+                }
+            }
+        });
+        $('.my-remark  .close-sign').click(function () {
+            //set default values
+            $('#addonInfo').val('');
+            $('.my-remark').fadeOut(100);
+        });
+    })
+    //подгружаем сводную информацию о заказе
+    function loadInfo() {
+        $("#panelInfo").html(''); // предварительно очищаем
+        $.ajax(
+            {
+                url: '/Order/TotalInfoServiceByOrder',
+                data: 'id=' + $('#OrderId').val(),
+                type: "Get",
+                complete: step2,
+                datatype: "json",
+                success: function (result) { $("#panelInfo").append(result); }
+            });
+
+        function step2() {
+            // console.log('step2()');
+            $.ajax(
+                {
+                    url: '/Order/TotalInfoAttachedPartByOrder',
+                    data: 'id=' + $('#OrderId').val(),
+                    type: "Get",
+                    complete: step3,
+                    datatype: "json",
+                    success: function (result) { $("#panelInfo").append(result); }
+                });
+            function step3() {
+                // console.log('step3()');
+                $.ajax(
+                    {
+                        url: '/Order/TotalInfoAttachedCustomPartByOrder',
+                        data: 'id=' + $('#OrderId').val(),
+                        type: "Get",
+                        beforeSend: showSpinnerLine,
+                        complete: hideSpinnerLine,
+                        datatype: "json",
+                        success: function (result) { $("#panelInfo").append(result); }
+                    });
+            }
+        }
+    }
+    $(function () {
+        if ($('#isclosed').val() == 'False') {//выполнить, только если заказ открыт
+            $('#toggle-accept').change(function () {
+                if (this.checked == true) {
+                    $('#formCloseRejection').animate({ opacity: 1, right: '80%' }, 1000).show();
+                    $('#formCloseSuccess').animate({ opacity: 0, right: '80%' }, 1000).hide();
+                }
+                else {
+                    $('#formCloseRejection').animate({ opacity: 0, right: '80%' }, 500).hide();
+                    $('#formCloseSuccess').animate({ opacity: 1, right: '80%' }, 500).show();
+                }
+
+            })
+            $('#toggle-accept').bootstrapToggle({
+                on: 'Отказано',
+                off: 'Принято',
+                onstyle: 'danger',
+                offstyle: 'success',
+                width: 150,
+                height: 35,
+                style: 'my_toggle'
+            });
+            $('div[class="input-group date col-md-12"]').datetimepicker({ language: 'ru', pickTime: false, format: 'YYYY-MM-DD' });
+        }
+    });
+
+    function showSpinner() {
+        $('#loading').show();
+    }
+
+    function hideSpinner() {
+        $('#loading').hide();
+    }
+    function showSpinnerLine() {
+        $('#loading_line2').show();
+    }
+
+    function hideSpinnerLine() {
+        $('#loading_line2').hide();
+    }
+    //для пейджинга-сброс номера отсылаемой страницы при изменении строки поиска услуг
+    $(document).ready(function () {
+        $('input[name="servname"]').change(function () {
+            $('#page').removeAttr('value');
+        })
+    })
+    //редактирование существующей услуги (получение данных)
+    function EditAttachedService(Serv) {
+        $.ajax(
+            {
+                url: '/Order/EditService',
+                data: 'serviceId=' + Serv + '&' + 'orderId=' + $("#OrderId").val(),
+                type: "GET",
+                datatype: "json",
+                beforeSend: showSpinner,
+                complete: hideSpinner,
+                success: function (result) { 
+                    // console.log(JSON.stringify(result));
+                    $("#contents1").html(result); }
+            })
+    };
+    //функция для  отправки запроса на прикрепленные запчасти к услуге
+    function AttachedParts(serviceId) {
+        $.ajax(
+            {
+                url: '/Parts/AttachSpareParts',
+                data: 'clientId=' + $('#ClientId').val() + '&serviceId=' + serviceId + '&orderId=' + $("#OrderId").val(),
+                type: "Get",
+                beforeSend: showSpinnerLine,
+                complete: hideSpinnerLine,
+                datatype: "json",
+                success: function (result) { $("#contents2").html(result); }
+            });
+    }
+    //для удалениия услуги из заказа
+    function DeleteAttachedService(serviceId) {
+        $.ajax(
+            {
+                url: '/Order/DeleteAttachedService',
+                data: 'serviceId=' + serviceId + '&orderId=' + $("#OrderId").val(),
+                type: "Get",
+                datatype: "json"
+            });
+    }
+    //добавление новой услуги (получение)
+    function addSertoOrd(serviceId) {
+        $.ajax(
+            {
+                url: '/Order/AddService',
+                data: 'serviceId=' + serviceId + '&' + 'orderId=' + $("#OrderId").val(),
+                type: "GET",
+                datatype: "json",
+                beforeSend: showSpinner,
+                complete: hideSpinner,
+                success: function (result) { $("#contents1").html(result); }
+            })
+    };
+    // для добавления услуги(отправка экземпляра услуги)
+    function addService() {
+        $.ajax(
+            {
+                url: '/Order/AddService',
+                data: $("#formAddService").serialize(),
+                type: "POST",
+                datatype: "json",
+                beforeSend: showSpinner,
+                complete: hideSpinner,
+                success: function (result) {
+                    //замена  таблицы услуг
+                    $("#execServices").replaceWith(result);
+                }
+            })
+    };
+
+    $(document).ready(function () {
+        //для редактирования услуги
+        $('#collapseOne, #collapseTwo').on('click', '.glyphicon-edit, button#btnAdd', function (event) {
+            event.preventDefault();
+            $('#overlay_dark').fadeIn(400,
+                function () {
+                    $('#modal_form')
+                        .css('display', 'block')
+                        .animate({ opacity: 1, top: '10%' }, 200);
+                });
+        });
+        /* Зaкрытие мoдaльнoгo oкнa, тут делaем тo же сaмoе нo в oбрaтнoм пoрядке */
+        $('#modal_close, #modal_close_parts, #overlay_dark').click(function () {
+            $('#modal_form, #modal_form_attach')
+                .animate({ opacity: 0, top: '45%' }, 100,
+                    function () {
+                        $(this).css('display', 'none');
+                        $('#overlay_dark').fadeOut(400);
+                    }
+                );
+            clearInterval(inter_check);
+        });
+        // окно прикрепления запчастей
+        $('#collapseOne').on('click', 'span[class="badge"]', function (event) {
+            event.preventDefault();
+            inter_check = setInterval(posi, 50);
+            $('#overlay_dark').fadeIn(400,
+                function () {
+                    $('#modal_form_attach')
+                        .css('display', 'block')
+                        .animate({ opacity: 1, top: '50%' }, 200);
+                });
+        });
+    });
+
+    //для автовыравнивания  модального окна (добавление запчастей) по вертикали
+    var inter_check;
+    function posi(e) {
+        var currentHeight = $('#modal_form_attach').css('height');
+        var currNumb = Number(currentHeight.replace('px', ''));
+        if (currNumb / 2 < 400)
+            $('#modal_form_attach').css('marginTop', -currNumb / 2);
+    }
+
+    $(document).ready(function () {
+        //подгружаем сводную информацию о заказе после загрузки страницы в три шага только для закрытого заказа
+        if ($('#isclosed').val() == 'True') {
+            $.ajax(
+                {
+                    url: '/Order/TotalInfoServiceByOrder',
+                    data: 'id=' + $('#OrderId').val(),
+                    type: "Get",
+                    complete: step2,
+                    datatype: "json",
+                    success: function (result) { $("#panelInfo").append(result); }
+                });
+
+            function step2() {
+                $.ajax(
+                    {
+                        url: '/Order/TotalInfoAttachedPartByOrder',
+                        data: 'id=' + $('#OrderId').val(),
+                        type: "Get",
+                        complete: step3,
+                        datatype: "json",
+                        success: function (result) { 
+                            
+                            $("#panelInfo").append(result); 
+                        }
+                    });
+                function step3() {
+                    $.ajax(
+                        {
+                            url: '/Order/TotalInfoAttachedCustomPartByOrder',
+                            data: 'id=' + $('#OrderId').val(),
+                            type: "Get",
+                            beforeSend: showSpinnerLine,
+                            complete: hideSpinnerLine,
+                            datatype: "json",
+                            success: function (result) { $("#panelInfo").append(result); }
+                        });
+                }
+            }
+        }
+    });
+</script>
+
+<!-- Модальное окно (добавление услуги) -->
+<div id="modal_form" class="modal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Добавление услуги</h5>
+                <button type="button" class="btn-close" aria-label="Close" id="modal_close"></button>
+            </div>
+            <div class="modal-body" id="contents1">
+                <!-- Содержимое модального окна -->
+            </div>
+            <div class="modal-footer">
+                <img id="loading" src="@Url.Content("~/img/loading.gif")" style="display: none;">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно (добавление запчастей) -->
+<div id="modal_form_attach" class="modal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Добавление запчастей</h5>
+                <button type="button" class="btn-close" aria-label="Close" id="modal_close_parts"></button>
+            </div>
+            <div class="modal-body" id="contents2">
+                <!-- Содержимое модального окна -->
+            </div>
+            <div class="modal-footer">
+                <div class="progress progress-striped active" id="loading_line2" style="display: none;">
+                    <div class="progress-bar" style="width: 100%">
+                        Идет загрузка... подождите пожалуйста
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Подложка для модальных окон -->
+<div id="overlay_dark"></div>
+
+@* <!-- Модальное окно подтверждения -->
+<div id="overlay"></div>
+<div class="DialogComfirms" class="modal" tabindex="-1">
+    <div id="contents" class="col-md-10">
+        <!-- Содержимое модального окна -->
+    </div>
+    <i class="fas fa-question-circle sing-question"></i>
+    <hr>
+    <div class="col-md-12 form-inline">
+        <button id="ok" class="btn btn-danger">Ок</button>
+        <button id="cancel" class="btn btn-success">Отмена</button>
+    </div>
+</div> *@

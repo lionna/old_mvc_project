@@ -1,0 +1,19 @@
+﻿@model CarServiceApp.Domain.Entity.Models.ContractToEmployee
+@{
+    ViewBag.Title = "Контракты";
+}
+<tr>
+    <td>@Model.ContractId</td>
+    <td>@Model.RecruitDate</td>
+    <td>@Model.DismissDate</td>
+    <td>@Model.Type</td>
+    <td>@Model.Term</td>
+    <td>
+        <i class='fas fa-edit' onclick='EditContract("@Model.ContractId")' title='Редактировать'></i>
+        @if (Model.DismissDate == null)
+        {
+            <i class="fas fa-times" onclick="confirmDialog('Вы уверены,  что хотите удалить контракт № @Model.ContractId ?', Delete, '@Model.ContractId');" title="Удалить"></i>
+            <i class="fas fa-lock" onclick="UnLock(@Model.ContractId)" title="Расторгнуть"></i>
+        }
+    </td>
+</tr>
